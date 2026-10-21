@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ballroom Quest: learn the steps before the lesson</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js" } }
+  </script>
+</head>
+<body>
+  <div id="stage"></div>
+
+  <header id="brand" class="card">
+    <div class="logo">Ballroom <span>Quest</span></div>
+    <div class="role" role="group" aria-label="Your role">
+      <button data-role="leader" class="on">Leader</button>
+      <button data-role="follower">Follower</button>
+    </div>
+    <div class="level"><span id="lvl">Level 1 · Newcomer</span><div class="bar"><i id="xpbar"></i></div><small id="xptext">0 XP</small></div>
+    <div class="ai"><i id="aidot"></i><span id="aitext">Checking AI…</span></div>
+  </header>
+
+  <nav id="tools" class="card">
+    <button data-open="drills" title="Team drill board (B)">📋 Drills</button>
+    <button data-open="planner" title="Competition planner (P)">📅 Plan</button>
+    <button data-open="usage" title="AI cost">💲 <span id="spend">$0.0000</span></button>
+    <button id="camBtn" title="Camera (V)">🎥 Behind</button>
+    <button id="soundBtn" title="Metronome (M)">🔔 On</button>
+    <button data-open="help" title="Help (H)">❔</button>
+  </nav>
+
+  <div id="prompt" class="pill hidden"></div>
+  <div id="legend" class="pill"></div>
+
+  <aside id="floor" class="card hidden">
+    <div class="floor-head">
+      <h2 id="floorTitle">Smooth</h2>
+      <button id="leaveFloor" title="Leave the floor (Esc)">✕</button>
+    </div>
+    <div id="danceTabs" class="tabs"></div>
+    <p id="danceFeel" class="feel"></p>
+    <h3>Figures <small>press 1–9 to add</small></h3>
+    <ol id="figList"></ol>
+    <h3>Your routine <small id="routineState"></small></h3>
+    <div id="routine" class="chain"><em>Add figures to build a routine.</em></div>
+    <div class="row speed"><label>Tempo <input id="speed" type="range" min="40" max="100" step="5" value="60" /> <b id="speedVal">60%</b></label></div>
+    <div class="row actions">
+      <button id="watchBtn" class="ghost">▶ Watch <kbd>W</kbd></button>
+      <button id="playBtn" class="primary">🎵 Play <kbd>Enter</kbd></button>
+      <button id="coachBtn" class="ghost">🧑‍🏫 Coach <kbd>C</kbd></button>
+    </div>
+    <div class="row small"><button id="undoBtn" class="link">⌫ Undo</button><button id="clearBtn" class="link">Clear <kbd>X</kbd></button></div>
+  </aside>
+
+  <div id="lane" class="hidden"><div class="hit"></div><div id="notes"></div></div>
+  <div id="judge"></div>
+  <div id="nowFig" class="pill hidden"></div>
+
+  <div id="modal" class="hidden" role="dialog" aria-modal="true">
+    <div class="sheet card"><button class="close" id="modalClose" aria-label="Close">✕</button><div id="modalBody"></div></div>
+  </div>
+
+  <div id="welcome">
+    <div class="sheet card">
+      <h1>Ballroom <span>Quest</span></h1>
+      <p class="lead">Learn your figures before the lesson. See the footwork from the dancer's own eyes, play it to the beat, and let three AI helpers coach you for competition.</p>
+      <ol class="how">
+        <li><b>Walk</b> with <kbd>WASD</kbd> or the arrow keys. Step onto the <span class="blue">Smooth</span> or <span class="coral">Latin</span> floor and press <kbd>E</kbd>.</li>
+        <li><b>Combine</b> figures with number keys <kbd>1</kbd>–<kbd>9</kbd>. The chain turns red if a link isn't danceable.</li>
+        <li><b>Play</b> with <kbd>↑</kbd> forward, <kbd>↓</kbd> back, <kbd>←</kbd> <kbd>→</kbd> side, <kbd>Space</kbd> close or replace, on the beat.</li>
+        <li><b>Ask for help</b>: Coach Marisol reviews your routine, the Drill Board turns lesson notes into drills, and the Planner builds your plan for competition.</li>
+      </ol>
+      <button id="startBtn" class="primary big">Enter the studio</button>
+    </div>
+  </div>
+
+  <script type="module" src="/static/js/main.js"></script>
+</body>
+</html>
