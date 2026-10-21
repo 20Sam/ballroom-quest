@@ -20,7 +20,7 @@ You need Python 3.11+ and an internet connection (three.js loads from a CDN). No
 
 1. Clone and enter the repo:
    ```bash
-   git clone <repo-url> ballroom-quest
+   git clone https://github.com/20Sam/ballroom-quest.git
    cd ballroom-quest
    ```
 2. Add the key. Copy `.env.example` to `.env` **in this folder or in the folder one level above**,
