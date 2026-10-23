@@ -62,7 +62,7 @@ game, the footwork and the free rule checks still work; only the three agents ar
   aren't danceable, wrong verdicts, links or key-like text, and plans over the time budget are all
   sent back to the agent to fix (`ModelRetry`).
 - **Spend caps:** $0.25 per browser session, $3 per day for the whole app, 20 AI requests per
-  10 minutes per session, 8 model calls and 60k tokens per agent run.
+  10 minutes per session, 8 model calls and 150k tokens per agent run. Failed runs are logged and charged too.
 - **Escaping:** the browser escapes all AI text before showing it.
 - **Logging:** every run is logged with its tokens, cost and step-by-step trace in
   `output/agent_runs.jsonl`. `GET /api/usage` returns the averages per agent.
@@ -85,7 +85,7 @@ frontend/
   js/main.js       game loop, rhythm game, panels
   js/api.js        API client + local progress
 data/
-  figures.json     130 figures, 19 dances, 4 styles (Standard figures checked against Alex Moore's
+  figures.json     131 figures, 19 dances, 4 styles (Standard figures checked against Alex Moore's
                    technique book; figures marked "general" still need a coach check)
   drills.json      team drills saved by the Drill Builder
 output/
@@ -95,6 +95,8 @@ output/
 ## Changing the data
 
 - To add a figure, add it to `data/figures.json`. Steps are written for the leader as
-  `[foot, direction, beats, turn°, count]`. The follower's part, the animation, the keys and the rules all
-  come from that line automatically.
+  `[foot, direction, beats, turn°, count]`. The follower's part, the animation, the keys and the rules
+  come from that line. Where her part is not the plain mirror, add `"follow_steps": {"<leader step index>":
+  [foot, dir, weight?]}`. Quickstep figures need `"end_travel": "fwd" | "back"`; `"only_after"` /
+  `"only_before"` restrict neighbours; every dance has a `"rise"` (`waltz`, `swing` or `none`).
 - To reset the team board, replace `data/drills.json` with `[]`.

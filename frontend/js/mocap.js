@@ -51,9 +51,35 @@ export class MocapPlayer {
     this.hide()
   }
 
-  load(clip, anchor) {
+  // damp < 1 shrinks floor travel toward the clip's centre: phone cameras pan and zoom, so travel is rough;
+  // spot dances (cha cha, rumba) look better almost in place. Only the couple's shared path (the midpoint of
+  // the two partners) is damped; each partner keeps their real offset from it, so the hold distance between
+  // them is unchanged and their bodies don't overlap.
+  load(clip, anchor, damp = 1) {
+    const ds = clip.dancers
+    // work from the original roots every time, so loading the same clip object twice can't damp it twice
+    const orig = (clip._roots ??= ds.map((d) => d.frames.map((f) => [f.root[0], f.root[1]])))
+    let sx = 0, sz = 0, n = 0
+    ds.forEach((d, k) => d.frames.forEach((f, t) => { if (f.conf > 0) { sx += orig[k][t][0]; sz += orig[k][t][1]; n++ } }))
+    const cx = n ? sx / n : 0, cz = n ? sz / n : 0
+    const pair = orig.slice(0, 2).filter((o) => o.length) // the couple that is drawn
+    const len = Math.max(0, ...orig.map((o) => o.length))
+    for (let t = 0; t < len; t++) {
+      // midpoint of the couple at frame t (a shorter dancer holds their last frame)
+      let mx = cx, mz = cz
+      if (pair.length) {
+        mx = 0; mz = 0
+        for (const o of pair) { const r = o[Math.min(t, o.length - 1)]; mx += r[0]; mz += r[1] }
+        mx /= pair.length; mz /= pair.length
+      }
+      const nx = (mx - cx) * damp, nz = (mz - cz) * damp
+      ds.forEach((d, k) => {
+        const f = d.frames[t]
+        if (f) f.root = [nx + (orig[k][t][0] - mx), nz + (orig[k][t][1] - mz)]
+      })
+    }
     this.clip = clip
-    this.anchor = anchor // {x, z, yaw}: where the clip's origin sits in the studio
+    this.anchor = anchor // {x, z, yaw}: where the clip's centre sits in the studio
     this.t0 = performance.now() / 1000
     this.figs.forEach((f) => (f.group.visible = true))
   }

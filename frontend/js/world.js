@@ -6,15 +6,29 @@ import * as THREE from 'three'
 export const ROOM = { w: 60, d: 44 }
 const H = 5.2 // wall height
 
-// One drum per style. rx/rz = oval radii; door = angle (radians, atan2(dz, dx)) of the opening.
+// One drum per style. rx/rz = oval radii; door = parametric angle t of the opening's centre, i.e. the wall
+// point (x + cos t * rx, z + sin t * rz). drum() draws and blockedByDrum() collides with this same angle.
 export const DRUMS = {
   standard: { x: -19, z: -12, rx: 8.5, rz: 6.5, color: 0x7a6bd1, label: 'STANDARD', room: 'Standard Drum' },
   smooth: { x: 19, z: -12, rx: 8.5, rz: 6.5, color: 0x3a9fc4, label: 'SMOOTH', room: 'Smooth Drum' },
   latin: { x: -19, z: 12, rx: 8.5, rz: 6.5, color: 0xe98a6b, label: 'LATIN', room: 'Latin Drum' },
   rhythm: { x: 19, z: 12, rx: 8.5, rz: 6.5, color: 0x2f9e7a, label: 'RHYTHM', room: 'Rhythm Drum' },
 }
-for (const d of Object.values(DRUMS)) d.door = Math.atan2(-d.z, -d.x) // the opening faces the courtyard
 const DOOR_HALF = 0.42 // radians of opening on each side
+const DRUM_SEGS = 64 // wall segments per drum; a segment is left out when its middle is within DOOR_HALF of the door
+const DOOR_EDGE = 0.04 // radians kept clear inside each door post, so the walker (a point) doesn't clip the wall
+const wrapAngle = (a) => Math.atan2(Math.sin(a), Math.cos(a))
+for (const d of Object.values(DRUMS)) {
+  d.door = Math.atan2(-d.z, -d.x) // the opening faces the courtyard
+  // the opening exactly as drawn (whole segments), as parametric angles relative to the door
+  const step = (Math.PI * 2) / DRUM_SEGS
+  let lo = Infinity, hi = -Infinity
+  for (let i = 0; i < DRUM_SEGS; i++) {
+    const diff = wrapAngle((i + 0.5) * step - d.door)
+    if (Math.abs(diff) < DOOR_HALF) { lo = Math.min(lo, diff - step / 2); hi = Math.max(hi, diff + step / 2) }
+  }
+  d.gap = [lo, hi]
+}
 
 // Where the couple dances in each studio (used by the game).
 export const FLOORS = Object.fromEntries(Object.entries(DRUMS).map(([k, d]) => [k, { x: d.x, z: d.z - 1.5, color: d.color, label: d.label }]))
@@ -138,15 +152,14 @@ function curtainWall(scene, x1, z1, x2, z2, h = H) {
 
 // An oval classroom drum: wood slats below, glass above, an opening toward the courtyard.
 function drum(scene, d) {
-  const segs = 64
+  const segs = DRUM_SEGS
   const slat = new THREE.MeshStandardMaterial({ map: slatTexture(), roughness: 0.7 })
   const glass = glassMat()
   const band = 1.2
   for (let i = 0; i < segs; i++) {
     const a0 = (i / segs) * Math.PI * 2, a1 = ((i + 1) / segs) * Math.PI * 2
     const mid = (a0 + a1) / 2
-    let diff = Math.atan2(Math.sin(mid - d.door), Math.cos(mid - d.door))
-    if (Math.abs(diff) < DOOR_HALF) continue
+    if (Math.abs(wrapAngle(mid - d.door)) < DOOR_HALF) continue // the opening (same test as d.gap)
     const p0 = [d.x + Math.cos(a0) * d.rx, d.z + Math.sin(a0) * d.rz]
     const p1 = [d.x + Math.cos(a1) * d.rx, d.z + Math.sin(a1) * d.rz]
     const len = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]) + 0.02
@@ -294,9 +307,9 @@ function blockedByDrum(x, z) {
     const nx = (x - d.x) / d.rx, nz = (z - d.z) / d.rz
     const r = Math.hypot(nx, nz)
     if (r > 0.94 && r < 1.08) {
-      const a = Math.atan2(z - d.z, x - d.x)
-      const diff = Math.atan2(Math.sin(a - d.door), Math.cos(a - d.door))
-      if (Math.abs(diff) > DOOR_HALF - 0.08) return true
+      // parametric angle (from the normalised nx, nz), the same angle drum() draws the wall and opening with
+      const diff = wrapAngle(Math.atan2(nz, nx) - d.door)
+      if (diff < d.gap[0] + DOOR_EDGE || diff > d.gap[1] - DOOR_EDGE) return true
     }
   }
   return false

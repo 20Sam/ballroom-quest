@@ -11,6 +11,9 @@ from pathlib import Path
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 OTHER = {"L": "R", "R": "L"}
+# A figure whose first step goes one of these ways starts by moving backward (used by the Quickstep travel rule).
+BACK_DIRS = {"back", "diag_back_l", "diag_back_r", "cross_back", "slip_back"}
+TRAVEL_WORD = {"fwd": "forward", "back": "backward"}
 
 
 @lru_cache(maxsize=1)
@@ -21,6 +24,7 @@ def load() -> dict:
         fig["start_foot"] = fig["steps"][0][0]
         fig["end_free"] = OTHER[weighted[-1][0]]
         fig["beats"] = sum(s[2] for s in fig["steps"])
+        fig["start_travel"] = "back" if fig["steps"][0][1] in BACK_DIRS else "fwd"
     return data
 
 
@@ -57,9 +61,30 @@ def check_routine(dance: str, figure_ids: list[str], start_position: str = "clos
         if position not in fig["accepts"]:
             issues.append({"index": idx, "from": figure_ids[idx - 1] if idx else None, "to": fid, "kind": "position",
                            "problem": f"After {prev} you are in {position} position, but {fig['name']} starts from {' or '.join(fig['accepts'])}."})
+        if idx:
+            before = figs[figure_ids[idx - 1]]
+            # Quickstep only: figures that carry end_travel must be followed by one that starts moving the same way.
+            travel = before.get("end_travel")
+            if travel and travel != fig["start_travel"]:
+                issues.append({"index": idx, "from": before["id"], "to": fid, "kind": "direction",
+                               "problem": f"After {prev} you are moving {TRAVEL_WORD[travel]}, but {fig['name']} starts "
+                                          f"with a {TRAVEL_WORD[fig['start_travel']]} step."})
+            # A few figures only ever come straight before / after particular figures (e.g. Closed Impetus -> Feather Finish).
+            nxt = before.get("only_before")
+            only = fig.get("only_after")
+            if nxt and fid not in nxt:
+                issues.append({"index": idx, "from": before["id"], "to": fid, "kind": "sequence",
+                               "problem": f"{prev} is always followed by {_names(figs, nxt)}, not {fig['name']}."})
+            elif only and before["id"] not in only:
+                issues.append({"index": idx, "from": before["id"], "to": fid, "kind": "sequence",
+                               "problem": f"{fig['name']} only comes straight after {_names(figs, only)}, not after {prev}."})
         position = position if fig["ends"] == "same" else fig["ends"]
         free = fig["end_free"]
     return {"ok": not issues, "issues": issues, "end_position": position, "end_free_foot": free}
+
+
+def _names(figs: dict, ids: list[str]) -> str:
+    return " or ".join(figs[i]["name"] if i in figs else i for i in ids)
 
 
 def bridges(dance: str, from_id: str, to_id: str) -> list[list[str]]:

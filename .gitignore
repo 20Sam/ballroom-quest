@@ -5,3 +5,10 @@
 __pycache__/
 .DS_Store
 .claude/settings.local.json
+
+# motion clips derived from team lesson videos: local until the team agrees to publish
+data/mocap/
+
+# written by the running app (may contain teammates' lesson notes): keep local
+output/agent_runs.jsonl
+data/drills.json

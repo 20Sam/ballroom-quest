@@ -96,6 +96,8 @@ button:disabled { opacity: .45; cursor: not-allowed; }
 .field { display: grid; gap: 6px; font-size: 13px; color: var(--muted); margin: 10px 0; }
 .checks { display: flex; flex-wrap: wrap; gap: 8px; }
 .checks label { background: var(--sand); padding: 6px 10px; border-radius: 10px; font-size: 13px; color: var(--ink); }
+#planChecks { display: grid; gap: 10px; }
+.checkgroup-title { font-size: 12px; font-weight: 600; color: var(--lagoon); letter-spacing: .3px; margin: 0 2px 5px; }
 .box { background: #fff; border: 1px solid var(--sand); border-radius: 14px; padding: 12px 14px; margin: 10px 0; }
 .box.warn { border-color: var(--coral); background: #fff4ef; }
 .box.ok { border-color: #bfe3d6; background: #f2fbf7; }

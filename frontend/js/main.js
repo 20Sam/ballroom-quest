@@ -67,6 +67,7 @@ function click(accent) {
 const player = () => (S.role === 'leader' ? leaderD : followerD)
 const partner = () => (S.role === 'leader' ? followerD : leaderD)
 const danceInfo = () => S.cat.dances[S.dance]
+const danceLabel = (k) => { const d = S.cat.dances[k]; return d ? `${d.name} · ${S.cat.styles[d.style]?.label || d.style}` : k }
 const figsOf = (d) => S.cat.figures.filter((f) => f.dance === d)
 const beatsPerBar = (d) => (S.cat.dances[d].time === '3/4' ? 3 : 4)
 const LEVELS = ['Newcomer', 'Newcomer', 'Bronze', 'Bronze', 'Bronze', 'Silver', 'Silver', 'Silver', 'Gold']
@@ -103,11 +104,12 @@ function showJudge(text, color = '#fff') {
 // ---------- floor mode ----------
 function placeCouple() {
   const f = FLOORS[S.style]
-  const start = { x: f.x, z: f.z + 2.5, yaw: Math.PI } // leader faces the back of the drum
+  const start = { x: f.x, z: f.z, yaw: Math.PI } // middle of the floor, leader faces the back of the drum
   S.start = start
+  // facing -z, the leader's right is +x
   const lead = { x: start.x, z: start.z, yaw: start.yaw, rise: 0,
-    L: { x: start.x + 0.1, z: start.z }, R: { x: start.x - 0.1, z: start.z } }
-  leaderD.apply(lead); followerD.apply(partnerOf(lead, 0.58))
+    L: { x: start.x - 0.1, z: start.z }, R: { x: start.x + 0.1, z: start.z } }
+  leaderD.apply(lead); followerD.apply(partnerOf(lead))
 }
 
 function enterFloor(style, opts = {}) {
@@ -115,11 +117,17 @@ function enterFloor(style, opts = {}) {
     openModal(`<h2>${esc(DRUMS[style]?.room || style)}</h2><p>This studio opens soon: its figures are still being added to the syllabus.</p>`)
     return
   }
-  S.style = style
+  stopRun() // drills and plan items can be practised from the nav bar in the middle of a watch/play run
   const ds = S.cat.styles[style].dances
-  S.dance = opts.dance && ds.includes(opts.dance) ? opts.dance : ds.includes(S.dance) ? S.dance : ds[0]
+  const dance = opts.dance && ds.includes(opts.dance) ? opts.dance : ds.includes(S.dance) ? S.dance : ds[0]
+  if (style !== S.style || dance !== S.dance) { // the instructors belong to the old floor/dance
+    mocap.hide(); S.mocapId = null; S.mocapGen = (S.mocapGen || 0) + 1; $('#mocapBtn').innerHTML = '🎥 Instructors <kbd>I</kbd>'
+  }
+  S.style = style
+  S.dance = dance
   if (opts.routine) S.routine = [...opts.routine]
   else if (S.routine.some((id) => S.figs[id]?.dance !== S.dance)) S.routine = []
+  S.check = null // re-checked below for the new routine
   if (opts.tempo) { S.speed = opts.tempo / 100; $('#speed').value = opts.tempo; $('#speedVal').textContent = `${opts.tempo}%` }
   S.mode = 'floor'
   document.body.classList.add('on-floor')
@@ -130,7 +138,7 @@ function enterFloor(style, opts = {}) {
 
 function leaveFloor() {
   stopRun()
-  mocap.hide(); $('#mocapBtn').textContent = '🎥 Instructors'
+  mocap.hide(); S.mocapId = null; S.mocapGen = (S.mocapGen || 0) + 1; $('#mocapBtn').innerHTML = '🎥 Instructors <kbd>I</kbd>'
   S.mode = 'explore'
   document.body.classList.remove('on-floor')
   $('#floor').classList.add('hidden')
@@ -142,7 +150,7 @@ function leaveFloor() {
 
 function switchDance(d) {
   if (S.mode !== 'floor') return
-  mocap.hide(); $('#mocapBtn').textContent = '🎥 Instructors'
+  mocap.hide(); S.mocapId = null; S.mocapGen = (S.mocapGen || 0) + 1; $('#mocapBtn').innerHTML = '🎥 Instructors <kbd>I</kbd>'
   S.dance = d
   S.routine = []
   S.check = null
@@ -193,17 +201,33 @@ function addFigure(id) {
 
 // ---------- instructor motion capture ----------
 async function toggleMocap() {
-  if (mocap.playing) { mocap.hide(); $('#mocapBtn').textContent = '🎥 Instructors'; return }
-  S.mocapList ??= await api.mocapList().catch(() => [])
-  const clip = S.mocapList.find((c) => c.dance === S.dance)
-  if (!clip) {
-    showJudge(`No captured ${danceInfo().name} clip yet`, '#ffd2c4'); return
+  // I cycles: off -> each captured clip for this dance -> off
+  if (toggleMocap.busy) return // a clip is still loading
+  const want = { dance: S.dance, style: S.style, gen: S.mocapGen }
+  // the player left the floor or changed dance/floor while we were fetching: drop the result
+  const stale = () => S.mode === 'explore' || S.dance !== want.dance || S.style !== want.style || S.mocapGen !== want.gen
+  const off = () => { mocap.hide(); S.mocapId = null; $('#mocapBtn').innerHTML = '🎥 Instructors <kbd>I</kbd>' }
+  toggleMocap.busy = true
+  try {
+    if (!S.mocapList) { const list = await api.mocapList().catch(() => null); if (list) S.mocapList = list }
+    if (stale()) return
+    const clips = (S.mocapList || []).filter((c) => c.dance === S.dance)
+    if (!clips.length) { off(); showJudge(`No captured ${danceInfo().name} clip yet`, '#ffd2c4'); return }
+    const next = mocap.playing ? clips.findIndex((c) => c.id === S.mocapId) + 1 : 0
+    if (next >= clips.length) { off(); return }
+    const clip = clips[next]
+    const data = await api.mocapClip(clip.id).catch(() => null)
+    if (stale()) return
+    if (!data) { showJudge('Could not load the instructors', '#ffd2c4'); return }
+    const f = FLOORS[S.style]
+    const spot = ['chacha', 'rumba', 'am_chacha', 'am_rumba', 'bolero', 'mambo', 'swing', 'jive'].includes(S.dance)
+    mocap.load(data, { x: f.x + 3.2, z: f.z + 0.5, yaw: Math.PI }, spot ? 0.35 : 0.8)
+    S.mocapId = clip.id
+    $('#mocapBtn').innerHTML = `⏹ ${esc(clip.label)} <kbd>I</kbd>`
+    showJudge(clips.length > 1 ? `Instructors ${next + 1}/${clips.length}` : 'Team instructors', '#fff6c9')
+  } finally {
+    toggleMocap.busy = false
   }
-  const data = await api.mocapClip(clip.id)
-  const f = FLOORS[S.style]
-  mocap.load(data, { x: f.x + 3, z: f.z + 1, yaw: Math.PI })
-  $('#mocapBtn').textContent = '⏹ Instructors'
-  showJudge('Team instructors (captured from video)', '#fff6c9')
 }
 
 // ---------- watch / play ----------
@@ -213,14 +237,21 @@ function startRun(kind) {
   if (!S.routine.length) S.routine = [...ids]
   const figs = ids.map((id) => S.figs[id])
   placeCouple()
-  const tl = buildTimeline(figs, danceInfo(), S.start)
+  // start in the hold the first figure needs; fit the whole path inside the drum (centred on the floor)
+  const acc = figs[0].accepts || ['closed']
+  const position = acc.includes('closed') ? 'closed' : acc[0]
+  const d = DRUMS[S.style], f = FLOORS[S.style]
+  const floor = { x: f.x, z: f.z, ex: d.x, ez: d.z, rx: d.rx, rz: d.rz, margin: 1 }
+  const tl = buildTimeline(figs, danceInfo(), { ...S.start, position, floor })
   const spb = 60 / (danceInfo().bpm * S.speed)
   const countIn = beatsPerBar(S.dance)
   tl.steps.forEach((s) => {
-    const mine = S.role === 'leader' ? s : followerStep(s)
-    s.key = KEY_FOR_DIR[mine.dir]; s.myFoot = mine.foot; s.judged = null
+    const mine = S.role === 'leader' ? s : followerStep(s, S.figs[s.figId])
+    s.key = KEY_FOR_DIR[mine.dir] ?? 'Space'; s.myFoot = mine.foot; s.judged = null
   })
-  S.run = { kind, tl, figs, ids, spb, countIn, t0: performance.now() / 1000, lastBeat: -99, points: 0 }
+  const first = poseAt(tl, 0, danceInfo())
+  leaderD.apply(first.lead); followerD.apply(first.follow)
+  S.run = { kind, tl, figs, ids, tooLong: tl.fit?.reach > 1, spb, countIn, t0: performance.now() / 1000, lastBeat: -99, points: 0 }
   S.mode = kind
   $('#lane').classList.toggle('hidden', false)
   $('#nowFig').classList.remove('hidden')
@@ -309,9 +340,10 @@ function updateRun(now) {
   renderChain.lastFig !== step.fig && (renderChain.lastFig = step.fig, renderChain(step.fig))
   $('#nowFig').innerHTML = beat < 0
     ? `Get ready… ${Math.ceil(-beat)}`
-    : `${esc(S.figs[step.figId].name)} · count <b>${esc(step.count)}</b> · ${esc(S.role === 'leader' ? S.figs[step.figId].lead_cue : S.figs[step.figId].follow_cue)}`
+    : `${esc(S.figs[step.figId].name)} · count <b>${esc(step.count)}</b> · ${esc(S.role === 'leader' ? S.figs[step.figId].lead_cue : S.figs[step.figId].follow_cue)}${R.tooLong ? ' · <small>⚠ longer than this floor: the couple will reach the wall</small>' : ''}`
   // lane
-  const px = 120
+  // wider spacing when counts are short (jive/samba 'a' = 1/4 beat) so notes don't overlap
+  const px = (R.px ??= Math.max(120, 64 / Math.min(...tl.steps.map((x) => x.beats))))
   tl.steps.forEach((s, i) => {
     const el = document.getElementById(`n${i}`)
     if (!el) return
@@ -324,7 +356,8 @@ function updateRun(now) {
   // ghost footprints for the next steps of the player's own feet
   let shown = 0
   for (let i = Math.max(0, pose.step); i < tl.steps.length && shown < 3; i++) {
-    if (!tl.steps[i].moves || (i === pose.step && pose.progress > 0.85)) continue
+    const moves = S.role === 'leader' ? tl.steps[i].moves : tl.steps[i].fmoves // her own step may move when his does not
+    if (!moves || (i === pose.step && pose.progress > 0.85)) continue
     const t = targetFor(tl, i, S.role)
     const m = prints[shown]
     m.position.x = t.x; m.position.z = t.z; m.rotation.z = t.yaw
@@ -350,7 +383,7 @@ function updateCamera(dt) {
     const fx = Math.sin(p.yaw), fz = Math.cos(p.yaw)
     const mid = { x: (leaderD.pose.x + followerD.pose.x) / 2, z: (leaderD.pose.z + followerD.pose.z) / 2 }
     player().setGhost(S.cam === 'behind'); partner().setGhost(false)
-    if (S.cam === 'behind') { const rx = Math.cos(p.yaw), rz = -Math.sin(p.yaw); camPos.set(p.x - fx * 2.6 + rx * 0.5, 3.6, p.z - fz * 2.6 + rz * 0.5); camTarget.set(p.x + fx * 0.5, 0, p.z + fz * 0.5) }
+    if (S.cam === 'behind') { const rx = -Math.cos(p.yaw), rz = Math.sin(p.yaw); camPos.set(p.x - fx * 2.6 + rx * 0.5, 3.6, p.z - fz * 2.6 + rz * 0.5); camTarget.set(p.x + fx * 0.5, 0, p.z + fz * 0.5) }
     else if (S.cam === 'top') { camPos.set(mid.x, 6.2, mid.z + 0.8); camTarget.set(mid.x, 0, mid.z) }
     else { camPos.set(mid.x + Math.cos(p.yaw) * 4.2, 1.6, mid.z - Math.sin(p.yaw) * 4.2); camTarget.set(mid.x, 0.7, mid.z) }
   }
@@ -487,7 +520,7 @@ async function openDrills() {
 async function loadTeamDrills() {
   try {
     const ds = await api.drills()
-    $('#team').innerHTML = ds.length ? ds.slice(0, 12).map((d) => `<div class="box drill"><div><b>${esc(d.title)}</b> <span class="tag">${esc(S.cat.dances[d.dance]?.name)}</span><br>
+    $('#team').innerHTML = ds.length ? ds.slice(0, 12).map((d) => `<div class="box drill"><div><b>${esc(d.title)}</b> <span class="tag">${esc(danceLabel(d.dance))}</span><br>
       <small>${d.figure_ids.map(figName).join(' → ')} · by ${esc(d.author)}</small></div><button class="ghost" data-practice="${esc(d.id)}">Practice</button></div>`).join('')
       : '<p class="sub">No team drills yet. Be the first!</p>'
     document.querySelectorAll('[data-practice]').forEach((b) => (b.onclick = () => practiceDrill(ds.find((d) => d.id === b.dataset.practice))))
@@ -511,7 +544,7 @@ async function buildDrill() {
     const flags = r.screening.flags
     $('#drillOut').innerHTML = `${flags.length ? `<div class="box warn"><h4>🛡 Safety check: ${flags.length} suspicious line${flags.length > 1 ? 's' : ''} removed before the AI saw ${flags.length > 1 ? 'them' : 'it'}</h4>
       ${flags.map((f) => `<div><small>line ${f.line}: “${esc(f.text)}”</small></div>`).join('')}</div>` : ''}
-      <div class="box ok"><h4>${esc(d.title)} <span class="tag">${esc(S.cat.dances[d.dance].name)}</span><span class="tag coral">${d.tempo_pct}% tempo</span></h4>
+      <div class="box ok"><h4>${esc(d.title)} <span class="tag">${esc(danceLabel(d.dance))}</span><span class="tag coral">${d.tempo_pct}% tempo</span></h4>
       <ol>${d.figure_ids.map((id, i) => `<li><b>${figName(id)}</b>: ${esc(d.cues[i])}</li>`).join('')}</ol>
       <p>${esc(d.coach_note)}</p>${d.skipped.length ? `<p><small>Skipped: ${d.skipped.map(esc).join('; ')}</small></p>` : ''}
       <button class="primary" id="practiceNew">Practice this drill</button></div>${usageLine(r.usage)}`
@@ -522,19 +555,25 @@ async function buildDrill() {
 }
 
 function openPlanner() {
-  const all = Object.entries(S.cat.dances)
   const practiced = new Set(Object.keys(S.prog.figures || {}).map((id) => S.figs[id]?.dance))
+  // Some names exist in two styles (Tango, Cha Cha, Rumba, Viennese Waltz), so the boxes are grouped by style.
+  const box = (k) => {
+    const d = S.cat.dances[k]
+    return `<label title="${esc(`${d.name} · ${S.cat.styles[d.style]?.label || d.style}`)}"><input type="checkbox" value="${esc(k)}" ${practiced.has(k) || k === 'waltz' || k === 'chacha' ? 'checked' : ''}/> ${esc(d.name)}</label>`
+  }
+  const groups = Object.values(S.cat.styles).map((st) => `<div class="checkgroup" role="group" aria-label="${esc(st.label)}">
+    <div class="checkgroup-title">${esc(st.label)}</div><div class="checks">${st.dances.filter((k) => S.cat.dances[k]).map(box).join('')}</div></div>`).join('')
   openModal(`<h2>📅 Competition Planner</h2>
     <p class="sub">The Planner agent reads your practice history and the team's drills, then builds a weekly plan that fits your time.</p>
     <div class="grid2"><div class="field">Competition date<input type="date" id="cdate" value="2026-12-05" /></div>
     <div class="field">Minutes per day<input type="number" id="mins" value="20" min="10" max="120" /></div></div>
-    <div class="field">Dances you're entering<div class="checks">${all.map(([k, d]) => `<label><input type="checkbox" value="${k}" ${practiced.has(k) || k === 'waltz' || k === 'chacha' ? 'checked' : ''}/> ${esc(d.name)}</label>`).join('')}</div></div>
+    <div class="field">Dances you're entering<div id="planChecks">${groups}</div></div>
     <button class="primary" id="makePlan" style="padding:11px 18px;border-radius:12px">✨ Make my plan (as ${S.role})</button><div id="planOut"></div>`)
   $('#makePlan').onclick = makePlan
 }
 
 async function makePlan() {
-  const dances = [...document.querySelectorAll('.checks input:checked')].map((i) => i.value)
+  const dances = [...document.querySelectorAll('#planChecks input:checked')].map((i) => i.value)
   if (!dances.length) { $('#planOut').innerHTML = '<p class="err">Pick at least one dance.</p>'; return }
   $('#makePlan').disabled = true
   $('#planOut').innerHTML = spinner('Looking at your progress and the team drills…')
@@ -556,17 +595,36 @@ async function makePlan() {
       const it = S.planItems[+b.dataset.item]
       if (it.kind === 'drill') return practiceDrill(team.find((d) => d.id === it.ref_ids[0]))
       const f = S.figs[it.ref_ids[0]]
-      closeModal(); enterFloor(S.cat.dances[f.dance].style, { dance: f.dance, routine: it.ref_ids })
+      if (!f) return
+      closeModal(); enterFloor(S.cat.dances[f.dance].style, { dance: f.dance, routine: it.ref_ids.filter((id) => S.figs[id]) })
     }))
   } catch (e) { $('#planOut').innerHTML = `<p class="err">${esc(e.message)}</p>` }
   $('#makePlan').disabled = false
 }
 
-function openUsage() {
+async function openUsage() {
   const rows = S.usage.map((u) => `<tr><td>${u.run_id}</td><td>${u.input_tokens.toLocaleString()}</td><td>${u.cached_tokens.toLocaleString()}</td><td>${u.output_tokens.toLocaleString()}</td><td>$${u.cost_usd.toFixed(5)}</td></tr>`).join('')
   openModal(`<h2>💲 AI cost this session</h2><p class="sub">Every AI answer is measured. The game itself (walking, watching, playing, rule checks) costs nothing.</p>
     <table class="t"><tr><th>Run</th><th>Input</th><th>Cached</th><th>Output</th><th>Cost</th></tr>${rows || '<tr><td colspan="5">No AI calls yet.</td></tr>'}</table>
-    <p class="sub">Budget guard: each session can spend at most $0.25, and the whole app at most $3 a day. After that the game keeps working without AI.</p>`)
+    <div id="usageServer"></div>
+    <p class="sub" id="usageBudget">Budget guard: each session can spend at most $0.25, and the whole app at most $3 a day. After that the game keeps working without AI.</p>`)
+  // The server's guard also charges runs that failed part-way (they still used tokens), so ask it for the real total.
+  const json = (r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))
+  try {
+    const [spend, measured] = await Promise.all([
+      fetch('/api/spend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: localStorage.bq_session }) }).then(json),
+      fetch('/api/usage').then(json),
+    ])
+    const box = $('#usageServer')
+    if (!box) return // another dialog replaced this one meanwhile
+    $('#spend').textContent = `$${spend.session_spent_usd.toFixed(4)}`
+    const agents = Object.entries(measured.agents || {}).map(([name, a]) => `<tr><td>${esc(name)}</td><td>${a.runs}</td><td>${a.errors || 0}</td>
+      <td>${Math.round(a.avg_input_tokens).toLocaleString()}</td><td>${Math.round(a.avg_cached_tokens).toLocaleString()}</td><td>$${(a.avg_cost_usd || 0).toFixed(5)}</td></tr>`).join('')
+    box.innerHTML = `<div class="box"><h4>Charged to this session: $${spend.session_spent_usd.toFixed(4)} of $${spend.session_budget_usd.toFixed(2)}</h4>
+      <p><small>Includes AI runs that stopped with an error: the tokens they used before stopping still count.</small></p></div>
+      ${agents ? `<h3>Measured on this server, per agent</h3><table class="t"><tr><th>Agent</th><th>Runs</th><th>Failed</th><th>Avg input</th><th>Avg cached</th><th>Avg cost</th></tr>${agents}</table>` : ''}`
+    $('#usageBudget').textContent = `Budget guard: each session can spend at most $${spend.session_budget_usd.toFixed(2)}, and the whole app at most $${spend.daily_budget_usd.toFixed(2)} a day. After that the game keeps working without AI.`
+  } catch { /* server unreachable: the table above still lists this session's finished runs */ }
 }
 
 function openHelp() {
@@ -652,6 +710,11 @@ async function boot() {
     $('#aidot').className = h.ai ? 'on' : 'off'
     $('#aitext').textContent = h.ai ? `AI helpers online · ${h.model}` : 'AI offline: game only (no key)'
   } catch { $('#aidot').className = 'off'; $('#aitext').textContent = 'Server unreachable' }
+  // after a reload, show what the server has already charged this session (failed runs included)
+  fetch('/api/spend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: localStorage.bq_session }) })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((s) => { if (s && !S.usage.length) $('#spend').textContent = `$${s.session_spent_usd.toFixed(4)}` })
+    .catch(() => {})
   let last = performance.now() / 1000
   const frame = (dtOverride) => {
     const now = performance.now() / 1000

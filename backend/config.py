@@ -38,7 +38,10 @@ PRICE_OUTPUT = 0.50
 
 # Guard rails
 REQUEST_LIMIT = 8            # model calls per agent run
-TOKEN_LIMIT_PER_RUN = 60_000
+# Every request re-sends the system prompt (the full 130-figure syllabus is ~12-13k tokens for the
+# Drill Builder and Planner), and pydantic_ai counts cached input toward this cap. 150k lets
+# REQUEST_LIMIT be the binding cap (8 x ~15k input + output); the USD budgets still bound spend.
+TOKEN_LIMIT_PER_RUN = 150_000
 SESSION_BUDGET_USD = 0.25    # per browser session
 DAILY_BUDGET_USD = 3.00      # whole app, per day
 RUNS_PER_10_MIN = 20         # per browser session

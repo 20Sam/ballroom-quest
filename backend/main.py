@@ -6,17 +6,18 @@ import threading
 import uuid
 from collections import defaultdict
 from datetime import date, datetime
-from typing import Literal
+from typing import Literal, get_args
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
-from pydantic_ai import UsageLimitExceeded
+from pydantic_ai import UnexpectedModelBehavior, UsageLimitExceeded
+from pydantic_ai.exceptions import ContentFilterError
 
 import catalog
 from agents import Deps, days_until, run_agent
-from config import DATA_DIR, FRONTEND_DIR, MAX_NOTES_CHARS, MODEL_NAME, OUTPUT_DIR, SESSION_BUDGET_USD, key_is_set
+from config import DAILY_BUDGET_USD, DATA_DIR, FRONTEND_DIR, MAX_NOTES_CHARS, MODEL_NAME, OUTPUT_DIR, SESSION_BUDGET_USD, key_is_set
 from safety import GUARD, screen_notes
 
 app = FastAPI(title="Ballroom Quest")
@@ -57,8 +58,12 @@ class PlanIn(BaseModel):
     role: Role = "leader"
     competition_date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
     minutes_per_day: int = Field(ge=10, le=120)
-    dances: list[DanceKey] = Field(min_length=1, max_length=6)
+    dances: list[DanceKey] = Field(min_length=1, max_length=len(get_args(DanceKey)))  # every syllabus dance
     progress: dict[str, dict[str, float]] = Field(default_factory=dict)
+
+
+class SessionIn(BaseModel):
+    session_id: str = Field(min_length=6, max_length=64)
 
 
 # ---------- helpers ----------
@@ -84,16 +89,18 @@ def gate(session: str) -> None:
 
 
 async def call(name: str, prompt: str, deps: Deps):
+    # run_agent charges the budget guard and logs every run once, including failed runs, so nothing is charged here.
     try:
         out, record = await run_agent(name, prompt, deps)
     except UsageLimitExceeded:
         raise HTTPException(502, "The agent hit its step limit before finishing. Try a shorter request.")
-    except Exception as exc:  # provider errors, content filter, timeouts
-        if "content_filter" in str(exc):
+    except Exception as exc:  # provider errors, content filter, timeouts, validator retries exhausted
+        if isinstance(exc, ContentFilterError) or "content_filter" in str(exc):
             raise HTTPException(422, "The AI provider's safety filter blocked this text. Remove anything that "
                                      "isn't about dancing and try again.")
+        if isinstance(exc, UnexpectedModelBehavior):  # e.g. the output validator's retries ran out
+            raise HTTPException(502, "The AI couldn't produce a valid answer this time. Please try again.")
         raise HTTPException(502, f"The AI coach is unavailable right now ({type(exc).__name__}).")
-    GUARD.charge(deps.session, record["cost_usd"])
     usage = {k: record[k] for k in ("run_id", "input_tokens", "cached_tokens", "output_tokens", "reasoning_tokens",
                                     "requests", "tool_calls", "cost_usd", "seconds")}
     usage["session_spent_usd"] = GUARD.spent(deps.session)
@@ -161,11 +168,14 @@ async def plan_route(body: PlanIn):
     days = days_until(body.competition_date)
     if days < 0:
         raise HTTPException(422, "The competition date is in the past.")
-    team = [d for d in load_drills() if d["dance"] in body.dances]
+    chosen = list(dict.fromkeys(body.dances))
+    team = [d for d in load_drills() if d["dance"] in chosen]
+    info, styles = catalog.dances(), catalog.public_catalog()["styles"]
+    named = ", ".join(f"{k} ({info[k]['name']}, {styles.get(info[k]['style'], {}).get('label', info[k]['style'])})" for k in chosen)
     prompt = (f"Today is {date.today().isoformat()}. Competition on {body.competition_date} ({days} days away, "
-              f"about {max(1, days // 7)} weeks). Role: {body.role}. Dances to prepare: {', '.join(body.dances)}. "
+              f"about {max(1, days // 7)} weeks). Role: {body.role}. Dances to prepare: {named}. "
               f"Minutes per day: {body.minutes_per_day}.")
-    deps = Deps(session=body.session_id, role=body.role, progress=body.progress,
+    deps = Deps(session=body.session_id, role=body.role, dances=chosen, progress=body.progress,
                 minutes_per_day=body.minutes_per_day, drills=team)
     out, usage, record = await call("planner", prompt, deps)
     return {"plan": out.model_dump(), "days_left": days, "usage": usage, "trace": record["trace"]}
@@ -203,21 +213,39 @@ def mocap_clip(clip_id: str):
 
 @app.get("/api/usage")
 def usage_summary():
-    """Measured tokens and cost per agent from output/agent_runs.jsonl (tokenomics evidence)."""
+    """Measured tokens and cost per agent from output/agent_runs.jsonl (tokenomics evidence).
+
+    avg_* are over finished runs; failed runs (status "error") are counted separately but their
+    tokens and cost are still included in total_cost_usd / error_cost_usd.
+    """
     path = OUTPUT_DIR / "agent_runs.jsonl"
     rows = [json.loads(line) for line in path.read_text().splitlines() if line.strip()] if path.exists() else []
+    keys = ("input_tokens", "cached_tokens", "output_tokens", "reasoning_tokens", "cost_usd", "seconds")
     agg: dict[str, dict] = defaultdict(lambda: defaultdict(float))
     for r in rows:
         a = agg[r["agent"]]
+        a["total_cost_usd"] += r.get("cost_usd", 0) or 0
+        if r.get("status", "ok") != "ok":
+            a["errors"] += 1
+            a["error_cost_usd"] += r.get("cost_usd", 0) or 0
+            continue
         a["runs"] += 1
-        for k in ("input_tokens", "cached_tokens", "output_tokens", "reasoning_tokens", "cost_usd", "seconds"):
+        for k in keys:
             a[k] += r.get(k, 0) or 0
     out = {}
     for name, a in agg.items():
         n = a["runs"]
-        out[name] = {"runs": int(n), **{f"avg_{k}": round(a[k] / n, 6 if k == "cost_usd" else 1)
-                                        for k in ("input_tokens", "cached_tokens", "output_tokens", "reasoning_tokens", "cost_usd", "seconds")}}
+        out[name] = {"runs": int(n), "errors": int(a["errors"]),
+                     "total_cost_usd": round(a["total_cost_usd"], 6), "error_cost_usd": round(a["error_cost_usd"], 6),
+                     **{f"avg_{k}": round(a[k] / n, 6 if k == "cost_usd" else 1) if n else 0 for k in keys}}
     return {"model": MODEL_NAME, "agents": out, "total_runs": len(rows)}
+
+
+@app.post("/api/spend")
+def session_spend(body: SessionIn):
+    """What this browser session has spent on AI so far, as charged by the budget guard (failed runs included)."""
+    spent = round(GUARD.session_spend.get(body.session_id, 0.0), 6)  # .get: don't create entries for unknown ids
+    return {"session_spent_usd": spent, "session_budget_usd": SESSION_BUDGET_USD, "daily_budget_usd": DAILY_BUDGET_USD}
 
 
 # ---------- the game ----------
