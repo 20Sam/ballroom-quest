@@ -29,6 +29,7 @@ const { rings } = buildWorld(scene)
 const leaderD = new Dancer(scene, 'leader')
 const followerD = new Dancer(scene, 'follower')
 const coachD = new Dancer(scene, 'coach')
+leaderD.partner = followerD; followerD.partner = leaderD // hands meet through Dancer.couple()
 coachD.walk(0, -2.5, 0, 0, false)
 const coachLabel = textSprite('Coach Marisol', { size: 44, scale: 0.8 })
 coachLabel.position.set(0, 2.25, -2.5); scene.add(coachLabel)
@@ -114,7 +115,8 @@ function placeCouple() {
   const first = S.figs[S.routine[0]]?.accepts?.[0] || 'closed'
   Object.assign(lead, { hold: first, style })
   const fol = partnerOf(lead, undefined, first, style)
-  leaderD.apply(lead); followerD.apply({ ...fol, hold: first, style })
+  S.idle = { lead, follow: { ...fol, hold: first, style } }
+  leaderD.apply(lead); followerD.apply(S.idle.follow); Dancer.couple(leaderD, followerD)
 }
 
 function enterFloor(style, opts = {}) {
@@ -261,7 +263,7 @@ function startRun(kind) {
     s.key = KEY_FOR_DIR[mine.dir] ?? 'Space'; s.myFoot = mine.foot; s.judged = null
   })
   const first = poseAt(tl, 0, danceInfo())
-  leaderD.apply(first.lead); followerD.apply(first.follow)
+  leaderD.apply(first.lead); followerD.apply(first.follow); Dancer.couple(leaderD, followerD)
   S.run = { kind, tl, figs, ids, tooLong: tl.fit?.reach > 1, spb, countIn, t0: performance.now() / 1000, lastBeat: -99, points: 0 }
   S.mode = kind
   $('#lane').classList.toggle('hidden', false)
@@ -274,6 +276,9 @@ function startRun(kind) {
 
 function stopRun() {
   if (!S.run) return
+  // end segment: hold the last position and ease into a finishing pose (like a start/loop/end animation set)
+  const lp = leaderD.pose, fp = followerD.pose
+  S.idle = { lead: { ...lp, hold: 'finish' }, follow: { ...fp, hold: 'finish' } }
   S.run = null
   if (S.mode === 'watch' || S.mode === 'play') S.mode = 'floor'
   $('#lane').classList.add('hidden'); $('#nowFig').classList.add('hidden')
@@ -348,7 +353,7 @@ function updateRun(now) {
   const pose = poseAt(tl, b, danceInfo())
   // she answers his weight change a fraction later (connection: the follower moves after feeling the lead)
   const lagged = poseAt(tl, Math.max(0, b - 0.06), danceInfo())
-  leaderD.apply(pose.lead); followerD.apply({ ...lagged.follow, x: pose.follow.x * 0.4 + lagged.follow.x * 0.6, z: pose.follow.z * 0.4 + lagged.follow.z * 0.6 })
+  leaderD.apply(pose.lead); followerD.apply({ ...lagged.follow, x: pose.follow.x * 0.4 + lagged.follow.x * 0.6, z: pose.follow.z * 0.4 + lagged.follow.z * 0.6 }); Dancer.couple(leaderD, followerD)
   const step = tl.steps[pose.step]
   renderChain.lastFig !== step.fig && (renderChain.lastFig = step.fig, renderChain(step.fig))
   $('#nowFig').innerHTML = beat < 0
@@ -734,6 +739,7 @@ async function boot() {
     const dt = dtOverride ?? Math.min(0.05, now - last); last = now
     if (S.mode === 'explore') updateExplore(dt)
     else if (S.run) updateRun(now)
+    else if (S.idle) { leaderD.apply(S.idle.lead); followerD.apply(S.idle.follow); Dancer.couple(leaderD, followerD) } // keep easing
     coachD.walk(0, -2.5, Math.sin(now * 0.6) * 0.25, 0, false) // limbs are world-space, so re-pose rather than rotate
     mocap.update(now, S.speed)
     updateCamera(dt)

@@ -36,6 +36,13 @@ function handTargets(kind, hold, latin, b) {
   const s = b.shoulderH, h = b.hipH
   if (kind === 'coach' || hold === 'none') return null
   const lead = kind === 'leader'
+  if (hold === 'finish' && latin) {
+    // Latin finish: joined inside hands low between them, free arms extended up and out
+    const joined = { x: lead ? 0.12 : -0.12, y: h + 0.18, z: 0.38 }
+    const free = { x: lead ? -0.72 : 0.72, y: s + 0.14, z: 0.1 } // diagonal up and out, not straight up
+    return lead ? { L: joined, R: free } : { L: free, R: joined }
+  }
+  if (hold === 'finish') hold = 'closed' // Standard finish keeps the frame; posture and head do the styling
   if (hold === 'open' || hold === 'fan') {
     const joined = { x: lead ? 0.10 : -0.10, y: h + 0.14, z: 0.40 }
     const free = { x: lead ? -0.56 : 0.56, y: s - 0.04, z: 0.04 }
@@ -116,6 +123,15 @@ export class Dancer {
       v.rotation.x = Math.PI; v.position.set(0, 0.43, b.torso[5][0] * b.depth - 0.005); v.scale.z = 0.2
       const tie = add(this.torso, new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.025, 0.02), M.tie))
       tie.position.set(0, 0.54, 0.075)
+      // tailcoat tails hanging from the back of the jacket, swinging with travel
+      this.tails = new THREE.Group(); this.tails.position.set(0, 0.06, -b.torso[1][0] * b.depth + 0.01)
+      for (const tx of [-0.06, 0.06]) {
+        const tail = add(this.tails, new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.42, 0.02), M.top))
+        tail.position.set(tx, -0.21, 0); tail.rotation.z = tx * 0.6
+      }
+      if (kind === 'leader') this.torso.add(this.tails); else this.tails = null
+      const vest = add(this.torso, new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.2, 3, 1, true), new THREE.MeshStandardMaterial({ color: kind === 'leader' ? 0x1b5e6b : 0xf6f1e7, roughness: 0.5 })))
+      vest.rotation.x = Math.PI; vest.position.set(0, 0.25, b.torso[3][0] * b.depth - 0.012); vest.scale.z = 0.2
       const pelvisM = add(this.pelvis, new THREE.Mesh(new THREE.SphereGeometry(0.155, 20, 14, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), M.legs))
       pelvisM.scale.set(1, 0.75, b.depth); pelvisM.position.y = 0.005
     } else {
@@ -125,6 +141,10 @@ export class Dancer {
       const skirtProf = [[0.13, 0.17], [0.17, 0.02], [0.24, -0.20], [0.33, -0.40], [0.40, -0.52], [0.405, -0.53]].map(([r, y]) => new THREE.Vector2(r, y))
       this.skirt = add(this.pelvis, new THREE.Mesh(new THREE.LatheGeometry(skirtProf, 36), M.skirt))
       this.skirt.scale.z = 0.85
+      // Standard/Smooth ball gown: to just above the floor (the shoes still show), soft bell shape
+      const longProf = [[0.13, 0.17], [0.17, 0.02], [0.25, -0.25], [0.36, -0.5], [0.47, -0.74], [0.53, -0.86], [0.535, -0.87]].map(([r, y]) => new THREE.Vector2(r, y))
+      this.skirtLong = add(this.pelvis, new THREE.Mesh(new THREE.LatheGeometry(longProf, 40), M.skirt))
+      this.skirtLong.scale.z = 0.9
     }
     // neck + head
     const neck = add(this.torso, new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.055, 0.12, 14), M.skin))
@@ -164,7 +184,7 @@ export class Dancer {
       this.parts[f] = {
         thigh: cap(b.limbR.thigh, b.thigh, M.legs), shin: cap(b.limbR.shin, b.shin, M.legs),
         upper: cap(b.limbR.upper, b.upperArm, M.arms), fore: cap(b.limbR.fore, b.foreArm, M.arms),
-        hand: add(this.limbs, new THREE.Mesh(new THREE.SphereGeometry(b.limbR.fore * 1.15, 10, 10), M.skin)),
+        hand: (() => { const h = add(this.limbs, new THREE.Mesh(new THREE.SphereGeometry(b.limbR.fore * 1.1, 12, 10), M.skin)); h.scale.set(1.0, 1.9, 0.55); return h })(),
         shoe: this.makeShoe(M.shoe),
       }
     }
@@ -238,14 +258,38 @@ export class Dancer {
     // upper body: posture, sway into turns, Latin counter-balance, Standard lady's line
     const lady = this.kind === 'follower'
     const closedStd = !latin && (hold === 'closed' || hold === 'promenade')
-    const lean = closedStd ? (lady ? -0.16 : 0.03) : latin ? 0.02 : 0
-    this.torso.rotation.set(lean, latin ? -pY * 0.9 : (p.turn || 0) * 0.12, (latin ? -pZ : 0) + (p.sway || 0))
-    // head line
+    let lean = closedStd ? (lady ? -0.16 : 0.03) : latin ? 0.02 : 0
+    if (hold === 'finish') lean = latin ? (lady ? -0.08 : 0.0) : (lady ? -0.3 : 0.02) // end pose: her line extends
+    // smoothing (like baked keyframes with ease in/out): everything above the hips eases toward its target
+    const now = performance.now() / 1000
+    const dt = this.lastT == null ? 1 : Math.min(0.1, Math.max(0, now - this.lastT))
+    this.lastT = now
+    const k = 1 - Math.exp(-dt * 10), kh = 1 - Math.exp(-dt * 6)
+    this.k = k
+    const S = (this.sm ??= { tx: lean, ty: 0, tz: 0, hx: 0, hy: 0 })
+    const breath = hold === 'none' ? Math.sin(now * 1.7 + (lady ? 1 : 0)) * 0.012 : 0
+    S.tx += (lean + breath - S.tx) * k
+    S.ty += ((latin ? -pY * 0.9 : (p.turn || 0) * 0.12) - S.ty) * k
+    S.tz += (((latin ? -pZ : 0) + (p.sway || 0)) - S.tz) * k
+    this.torso.rotation.set(S.tx, S.ty, S.tz)
+    // head line (eye-line to the partner is added in couple())
     let hy = 0, hx = 0
     if (closedStd) { hy = lady ? 0.55 : 0.15; hx = lady ? -0.12 : 0 }
     if (hold === 'promenade') hy = lady ? -0.6 : 0.6
+    if (hold === 'finish') { hy = latin ? (lady ? 0.5 : -0.5) : (lady ? 0.7 : 0.2); hx = lady && !latin ? -0.2 : 0 }
     if (hold === 'none' || this.kind === 'coach') { hy = 0; hx = 0 }
-    this.headG.rotation.set(hx, hy, 0)
+    this.headGoal = { hx, hy }
+    S.hx += (hx - S.hx) * kh; S.hy += (hy - S.hy) * kh
+    this.headG.rotation.set(S.hx, S.hy, 0)
+    // costume: long gown for Standard/Smooth, short skirt for Latin/Rhythm; tailcoat tails swing with travel
+    if (this.skirtLong) { this.skirtLong.visible = !latin && hold !== 'none'; this.skirt.visible = !this.skirtLong.visible }
+    if (this.tails) {
+      const v = this.lastPos ? Math.hypot(p.x - this.lastPos.x, p.z - this.lastPos.z) / Math.max(dt, 1e-3) : 0
+      this.tailSwing = (this.tailSwing || 0) + (Math.min(0.5, v * 0.25) - (this.tailSwing || 0)) * k
+      this.tails.rotation.x = -this.tailSwing
+    }
+    this.lastPos = { x: p.x, z: p.z }
+    this.hold = hold; this.latin = latin; this.hipY = hipY
 
     // skirt flows with turning
     if (this.skirt) {
@@ -253,8 +297,11 @@ export class Dancer {
       if (Math.abs(dy) > 0.4) dy = 0 // a teleport (new routine, new floor), not a spin
       this.skirtVel = this.skirtVel * 0.85 + dy * 0.15
       const flare = Math.min(0.18, Math.abs(this.skirtVel) * 3)
-      this.skirt.rotation.set(0, 0, Math.max(-0.12, Math.min(0.12, -this.skirtVel * 2)))
-      this.skirt.scale.set(1 + flare, 1 - flare * 0.4, 0.85 + flare)
+      for (const sk of [this.skirt, this.skirtLong]) {
+        if (!sk) continue
+        sk.rotation.set(0, 0, Math.max(-0.12, Math.min(0.12, -this.skirtVel * 2)))
+        sk.scale.set(1 + flare, 1 - flare * 0.4, 0.85 + flare)
+      }
     }
     this.lastYaw = yaw
     this.root.updateMatrixWorld(true)
@@ -284,25 +331,71 @@ export class Dancer {
       P.shoe.rotateX(pitch)
     }
 
-    // arms
+    // arms: goals in world space; a partnered dancer is finished by couple() so hands can meet
     const T = handTargets(this.kind, hold, latin, b)
+    this.goals = {}; this.poles = {}
+    for (const f of ['L', 'R']) {
+      const sx = f === 'L' ? 1 : -1
+      const g = new THREE.Vector3(), pole = new THREE.Vector3()
+      if (T) {
+        this.root.localToWorld(g.set(T[f].x, T[f].y - (b.hipH - hipY) * 0.5, T[f].z))
+        this.root.localToWorld(pole.set(sx * 1.0, -0.35, -0.2)).sub(this.root.localToWorld(tmpA.set(0, 0, 0))) // elbows out: the frame
+      } else {
+        const swing = this.walkSwing ? this.walkSwing * (f === 'L' ? -1 : 1) : 0
+        this.root.localToWorld(g.set(sx * (b.shoulderW + 0.03), hipY - 0.06, 0.04 + swing))
+        this.root.localToWorld(pole.set(sx * 0.2, 0, -1)).sub(this.root.localToWorld(tmpA.set(0, 0, 0)))
+      }
+      this.goals[f] = g; this.poles[f] = pole
+    }
+    if (!this.partner || hold === 'none') this.solveArms()
+  }
+
+  // Ease each hand toward its goal (no snapping between holds), then two-bone IK from the shoulder.
+  solveArms() {
+    const b = this.b, V = this.v
+    this.hands ??= {}
     for (const f of ['L', 'R']) {
       const sx = f === 'L' ? 1 : -1
       const P = this.parts[f]
+      const h = (this.hands[f] ??= this.goals[f].clone())
+      if (h.distanceTo(this.goals[f]) > 1.5) h.copy(this.goals[f]) // teleport, not a reach
+      h.lerp(this.goals[f], this.k ?? 1)
       this.torso.localToWorld(V.sh.set(sx * b.shoulderW, b.shoulderH - b.hipH, 0))
-      if (T) {
-        this.root.localToWorld(V.tgt.set(T[f].x, T[f].y - (b.hipH - hipY) * 0.5, T[f].z))
-        // elbows out to the side and slightly down: the frame
-        this.root.localToWorld(V.pole.set(sx * 1.0, -0.35, -0.2)).sub(this.root.localToWorld(tmpA.set(0, 0, 0)))
-      } else {
-        const swing = this.walkSwing ? this.walkSwing * (f === 'L' ? -1 : 1) : 0
-        this.root.localToWorld(V.tgt.set(sx * (b.shoulderW + 0.03), hipY - 0.06, 0.04 + swing))
-        this.root.localToWorld(V.pole.set(sx * 0.2, 0, -1)).sub(this.root.localToWorld(tmpA.set(0, 0, 0)))
-      }
-      solve2(V.sh, V.tgt, b.upperArm, b.foreArm, V.pole, V.elbow, V.wrist)
+      solve2(V.sh, h, b.upperArm, b.foreArm, this.poles[f], V.elbow, V.wrist)
       segment(P.upper, V.sh, V.elbow)
       segment(P.fore, V.elbow, V.wrist)
-      P.hand.position.copy(V.wrist)
+      // hand: a flattened palm continuing the forearm line
+      P.hand.position.copy(V.wrist).addScaledVector(tmpA.subVectors(V.wrist, V.elbow).normalize(), 0.035)
+      P.hand.quaternion.setFromUnitVectors(UP, tmpA)
+    }
+  }
+
+  // Partner contact (the couple's "IK slots"): joined hands meet, his right hand sits on her left shoulder
+  // blade, her left hand on his right upper arm; heads find each other in Latin and open holds.
+  static couple(lead, fol) {
+    const hold = lead.hold
+    if (!hold || hold === 'none') { lead.solveArms(); fol.solveArms(); return }
+    const mid = new THREE.Vector3().addVectors(lead.goals.L, fol.goals.R).multiplyScalar(0.5)
+    if (hold !== 'finish' || lead.latin) {
+      lead.goals.L.copy(mid).add(new THREE.Vector3(0, -0.012, 0))
+      fol.goals.R.copy(mid).add(new THREE.Vector3(0, 0.012, 0))
+    }
+    if (hold === 'closed' || hold === 'promenade' || (hold === 'finish' && !lead.latin)) {
+      const fb = fol.b, lb = lead.b
+      fol.torso.localToWorld(lead.goals.R.set(0.07, fb.shoulderH - fb.hipH - (lead.latin ? 0.16 : 0.12), -0.085))
+      lead.torso.localToWorld(fol.goals.L.set(-(lb.shoulderW + 0.04), lb.shoulderH - lb.hipH - 0.10, 0.02))
+    }
+    lead.solveArms(); fol.solveArms()
+    // eye-line: in Latin and open holds both look at the partner (Standard keeps its own head lines)
+    if (lead.latin || hold === 'open' || hold === 'fan') {
+      for (const [a, other] of [[lead, fol], [fol, lead]]) {
+        if (hold === 'finish') continue
+        const to = other.root.position.clone().sub(a.root.position)
+        const rel = Math.atan2(to.x, to.z) - a.root.rotation.y - a.torso.rotation.y
+        const yawTo = Math.max(-0.8, Math.min(0.8, Math.atan2(Math.sin(rel), Math.cos(rel))))
+        a.sm.hy += (yawTo - a.sm.hy) * (a.k ?? 1)
+        a.headG.rotation.y = a.sm.hy
+      }
     }
   }
 
