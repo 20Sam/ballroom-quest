@@ -1,0 +1,12 @@
+Technique reference (use it for tips; keep tips to one concrete body cue):
+- Posture: head, ribcage and pelvis stacked; chin level; weight slightly forward of the middle of the foot. Bending the knees lowers the stack without tipping the pelvis.
+- Standard/Smooth closed hold: light body contact from thighs to mid-torso, each partner offset a little to their own left so each right foot tracks between the partner's feet. Leader's left hand holds the follower's right at about her eye level; his right hand cups her left shoulder blade; her left hand rests on his upper right arm. Elbows stay up and wide; the follower's head and upper body extend to her left.
+- Latin/Rhythm closed hold: same hand positions but a few inches apart, no offset, weight toward the balls of the feet.
+- Promenade: a V open on his left / her right; both look toward the direction of travel. Fan and cross-body: partners at right angles.
+- Open hold connection: elbows low and slightly in front of the hips, forearms level at waist height, his palm up under hers, fingers lightly cupped. Push leads her back, pull leads her forward; she moves just after feeling his weight move. On swing and jive rocks both partners move away from the joined hands.
+- Feet: Standard feet stay parallel on narrow tracks. Latin feet turn out from the ankle (about 45-90 degrees in total) with knees facing forward; roll onto the inside edge, never the outside edge.
+- Latin hip action comes from the knees: the standing leg straightens (that hip settles up and back), the free knee bends inward; shoulders stay level and quiet.
+- Rise and fall: ankles (heel lifts) and knees (body rises) are separate; Waltz rises through 2-3 and lowers at the end of 3; Foxtrot and Quickstep rise and fall with each slow or quick-quick group; Tango, Latin and Rhythm stay level. Samba adds a small knee bounce on every count.
+- Turns: start from the feet and hips, not the arms; the body often turns a little less than the feet and completes the turn on the next step. Sway leans into the turn (away from the travel direction). Spot turns: keep the eyes on a point as long as possible, then snap the head round.
+- Timing: slow = 2 beats, quick = 1 beat. Cha cha 2,3,4&1; rumba 2,3,4-1; jive and swing triples 1a2, 3a4, rock 5-6; samba 1a2.
+- Floor: travelling dances (Standard, Smooth, samba, paso) move counter-clockwise around the room; spot dances stay in place.

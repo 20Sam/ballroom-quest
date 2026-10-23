@@ -76,11 +76,12 @@ backend/
   catalog.py       syllabus loader + routine checker + bridge finder (no AI)
   safety.py        injection screen, budgets, rate limits
   config.py        model, prices, limits, .env lookup
-  prompts/         shared_rules.md (+ syllabus, cached prefix), coach.md, drill_builder.md, planner.md
+  prompts/         technique.md (holds, posture, hip action, rise & fall: shared by all agents), shared_rules.md (+ syllabus, cached prefix), coach.md, drill_builder.md, planner.md
 frontend/
   index.html, style.css
   js/world.js      Evans Hall Ballroom: courtyard, 4 style drums, library, terrace, minimap, collisions
   js/mocap.js      replays instructor motion captured from lesson videos (skeletons only)
+  js/body.js       proportioned man and lady (IK legs and arms, holds, Latin hip action, Standard posture)
   js/dancer.js     characters + footwork engine (leader steps -> mirrored follower)
   js/main.js       game loop, rhythm game, panels
   js/api.js        API client + local progress

@@ -122,6 +122,7 @@ def catalog_text(style: str | None = None) -> str:
 
 def _instructions(job: str, style: str | None = None) -> str:
     shared = (PROMPTS_DIR / "shared_rules.md").read_text().replace("{catalog}", catalog_text(style))
+    shared += "\n\n" + (PROMPTS_DIR / "technique.md").read_text()  # static, so it stays in the cached prefix
     return shared + "\n\n" + (PROMPTS_DIR / f"{job}.md").read_text()
 
 

@@ -16,119 +16,6 @@ function local(p, yaw, ox, oz) {
 // rotate a ground vector by a yaw angle (+ = left)
 const spin = (v, a) => ({ x: v.x * Math.cos(a) + v.z * Math.sin(a), z: -v.x * Math.sin(a) + v.z * Math.cos(a) })
 
-// ---------- character ----------
-export class Dancer {
-  constructor(scene, kind) {
-    this.kind = kind // 'leader' | 'follower' | 'coach'
-    const palette = {
-      leader: { body: 0x173f5f, accent: 0xf3e6cf, skin: 0xe2b48c, hair: 0x2b1d14, shoe: 0x111111 },
-      follower: { body: 0xe98a6b, accent: 0xf6d7a7, skin: 0xc68a5e, hair: 0x4a2a16, shoe: 0xd9b26a },
-      coach: { body: 0x2a8fb3, accent: 0xffffff, skin: 0x9a6a46, hair: 0x1a1a1a, shoe: 0x222222 },
-    }[kind]
-    const mat = (c, r = 0.6) => new THREE.MeshStandardMaterial({ color: c, roughness: r })
-    this.root = new THREE.Group()
-    this.body = new THREE.Group()
-    this.root.add(this.body)
-
-    const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.15, 0.62, 16), mat(palette.body))
-    torso.position.y = 1.22
-    const chest = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.22, 0.02), mat(palette.accent))
-    chest.position.set(0, 1.36, 0.17)
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.13, 20, 20), mat(palette.skin, 0.5))
-    head.position.y = 1.68
-    const hair = new THREE.Mesh(new THREE.SphereGeometry(0.135, 20, 20, 0, Math.PI * 2, 0, Math.PI / 2), mat(palette.hair))
-    hair.position.y = 1.7
-    const eyeMat = mat(0x1a1a1a)
-    for (const s of [-1, 1]) {
-      const eye = new THREE.Mesh(new THREE.SphereGeometry(0.015, 8, 8), eyeMat)
-      eye.position.set(s * 0.045, 1.69, 0.12); this.body.add(eye)
-    }
-    this.body.add(torso, chest, head, hair)
-    if (kind === 'follower') {
-      const skirt = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.46, 0.75, 24, 1, true), mat(palette.body, 0.5))
-      skirt.material.side = THREE.DoubleSide
-      skirt.position.y = 0.6
-      this.body.add(skirt)
-      const bun = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 12), mat(palette.hair))
-      bun.position.set(0, 1.74, -0.12); this.body.add(bun)
-    } else {
-      const hips = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.14, 0.22, 16), mat(palette.body))
-      hips.position.y = 0.92; this.body.add(hips)
-    }
-    // arms in a dance frame
-    this.arms = []
-    for (const s of [-1, 1]) {
-      const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.04, 0.34, 10), mat(palette.body))
-      upper.position.set(s * 0.33, 1.42, 0.06); upper.rotation.z = s * 1.2; upper.rotation.x = -0.3
-      const hand = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 10), mat(palette.skin, 0.5))
-      hand.position.set(s * 0.5, 1.52, 0.18)
-      this.body.add(upper, hand); this.arms.push(upper)
-    }
-    this.body.traverse((o) => { if (o.isMesh) o.castShadow = true })
-
-    // legs + shoes live in world space
-    this.legs = {}; this.shoes = {}
-    for (const f of ['L', 'R']) {
-      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.05, 1, 10), mat(kind === 'follower' ? palette.skin : palette.body))
-      const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.06, 0.24), mat(palette.shoe, 0.3))
-      leg.castShadow = shoe.castShadow = true
-      this.legs[f] = leg; this.shoes[f] = shoe
-      scene.add(leg, shoe)
-    }
-    scene.add(this.root)
-    // yaw 0 faces +z, so the dancer's left is +x
-    this.pose = { x: 0, z: 0, yaw: 0, L: { x: 0.1, z: 0, y: 0 }, R: { x: -0.1, z: 0, y: 0 }, rise: 0 }
-  }
-
-  // See-through body so the player can watch their own feet from behind.
-  setGhost(on) {
-    if (this._ghost === on) return
-    this._ghost = on
-    this.body.traverse((o) => { if (o.isMesh) { o.material.transparent = on; o.material.opacity = on ? 0.35 : 1; o.material.depthWrite = !on } })
-  }
-
-  setVisible(v) {
-    this.root.visible = v
-    for (const f of ['L', 'R']) { this.legs[f].visible = v; this.shoes[f].visible = v }
-  }
-
-  apply(p) {
-    this.pose = p
-    this.root.position.set(p.x, p.rise || 0, p.z)
-    this.root.rotation.y = p.yaw
-    const hipY = 0.88 + (p.rise || 0)
-    const r = rightOf(p.yaw)
-    const right = new THREE.Vector3(r.x, 0, r.z)
-    for (const f of ['L', 'R']) {
-      const side = f === 'L' ? -1 : 1
-      const hip = new THREE.Vector3(p.x, hipY, p.z).addScaledVector(right, side * 0.09)
-      const foot = new THREE.Vector3(p[f].x, 0.07 + (p[f].y || 0), p[f].z)
-      const dir = foot.clone().sub(hip)
-      const len = dir.length()
-      const leg = this.legs[f]
-      leg.position.copy(hip).addScaledVector(dir, 0.5)
-      leg.scale.set(1, len, 1)
-      leg.quaternion.setFromUnitVectors(UP, dir.normalize())
-      const shoe = this.shoes[f]
-      shoe.position.set(p[f].x, 0.035 + (p[f].y || 0), p[f].z)
-      shoe.rotation.y = p.yaw
-    }
-  }
-
-  // simple walk cycle for exploring the studio
-  walk(x, z, yaw, phase, moving) {
-    const fwd = fwdOf(yaw), right = rightOf(yaw)
-    const swing = moving ? Math.sin(phase) * 0.22 : 0
-    const lift = moving ? Math.max(0, Math.cos(phase)) * 0.06 : 0
-    const liftR = moving ? Math.max(0, -Math.cos(phase)) * 0.06 : 0
-    this.apply({
-      x, z, yaw, rise: moving ? Math.abs(Math.sin(phase)) * 0.03 : 0,
-      L: { x: x - right.x * 0.1 + fwd.x * swing, z: z - right.z * 0.1 + fwd.z * swing, y: lift },
-      R: { x: x + right.x * 0.1 - fwd.x * swing, z: z + right.z * 0.1 - fwd.z * swing, y: liftR },
-    })
-  }
-}
-
 // ---------- footwork engine ----------
 // Offsets of the stepping foot relative to the supporting foot, in the dancer's frame ([right, forward], metres).
 function offset(foot, dir, s) {
@@ -198,7 +85,17 @@ const HOLD = {
   open: { gap: 1.1, side: 0, turn: 0, slack: 0.45 },
   fan: { gap: 0.6, side: -1.0, turn: Math.PI / 2, slack: 0.5 }, // on his left at right angles, facing across him
 }
-const holdOf = (p) => HOLD[p] ?? HOLD.closed
+// Closed hold spacing per style (curriculum notes): Standard/Smooth hold has body contact with each partner
+// offset to their own left, so she stands close and to his right; Latin/Rhythm closed facing hold is a few
+// inches apart with no offset.
+const CLOSED_BY_STYLE = {
+  standard: { gap: 0.42, side: 0.17 }, smooth: { gap: 0.44, side: 0.16 },
+  latin: { gap: 0.5, side: 0.02 }, rhythm: { gap: 0.5, side: 0.02 },
+}
+const holdOf = (p, style) => {
+  const h = HOLD[p] ?? HOLD.closed
+  return (p === 'closed' || !HOLD[p]) && CLOSED_BY_STYLE[style] ? { ...h, ...CLOSED_BY_STYLE[style] } : h
+}
 const LOOSE_CLOSED_SLACK = 0.25
 
 // Her hold turn after moving from hold pa to pb: the nearest way round, except that out of the fan into
@@ -259,7 +156,7 @@ function simulate(figs, dance, start) {
   const yaw0 = start.yaw ?? 0
   const pos0 = HOLD[start.position] ? start.position : 'closed'
   let st = { x: start.x, z: start.z, yaw: yaw0, L: local(start, yaw0, -0.1, 0), R: local(start, yaw0, 0.1, 0), weight: 'R', position: pos0 }
-  const h0 = holdOf(pos0), spot0 = spotFor(st, h0)
+  const h0 = holdOf(pos0, dance.style), spot0 = spotFor(st, h0)
   let fs = { x: spot0.x, z: spot0.z, yaw: spot0.yaw, turn: h0.turn, mo: 0, ...mirrorFeet(st, spot0, h0.turn), weight: 'L', dx: 0, dz: 0 }
   const states = [structuredClone(st)], fstates = [structuredClone(fs)], steps = []
   let beat = 0
@@ -281,7 +178,7 @@ function simulate(figs, dance, start) {
 
       // follower
       const turnB = nextTurn(fs.turn, st.position, next.position)
-      const hb = { ...holdOf(next.position), turn: turnB }
+      const hb = { ...holdOf(next.position, dance.style), turn: turnB }
       const mo = fs.mo + (opp ? next.yaw - st.yaw : 0)
       const spot = spotFor(next, hb, mo)
       let nf
@@ -386,10 +283,11 @@ export function poseAt(tl, beat, dance) {
   const mf = step.foot
   lead[mf] = { x: lerp(a[mf].x, b[mf].x), z: lerp(a[mf].z, b[mf].z), y: step.moves ? lift : 0 }
   lead.rise = riseAt(dance, beat, step.figStart ?? 0)
+  if (dance.name === 'Samba') lead.rise -= 0.025 * Math.sin(Math.PI * (beat % 1)) ** 2 // samba bounce: knees flex on every count
 
   // follower: body at her spot by the leader (plus any slack), feet relative to her body
   const A = fstates[i], B = fstates[i + 1]
-  const ha = holdOf(a.position), hb = holdOf(b.position)
+  const ha = holdOf(a.position, dance.style), hb = holdOf(b.position, dance.style)
   const turn = lerp(A.turn, B.turn)
   const spot = spotFor(lead, { gap: lerp(ha.gap, hb.gap), side: lerp(ha.side, hb.side), turn }, lerp(A.mo, B.mo))
   const bx = spot.x + lerp(A.dx, B.dx), bz = spot.z + lerp(A.dz, B.dz)
@@ -400,13 +298,21 @@ export function poseAt(tl, beat, dance) {
     const v = spin({ x: lerp(oa.x, ob.x), z: lerp(oa.z, ob.z) }, turn)
     follow[f] = { x: bx + v.x, z: bz + v.z, y: f === ff && step.fmoves ? lift : 0 }
   }
+  // extras for the bodies: hold for the arms/head, style for posture, turn direction for CBM, and sway
+  // (Standard/Smooth: lean toward the inside of the turn on the 2nd and 3rd steps of turning figures)
+  const hold = p < 0.5 ? a.position : b.position
+  const dyaw = b.yaw - a.yaw
+  const sw = dance.style === 'standard' || dance.style === 'smooth'
+    ? Math.max(-0.09, Math.min(0.09, -dyaw * 0.12)) * Math.sin(Math.PI * Math.min(1, p + 0.25)) : 0
+  Object.assign(lead, { hold, style: dance.style, turn: Math.sign(dyaw) * Math.min(1, Math.abs(dyaw) / 0.8), sway: sw })
+  Object.assign(follow, { hold, style: dance.style, turn: lead.turn, sway: -sw })
   return { lead, follow, step: i, progress: p }
 }
 
 // Follower placed from a leader pose alone (used before a run starts): her feet copy his by translation with
 // L/R swapped, around her spot for the hold.
-export function partnerOf(lead, gap, position = 'closed') {
-  const h = holdOf(position)
+export function partnerOf(lead, gap, position = 'closed', style) {
+  const h = holdOf(position, style)
   const spot = spotFor(lead, gap == null ? h : { ...h, gap })
   const feet = mirrorFeet(lead, spot, h.turn)
   return { x: spot.x, z: spot.z, yaw: spot.yaw, rise: lead.rise || 0, L: { ...feet.L, y: lead.R.y || 0 }, R: { ...feet.R, y: lead.L.y || 0 } }

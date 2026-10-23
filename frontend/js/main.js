@@ -1,9 +1,10 @@
 // Ballroom Quest: explore the studio, combine figures, play them to the beat, and ask the AI helpers.
 import * as THREE from 'three'
 import { buildWorld, STATIONS, FLOORS, DRUMS, SPAWN, move, drawMinimap, textSprite } from './world.js'
-import { Dancer, buildTimeline, poseAt, partnerOf, targetFor, followerStep, KEY_FOR_DIR, KEY_LABEL } from './dancer.js'
+import { buildTimeline, poseAt, partnerOf, targetFor, followerStep, KEY_FOR_DIR, KEY_LABEL } from './dancer.js'
 import { api, store } from './api.js'
 import { MocapPlayer } from './mocap.js'
+import { Dancer } from './body.js'
 
 const $ = (s) => document.querySelector(s)
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
@@ -109,7 +110,11 @@ function placeCouple() {
   // facing -z, the leader's right is +x
   const lead = { x: start.x, z: start.z, yaw: start.yaw, rise: 0,
     L: { x: start.x - 0.1, z: start.z }, R: { x: start.x + 0.1, z: start.z } }
-  leaderD.apply(lead); followerD.apply(partnerOf(lead))
+  const style = S.cat?.dances[S.dance]?.style
+  const first = S.figs[S.routine[0]]?.accepts?.[0] || 'closed'
+  Object.assign(lead, { hold: first, style })
+  const fol = partnerOf(lead, undefined, first, style)
+  leaderD.apply(lead); followerD.apply({ ...fol, hold: first, style })
 }
 
 function enterFloor(style, opts = {}) {
@@ -162,7 +167,13 @@ function renderFloor() {
   $('#floorTitle').textContent = `${st.label} floor · ${S.role === 'leader' ? 'Leader' : 'Follower'}`
   $('#danceTabs').innerHTML = st.dances.map((d) => `<button data-dance="${d}" class="${d === S.dance ? 'on' : ''}">${esc(S.cat.dances[d].name)}</button>`).join('')
   const di = danceInfo()
-  $('#danceFeel').textContent = `${di.time} · ${di.bpm} bpm. ${di.feel}`
+  const TIP = {
+    standard: 'Frame: light contact, she sits a little to his right; elbows up, her head to her left; feet parallel.',
+    smooth: 'Frame: like Standard in closed hold, but open and side-by-side moves are allowed; keep the elbows up.',
+    latin: 'Feet turned out, weight on the balls; straighten the standing leg and let the hip settle over it.',
+    rhythm: 'Bend the free knee, straighten the standing leg (Cuban motion); compact steps, level shoulders.',
+  }
+  $('#danceFeel').textContent = `${di.time} · ${di.bpm} bpm. ${di.feel} ${TIP[S.style] || ''}`
   $('#figList').innerHTML = figsOf(S.dance).map((f, i) => {
     const p = S.prog.figures?.[f.id]
     return `<li><button data-add="${f.id}" title="${esc(S.role === 'leader' ? f.lead_cue : f.follow_cue)}">
@@ -335,7 +346,9 @@ function updateRun(now) {
   if (wb !== R.lastBeat && beat < tl.totalBeats) { R.lastBeat = wb; click(wb % beatsPerBar(S.dance) === 0) }
   const b = Math.max(0, Math.min(beat, tl.totalBeats - 1e-4))
   const pose = poseAt(tl, b, danceInfo())
-  leaderD.apply(pose.lead); followerD.apply(pose.follow)
+  // she answers his weight change a fraction later (connection: the follower moves after feeling the lead)
+  const lagged = poseAt(tl, Math.max(0, b - 0.06), danceInfo())
+  leaderD.apply(pose.lead); followerD.apply({ ...lagged.follow, x: pose.follow.x * 0.4 + lagged.follow.x * 0.6, z: pose.follow.z * 0.4 + lagged.follow.z * 0.6 })
   const step = tl.steps[pose.step]
   renderChain.lastFig !== step.fig && (renderChain.lastFig = step.fig, renderChain(step.fig))
   $('#nowFig').innerHTML = beat < 0
@@ -721,7 +734,7 @@ async function boot() {
     const dt = dtOverride ?? Math.min(0.05, now - last); last = now
     if (S.mode === 'explore') updateExplore(dt)
     else if (S.run) updateRun(now)
-    coachD.root.rotation.y = Math.sin(now * 0.6) * 0.25
+    coachD.walk(0, -2.5, Math.sin(now * 0.6) * 0.25, 0, false) // limbs are world-space, so re-pose rather than rotate
     mocap.update(now, S.speed)
     updateCamera(dt)
     renderer.render(scene, camera)
