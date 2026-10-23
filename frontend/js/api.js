@@ -22,6 +22,8 @@ export const api = {
   coach: (b) => req('/api/coach', b),
   drill: (b) => req('/api/drill', b),
   plan: (b) => req('/api/plan', b),
+  mocapList: () => req('/api/mocap'),
+  mocapClip: (id) => req(`/api/mocap/${encodeURIComponent(id)}`),
 }
 
 const KEY = 'bq_progress_v1'

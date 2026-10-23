@@ -22,7 +22,7 @@ import catalog
 from config import OUTPUT_DIR, PROMPTS_DIR, REQUEST_LIMIT, TOKEN_LIMIT_PER_RUN, MODEL_NAME, build_model, cost_usd
 from safety import leaks
 
-DanceKey = Literal["waltz", "tango", "foxtrot", "chacha", "rumba", "jive"]
+DanceKey = Literal["std_waltz", "std_foxtrot", "std_tango", "quickstep", "std_viennese", "waltz", "tango", "foxtrot", "viennese", "chacha", "rumba", "jive", "samba", "paso", "am_chacha", "am_rumba", "swing", "bolero", "mambo"]
 Role = Literal["leader", "follower"]
 
 

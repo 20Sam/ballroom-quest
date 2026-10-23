@@ -1,226 +1,7629 @@
 {
-  "_about": "Ballroom Quest syllabus. Steps are written for the LEADER: [foot, direction, beats, turn_degrees(+ = right), count_label, weight(optional, default true)]. The follower's part is the mirror image (other foot, forward<->back). Positions: closed, promenade, open, fan. A figure can follow another only if the free foot and the position match.",
-  "styles": {
-    "smooth": {
-      "label": "Smooth",
-      "dances": ["waltz", "tango", "foxtrot"]
-    },
-    "latin": {
-      "label": "Latin",
-      "dances": ["chacha", "rumba", "jive"]
-    }
+ "_about": "Ballroom Quest syllabus v2 (Newcomer + Bronze, four styles). Steps are written for the LEADER: [foot, direction, beats, turn_degrees(+ = right), count_label, weight(optional, default true)]. The follower's part is the mirror image (other foot, forward<->back, side_l<->side_r). Positions: closed, promenade, open, fan. A figure can follow another only if the free foot and the position match. source: 'moore' = International Standard facts from Alex Moore, Ballroom Dancing (book_pages = PDF pages; cues are our own words); 'v1' = original syllabus; 'general' = common Bronze syllabus knowledge, to be checked by a coach. Where the book overlaps a figure's last step with the next figure's first step, each step is listed only once here.",
+ "styles": {
+  "standard": {
+   "label": "International Standard",
+   "dances": [
+    "std_waltz",
+    "std_foxtrot",
+    "std_tango",
+    "quickstep",
+    "std_viennese"
+   ]
   },
-  "dances": {
-    "waltz": {"name": "Waltz", "style": "smooth", "time": "3/4", "bpm": 84, "stride": 0.5,
-      "feel": "Rise and fall, 1-2-3 with the strongest step on 1. Swing and sway."},
-    "tango": {"name": "Tango", "style": "smooth", "time": "2/4", "bpm": 120, "stride": 0.45,
-      "feel": "Staccato, no rise and fall. Walks curve slightly left. Slow = 2 beats, quick = 1 beat."},
-    "foxtrot": {"name": "Foxtrot", "style": "smooth", "time": "4/4", "bpm": 120, "stride": 0.5,
-      "feel": "Smooth, gliding Slow-Slow-Quick-Quick. Long walking slows, soft quicks."},
-    "chacha": {"name": "Cha Cha", "style": "latin", "time": "4/4", "bpm": 120, "stride": 0.28,
-      "feel": "Counted 2, 3, 4-and-1. Break steps on 2-3, a quick chasse on 4-and-1. Straight legs, Cuban motion."},
-    "rumba": {"name": "Rumba", "style": "latin", "time": "4/4", "bpm": 100, "stride": 0.28,
-      "feel": "Slow and sensual. Counted 2, 3, 4-1: the side step on 4 is held through 1."},
-    "jive": {"name": "Jive", "style": "latin", "time": "4/4", "bpm": 168, "stride": 0.22,
-      "feel": "Bouncy and fast. Rock step on 1-2, chasse 3-a-4, chasse 5-a-6."}
+  "smooth": {
+   "label": "American Smooth",
+   "dances": [
+    "waltz",
+    "tango",
+    "foxtrot",
+    "viennese"
+   ]
   },
-  "figures": [
-    {"id": "waltz_box", "dance": "waltz", "name": "Box Step", "level": "Newcomer",
-      "accepts": ["closed"], "ends": "closed",
-      "steps": [["L","fwd",1,0,"1"],["R","side_r",1,0,"2"],["L","close",1,0,"3"],["R","back",1,0,"4"],["L","side_l",1,0,"5"],["R","close",1,0,"6"]],
-      "lead_cue": "Forward-side-close, back-side-close. Draw a square on the floor.",
-      "follow_cue": "Back-side-close, forward-side-close. Wait for the lead before the side step.",
-      "mistake": "Stepping side on 1 instead of forward; forgetting to close the feet on 3."},
-    {"id": "waltz_lf_change", "dance": "waltz", "name": "Left Foot Closed Change", "level": "Newcomer",
-      "accepts": ["closed"], "ends": "closed",
-      "steps": [["L","fwd",1,0,"1"],["R","side_r",1,0,"2"],["L","close",1,0,"3"]],
-      "lead_cue": "Forward on the left, side, close. Use it to switch to a right-foot figure.",
-      "follow_cue": "Back on the right, side, close.",
-      "mistake": "Dancing it with a turn. It travels straight down the line of dance."},
-    {"id": "waltz_rf_change", "dance": "waltz", "name": "Right Foot Closed Change", "level": "Newcomer",
-      "accepts": ["closed"], "ends": "closed",
-      "steps": [["R","fwd",1,0,"1"],["L","side_l",1,0,"2"],["R","close",1,0,"3"]],
-      "lead_cue": "Forward on the right, side, close. The bridge from a Natural Turn into a Reverse Turn.",
-      "follow_cue": "Back on the left, side, close.",
-      "mistake": "Skipping it and trying to start a Reverse Turn on the wrong foot."},
-    {"id": "waltz_natural", "dance": "waltz", "name": "Natural Turn", "level": "Bronze",
-      "accepts": ["closed"], "ends": "closed",
-      "steps": [["R","fwd",1,45,"1"],["L","side_l",1,45,"2"],["R","close",1,45,"3"],["L","back",1,45,"4"],["R","side_r",1,45,"5"],["L","close",1,0,"6"]],
-      "lead_cue": "Right foot forward and start turning right. About 3/4 of a turn over six steps.",
-      "follow_cue": "Left foot back, heel turn on 2-3, then forward-side-close.",
-      "mistake": "Starting it with the left foot. A natural (right) turn always starts on the right foot for the leader."},
-    {"id": "waltz_reverse", "dance": "waltz", "name": "Reverse Turn", "level": "Bronze",
-      "accepts": ["closed"], "ends": "closed",
-      "steps": [["L","fwd",1,-45,"1"],["R","side_r",1,-45,"2"],["L","close",1,-45,"3"],["R","back",1,-45,"4"],["L","side_l",1,-45,"5"],["R","close",1,0,"6"]],
-      "lead_cue": "Left foot forward and turn left. About 3/4 of a turn over six steps.",
-      "follow_cue": "Right foot back, heel turn, then forward-side-close.",
-      "mistake": "Following a Natural Turn directly. You need a Right Foot Closed Change in between."},
-    {"id": "waltz_whisk", "dance": "waltz", "name": "Whisk", "level": "Bronze",
-      "accepts": ["closed"], "ends": "promenade",
-      "steps": [["L","fwd",1,0,"1"],["R","diag_fwd_r",1,0,"2"],["L","cross_behind",1,0,"3"]],
-      "lead_cue": "Forward, side, cross the left foot behind and open the follower into promenade.",
-      "follow_cue": "Back, side, cross the right foot behind as you turn your head right.",
-      "mistake": "Closing back to closed position after a Whisk. You end in promenade, so a Chasse from Promenade comes next."},
-    {"id": "waltz_chasse_pp", "dance": "waltz", "name": "Chasse from Promenade", "level": "Bronze",
-      "accepts": ["promenade"], "ends": "closed",
-      "steps": [["R","cross_fwd",1,0,"1"],["L","side_l",0.5,0,"2"],["R","close",0.5,0,"&"],["L","side_l",1,0,"3"]],
-      "lead_cue": "Right foot through in promenade, then side-close-side to bring her back to closed.",
-      "follow_cue": "Left foot through, then turn to face him on side-close-side.",
-      "mistake": "Dancing it from closed position. It only starts from promenade (for example after a Whisk)."},
-
-    {"id": "tango_walks", "dance": "tango", "name": "Tango Walks", "level": "Newcomer",
-      "accepts": ["closed"], "ends": "closed",
-      "steps": [["L","fwd",2,0,"S"],["R","fwd",2,0,"S"]],
-      "lead_cue": "Two slow walks, curving slightly left, feet placed with purpose.",
-      "follow_cue": "Two slow walks back, staying connected in the frame.",
-      "mistake": "Rising on the toes. Tango stays level."},
-    {"id": "tango_basic", "dance": "tango", "name": "Basic (Walks + Tango Close)", "level": "Newcomer",
-      "accepts": ["closed"], "ends": "closed",
-      "steps": [["L","fwd",2,0,"S"],["R","fwd",2,0,"S"],["L","fwd",1,0,"Q"],["R","side_r",1,0,"Q"],["L","close",2,0,"S",false]],
-      "lead_cue": "Slow, slow, quick, quick, slow. Draw the left foot in on the last slow without weight.",
-      "follow_cue": "Back, back, back, side, draw the right foot in without weight.",
-      "mistake": "Putting weight on the drawn foot. The same foot stays free for the next figure."},
-    {"id": "tango_link", "dance": "tango", "name": "Progressive Link", "level": "Bronze",
-      "accepts": ["closed"], "ends": "promenade",
-      "steps": [["L","fwd",1,0,"Q"],["R","back",1,0,"Q"]],
-      "lead_cue": "Quick-quick: left forward, then right back as you snap into promenade.",
-      "follow_cue": "Right back, then left back as your head snaps to the right.",
-      "mistake": "Dancing a Closed Promenade without the Link first."},
-    {"id": "tango_closed_prom", "dance": "tango", "name": "Closed Promenade", "level": "Bronze",
-      "accepts": ["promenade"], "ends": "closed",
-      "steps": [["L","side_l",2,0,"S"],["R","cross_fwd",1,0,"Q"],["L","side_l",1,0,"Q"],["R","close",2,0,"S"]],
-      "lead_cue": "Slow side in promenade, quick through, quick side, slow close back to closed.",
-      "follow_cue": "Side, through, turn to face him, close.",
-      "mistake": "Starting it from closed position. It needs promenade (use a Progressive Link)."},
-
-    {"id": "fox_basic_fwd", "dance": "foxtrot", "name": "Forward Basic", "level": "Newcomer",
-      "accepts": ["closed"], "ends": "closed",
-      "steps": [["L","fwd",2,0,"S"],["R","fwd",2,0,"S"],["L","side_l",1,0,"Q"],["R","close",1,0,"Q"]],
-      "lead_cue": "Slow, slow, quick, quick: walk, walk, side, close.",
-      "follow_cue": "Back, back, side, close.",
-      "mistake": "Rushing the slows. Each slow is two full beats."},
-    {"id": "fox_basic_back", "dance": "foxtrot", "name": "Back Basic", "level": "Newcomer",
-      "accepts": ["closed"], "ends": "closed",
-      "steps": [["L","back",2,0,"S"],["R","back",2,0,"S"],["L","side_l",1,0,"Q"],["R","close",1,0,"Q"]],
-      "lead_cue": "Back, back, side, close. Keep the frame toward your partner.",
-      "follow_cue": "Forward, forward, side, close.",
-      "mistake": "Looking down at the feet while going backward."},
-    {"id": "fox_promenade", "dance": "foxtrot", "name": "Promenade", "level": "Newcomer",
-      "accepts": ["closed"], "ends": "closed",
-      "steps": [["L","side_l",2,0,"S"],["R","cross_fwd",2,0,"S"],["L","side_l",1,0,"Q"],["R","close",1,0,"Q"]],
-      "lead_cue": "Open to promenade, walk through, then side-close to come back to closed.",
-      "follow_cue": "Open to promenade, walk through with your left, side-close.",
-      "mistake": "Forgetting to close at the end. The quicks bring you back to closed position."},
-
-    {"id": "cc_basic_fwd", "dance": "chacha", "name": "Basic (forward half)", "level": "Newcomer",
-      "accepts": ["closed", "open"], "ends": "same",
-      "steps": [["L","fwd",1,0,"2"],["R","replace",1,0,"3"],["L","side_l",0.5,0,"4"],["R","close",0.5,0,"&"],["L","side_l",1,0,"1"]],
-      "lead_cue": "Rock forward, replace, chasse to the left.",
-      "follow_cue": "Rock back, replace, chasse to the right.",
-      "mistake": "Starting the rock on 1. In cha cha the break step is on 2."},
-    {"id": "cc_basic_back", "dance": "chacha", "name": "Basic (back half)", "level": "Newcomer",
-      "accepts": ["closed", "open"], "ends": "same",
-      "steps": [["R","back",1,0,"2"],["L","replace",1,0,"3"],["R","side_r",0.5,0,"4"],["L","close",0.5,0,"&"],["R","side_r",1,0,"1"]],
-      "lead_cue": "Rock back, replace, chasse to the right.",
-      "follow_cue": "Rock forward, replace, chasse to the left.",
-      "mistake": "Taking the chasse too big. Keep the side steps small."},
-    {"id": "cc_basic_full", "dance": "chacha", "name": "Basic (full)", "level": "Newcomer",
-      "accepts": ["closed", "open"], "ends": "same",
-      "steps": [["L","fwd",1,0,"2"],["R","replace",1,0,"3"],["L","side_l",0.5,0,"4"],["R","close",0.5,0,"&"],["L","side_l",1,0,"1"],["R","back",1,0,"2"],["L","replace",1,0,"3"],["R","side_r",0.5,0,"4"],["L","close",0.5,0,"&"],["R","side_r",1,0,"1"]],
-      "lead_cue": "Forward half then back half. Ends with the left foot free.",
-      "follow_cue": "Back half then forward half.",
-      "mistake": "Going straight from a full Basic into a New Yorker. The New Yorker needs the right foot free."},
-    {"id": "cc_new_yorker", "dance": "chacha", "name": "New Yorker", "level": "Newcomer",
-      "accepts": ["closed", "open"], "ends": "same",
-      "steps": [["R","cross_fwd",1,-90,"2"],["L","replace",1,0,"3"],["R","side_r",0.5,90,"4"],["L","close",0.5,0,"&"],["R","side_r",1,0,"1"],["L","cross_fwd",1,90,"2"],["R","replace",1,0,"3"],["L","side_l",0.5,-90,"4"],["R","close",0.5,0,"&"],["L","side_l",1,0,"1"]],
-      "lead_cue": "Turn a quarter and check forward through side-by-side, replace, chasse back to face. Then the other side.",
-      "follow_cue": "Mirror him: check forward with the left, replace, chasse.",
-      "mistake": "Checking with the wrong foot. The leader's first check is with the right foot."},
-    {"id": "cc_hand_to_hand", "dance": "chacha", "name": "Hand to Hand", "level": "Newcomer",
-      "accepts": ["closed", "open"], "ends": "same",
-      "steps": [["R","back",1,-90,"2"],["L","replace",1,0,"3"],["R","side_r",0.5,90,"4"],["L","close",0.5,0,"&"],["R","side_r",1,0,"1"],["L","back",1,90,"2"],["R","replace",1,0,"3"],["L","side_l",0.5,-90,"4"],["R","close",0.5,0,"&"],["L","side_l",1,0,"1"]],
-      "lead_cue": "Like a New Yorker, but you check BACK side by side, holding one hand.",
-      "follow_cue": "Check back with the left, side by side.",
-      "mistake": "Breaking forward instead of back."},
-    {"id": "cc_underarm", "dance": "chacha", "name": "Underarm Turn", "level": "Bronze",
-      "accepts": ["closed", "open"], "ends": "open",
-      "steps": [["R","back",1,0,"2"],["L","replace",1,0,"3"],["R","side_r",0.5,0,"4"],["L","close",0.5,0,"&"],["R","side_r",1,0,"1"]],
-      "lead_cue": "Dance a back half while raising your left hand so she turns right under it.",
-      "follow_cue": "Forward, turn right under his arm on 3, chasse to face him.",
-      "mistake": "Leading the turn on the wrong foot: the leader needs the right foot free."},
-
-    {"id": "rb_basic_fwd", "dance": "rumba", "name": "Basic (forward half)", "level": "Newcomer",
-      "accepts": ["closed", "open"], "ends": "same",
-      "steps": [["L","fwd",1,0,"2"],["R","replace",1,0,"3"],["L","side_l",2,0,"4-1"]],
-      "lead_cue": "Forward, replace, side and hold through 1.",
-      "follow_cue": "Back, replace, side and hold.",
-      "mistake": "Not holding the side step. 4-1 is two beats."},
-    {"id": "rb_basic_back", "dance": "rumba", "name": "Basic (back half)", "level": "Newcomer",
-      "accepts": ["closed", "open"], "ends": "same",
-      "steps": [["R","back",1,0,"2"],["L","replace",1,0,"3"],["R","side_r",2,0,"4-1"]],
-      "lead_cue": "Back, replace, side and hold.",
-      "follow_cue": "Forward, replace, side and hold.",
-      "mistake": "Bouncing. Rumba stays grounded with hip action."},
-    {"id": "rb_basic_full", "dance": "rumba", "name": "Basic (full box)", "level": "Newcomer",
-      "accepts": ["closed", "open"], "ends": "same",
-      "steps": [["L","fwd",1,0,"2"],["R","replace",1,0,"3"],["L","side_l",2,0,"4-1"],["R","back",1,0,"2"],["L","replace",1,0,"3"],["R","side_r",2,0,"4-1"]],
-      "lead_cue": "Forward half then back half. Ends with the left foot free.",
-      "follow_cue": "Back half then forward half.",
-      "mistake": "Following a full basic with a Fan. The Fan needs the right foot free."},
-    {"id": "rb_fan", "dance": "rumba", "name": "Fan", "level": "Bronze",
-      "accepts": ["closed"], "ends": "fan",
-      "steps": [["R","back",1,0,"2"],["L","replace",1,0,"3"],["R","side_r",2,0,"4-1"]],
-      "lead_cue": "Back half of the basic while you lead her out to your left into fan position.",
-      "follow_cue": "Forward, back, back as you turn away to his left side.",
-      "mistake": "Dancing a Fan from open position or with the wrong foot. It starts from closed with the right foot free."},
-    {"id": "rb_hockey", "dance": "rumba", "name": "Hockey Stick", "level": "Bronze",
-      "accepts": ["fan"], "ends": "open",
-      "steps": [["L","fwd",1,0,"2"],["R","replace",1,0,"3"],["L","close",2,0,"4-1"],["R","back",1,0,"2"],["L","replace",1,0,"3"],["R","fwd",2,0,"4-1"]],
-      "lead_cue": "From fan: forward, replace, close and raise your left hand; she turns under it.",
-      "follow_cue": "Close, forward, forward, then turn left under his arm.",
-      "mistake": "Dancing it from closed. A Hockey Stick only starts from fan position."},
-    {"id": "rb_alemana", "dance": "rumba", "name": "Alemana", "level": "Bronze",
-      "accepts": ["fan"], "ends": "closed",
-      "steps": [["L","fwd",1,0,"2"],["R","replace",1,0,"3"],["L","close",2,0,"4-1"],["R","back",1,0,"2"],["L","replace",1,0,"3"],["R","close",2,0,"4-1"]],
-      "lead_cue": "From fan: forward, replace, close, then lead her to turn right under your arm back to closed.",
-      "follow_cue": "Close, forward, forward, then turn right under his arm.",
-      "mistake": "Trying it from open position after a Hockey Stick."},
-    {"id": "rb_new_yorker", "dance": "rumba", "name": "New Yorker", "level": "Newcomer",
-      "accepts": ["closed", "open"], "ends": "same",
-      "steps": [["R","cross_fwd",1,-90,"2"],["L","replace",1,0,"3"],["R","side_r",2,90,"4-1"],["L","cross_fwd",1,90,"2"],["R","replace",1,0,"3"],["L","side_l",2,-90,"4-1"]],
-      "lead_cue": "Quarter turn, check forward, replace, side. Then the other way.",
-      "follow_cue": "Mirror him with your left foot first.",
-      "mistake": "Starting with the left foot. The leader needs the right foot free."},
-
-    {"id": "jv_fallaway", "dance": "jive", "name": "Fallaway Rock", "level": "Newcomer",
-      "accepts": ["closed"], "ends": "closed",
-      "steps": [["L","back",1,0,"1"],["R","replace",1,0,"2"],["L","side_l",0.75,0,"3"],["R","close",0.25,0,"a"],["L","side_l",1,0,"4"],["R","side_r",0.75,0,"5"],["L","close",0.25,0,"a"],["R","side_r",1,0,"6"]],
-      "lead_cue": "Rock back, replace, chasse left, chasse right. Stay bouncy.",
-      "follow_cue": "Rock back, replace, chasse right, chasse left.",
-      "mistake": "Flat feet. Jive chasses are danced on the balls of the feet."},
-    {"id": "jv_change_rl", "dance": "jive", "name": "Change of Place Right to Left", "level": "Newcomer",
-      "accepts": ["closed"], "ends": "open",
-      "steps": [["L","back",1,0,"1"],["R","replace",1,0,"2"],["L","side_l",0.75,-45,"3"],["R","close",0.25,0,"a"],["L","side_l",1,-45,"4"],["R","side_r",0.75,0,"5"],["L","close",0.25,0,"a"],["R","side_r",1,0,"6"]],
-      "lead_cue": "Rock, then raise your left hand on 4 so she turns under it to your left side. You end apart.",
-      "follow_cue": "Rock, then turn right under his arm on the first chasse.",
-      "mistake": "Starting it from open position. It starts from closed; from open use Left to Right."},
-    {"id": "jv_change_lr", "dance": "jive", "name": "Change of Place Left to Right", "level": "Newcomer",
-      "accepts": ["open"], "ends": "open",
-      "steps": [["L","back",1,0,"1"],["R","replace",1,0,"2"],["L","side_l",0.75,45,"3"],["R","close",0.25,0,"a"],["L","side_l",1,45,"4"],["R","side_r",0.75,0,"5"],["L","close",0.25,0,"a"],["R","side_r",1,0,"6"]],
-      "lead_cue": "Rock, then lead her to turn left under your arm while you turn right.",
-      "follow_cue": "Rock, then turn left under his arm.",
-      "mistake": "Dancing it from closed position. You need to be apart first (Right to Left)."},
-    {"id": "jv_hands_behind", "dance": "jive", "name": "Change of Hands Behind Back", "level": "Bronze",
-      "accepts": ["open"], "ends": "open",
-      "steps": [["L","back",1,0,"1"],["R","replace",1,0,"2"],["L","fwd",0.75,90,"3"],["R","close",0.25,0,"a"],["L","fwd",1,90,"4"],["R","fwd",0.75,0,"5"],["L","close",0.25,0,"a"],["R","fwd",1,0,"6"]],
-      "lead_cue": "Rock, then pass her right hand behind your back as you turn.",
-      "follow_cue": "Rock, then walk past him as he changes hands.",
-      "mistake": "Trying it from closed hold. You need open position."},
-    {"id": "jv_link", "dance": "jive", "name": "Link", "level": "Newcomer",
-      "accepts": ["open"], "ends": "closed",
-      "steps": [["L","back",1,0,"1"],["R","replace",1,0,"2"],["L","fwd",0.75,0,"3"],["R","close",0.25,0,"a"],["L","fwd",1,0,"4"],["R","side_r",0.75,0,"5"],["L","close",0.25,0,"a"],["R","side_r",1,0,"6"]],
-      "lead_cue": "Rock, then draw her in with a forward chasse back to closed hold.",
-      "follow_cue": "Rock, then chasse forward into his arms.",
-      "mistake": "Forgetting to link. After open figures, the Link brings you back to closed."}
-  ]
+  "latin": {
+   "label": "International Latin",
+   "dances": [
+    "chacha",
+    "rumba",
+    "jive",
+    "samba",
+    "paso"
+   ]
+  },
+  "rhythm": {
+   "label": "American Rhythm",
+   "dances": [
+    "am_chacha",
+    "am_rumba",
+    "swing",
+    "bolero",
+    "mambo"
+   ]
+  }
+ },
+ "dances": {
+  "std_waltz": {
+   "name": "Slow Waltz",
+   "style": "standard",
+   "time": "3/4",
+   "bpm": 90,
+   "stride": 0.5,
+   "feel": "Swing and sway, 1-2-3 with rise at the end of 1 and lowering at the end of 3. Closed hold throughout."
+  },
+  "std_foxtrot": {
+   "name": "Slow Foxtrot",
+   "style": "standard",
+   "time": "4/4",
+   "bpm": 120,
+   "stride": 0.55,
+   "feel": "Long, gliding, lazy steps: slow-quick-quick. The smoothest and most continuous of the dances."
+  },
+  "std_tango": {
+   "name": "Tango",
+   "style": "standard",
+   "time": "2/4",
+   "bpm": 128,
+   "stride": 0.45,
+   "feel": "Staccato and level with no rise and fall. Feet placed, not swung; walks curve slightly left. (Slow = 2 game beats, quick = 1.)"
+  },
+  "quickstep": {
+   "name": "Quickstep",
+   "style": "standard",
+   "time": "4/4",
+   "bpm": 200,
+   "stride": 0.45,
+   "feel": "Fast and light with chasses and locks: slow = 2 beats, quick = 1. Stay up on the toes through the quicks."
+  },
+  "std_viennese": {
+   "name": "Viennese Waltz",
+   "style": "standard",
+   "time": "3/4",
+   "bpm": 180,
+   "stride": 0.45,
+   "feel": "Fast rotating turns, 60 bars a minute. Changes switch between Natural and Reverse Turns."
+  },
+  "waltz": {
+   "name": "Waltz",
+   "style": "smooth",
+   "time": "3/4",
+   "bpm": 84,
+   "stride": 0.5,
+   "feel": "Rise and fall, 1-2-3 with the strongest step on 1. Swing and sway."
+  },
+  "tango": {
+   "name": "Tango",
+   "style": "smooth",
+   "time": "2/4",
+   "bpm": 120,
+   "stride": 0.45,
+   "feel": "Staccato, no rise and fall. Walks curve slightly left. Slow = 2 beats, quick = 1 beat."
+  },
+  "foxtrot": {
+   "name": "Foxtrot",
+   "style": "smooth",
+   "time": "4/4",
+   "bpm": 120,
+   "stride": 0.5,
+   "feel": "Smooth, gliding Slow-Slow-Quick-Quick. Long walking slows, soft quicks."
+  },
+  "viennese": {
+   "name": "Viennese Waltz",
+   "style": "smooth",
+   "time": "3/4",
+   "bpm": 162,
+   "stride": 0.45,
+   "feel": "Fast, sweeping 1-2-3 turns. American style may open out of hold for underarm turns."
+  },
+  "chacha": {
+   "name": "Cha Cha",
+   "style": "latin",
+   "time": "4/4",
+   "bpm": 120,
+   "stride": 0.28,
+   "feel": "Counted 2, 3, 4-and-1. Break steps on 2-3, a quick chasse on 4-and-1. Straight legs, Cuban motion."
+  },
+  "rumba": {
+   "name": "Rumba",
+   "style": "latin",
+   "time": "4/4",
+   "bpm": 100,
+   "stride": 0.28,
+   "feel": "Slow and sensual. Counted 2, 3, 4-1: the side step on 4 is held through 1."
+  },
+  "jive": {
+   "name": "Jive",
+   "style": "latin",
+   "time": "4/4",
+   "bpm": 168,
+   "stride": 0.22,
+   "feel": "Bouncy and fast. Rock step on 1-2, chasse 3-a-4, chasse 5-a-6."
+  },
+  "samba": {
+   "name": "Samba",
+   "style": "latin",
+   "time": "2/4",
+   "bpm": 100,
+   "stride": 0.3,
+   "feel": "Carnival bounce through the knees, counted 1-a-2. The 'a' is a very quick step."
+  },
+  "paso": {
+   "name": "Paso Doble",
+   "style": "latin",
+   "time": "2/4",
+   "bpm": 120,
+   "stride": 0.35,
+   "feel": "A proud Spanish march, one step per beat. Tall posture, sharp appels (stamps)."
+  },
+  "am_chacha": {
+   "name": "Cha Cha",
+   "style": "rhythm",
+   "time": "4/4",
+   "bpm": 120,
+   "stride": 0.25,
+   "feel": "Counted 2, 3, 4-and-1, like the Latin cha cha, with more open and side-by-side figures."
+  },
+  "am_rumba": {
+   "name": "Rumba",
+   "style": "rhythm",
+   "time": "4/4",
+   "bpm": 128,
+   "stride": 0.28,
+   "feel": "Slow, quick, quick box rhythm with Cuban motion: the hips settle as each step takes weight."
+  },
+  "swing": {
+   "name": "East Coast Swing",
+   "style": "rhythm",
+   "time": "4/4",
+   "bpm": 144,
+   "stride": 0.22,
+   "feel": "Six-count swing: triple step, triple step, rock step. Relaxed, bouncy and playful."
+  },
+  "bolero": {
+   "name": "Bolero",
+   "style": "rhythm",
+   "time": "4/4",
+   "bpm": 96,
+   "stride": 0.3,
+   "feel": "Slow, romantic rumba-like dance with rise and fall: a long rising slow, then two quicks."
+  },
+  "mambo": {
+   "name": "Mambo",
+   "style": "rhythm",
+   "time": "4/4",
+   "bpm": 192,
+   "stride": 0.22,
+   "feel": "Fast and punchy: break on 2, hold on 1. Strong Cuban hip action."
+  }
+ },
+ "figures": [
+  {
+   "id": "sw_lf_change",
+   "dance": "std_waltz",
+   "name": "LF Closed Change",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "3"
+    ]
+   ],
+   "lead_cue": "Left forward, side, close. It takes you from a Reverse Turn into a Natural Turn.",
+   "follow_cue": "Right back, side, close. Let him carry you straight down the room.",
+   "mistake": "Letting the side step drift forward; keep it to the side so the next turn starts square.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH"
+   ],
+   "rise_fall": "Rise at end of 1, up on 2-3, lower at end of 3",
+   "sway": "Left on 2-3",
+   "cbm": "Slight on 1",
+   "notes_for_beginners": "Use it to switch your free foot from left to right without turning."
+  },
+  {
+   "id": "sw_rf_change",
+   "dance": "std_waltz",
+   "name": "RF Closed Change",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "3"
+    ]
+   ],
+   "lead_cue": "Right forward, side, close. The bridge from a Natural Turn into a Reverse Turn.",
+   "follow_cue": "Left back, side, close.",
+   "mistake": "Skipping it and trying to start a Reverse Turn straight after a Natural Turn.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH"
+   ],
+   "rise_fall": "Rise at end of 1, up on 2-3, lower at end of 3",
+   "sway": "Right on 2-3",
+   "cbm": "Slight on 1"
+  },
+  {
+   "id": "sw_natural",
+   "dance": "std_waltz",
+   "name": "Natural Turn",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     1,
+     45,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     45,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     45,
+     "3"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     45,
+     "4"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     45,
+     "5"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     45,
+     "6"
+    ]
+   ],
+   "lead_cue": "Right foot forward and turn right: forward-side-close, then back-side-close. Three-eighths per half.",
+   "follow_cue": "Left back and turn right, then forward-side-close on the outside of the turn.",
+   "mistake": "Making the second step short when going forward; the outside partner needs the long step.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH",
+    "TH",
+    "T",
+    "TH"
+   ],
+   "rise_fall": "Rise at end of 1, up 2-3, lower end of 3; rise end of 4 (no foot rise), up 5-6, lower end of 6",
+   "sway": "Right on 2-3, left on 5-6",
+   "cbm": "On 1 and 4"
+  },
+  {
+   "id": "sw_reverse",
+   "dance": "std_waltz",
+   "name": "Reverse Turn",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     -45,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     -45,
+     "2"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     -45,
+     "3"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -45,
+     "4"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -45,
+     "5"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     -45,
+     "6"
+    ]
+   ],
+   "lead_cue": "Left foot forward and turn left: forward-side-close, back-side-close. Three-eighths per half.",
+   "follow_cue": "Right back and turn left; on 4-6 go forward-side-close around him.",
+   "mistake": "Starting it right after a Natural Turn; dance a RF Closed Change in between.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH",
+    "TH",
+    "T",
+    "TH"
+   ],
+   "rise_fall": "Same pattern as the Natural Turn",
+   "sway": "Left on 2-3, right on 5-6",
+   "cbm": "On 1 and 4"
+  },
+  {
+   "id": "sw_whisk",
+   "dance": "std_waltz",
+   "name": "Whisk",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "promenade",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "diag_fwd_r",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "cross_behind",
+     1,
+     0,
+     "3"
+    ]
+   ],
+   "lead_cue": "Forward, side, cross the left foot behind and open her into promenade. You do not turn.",
+   "follow_cue": "Back, side, cross your right foot behind as you turn your head to the right.",
+   "mistake": "Trying to close back into closed hold; the Whisk ends in promenade, so a Chasse from Promenade comes next.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH"
+   ],
+   "rise_fall": "Rise at end of 1, up 2-3, lower end of 3",
+   "sway": "Left on 2-3",
+   "cbm": "Slight on 1"
+  },
+  {
+   "id": "sw_chasse_pp",
+   "dance": "std_waltz",
+   "name": "Chasse from Promenade",
+   "level": "Bronze",
+   "accepts": [
+    "promenade"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "cross_fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     0.5,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "3"
+    ]
+   ],
+   "lead_cue": "Right foot through in promenade, then side-close-side as she comes back to face you.",
+   "follow_cue": "Left foot through, then turn to face him on side-close-side.",
+   "mistake": "Rushing the 'and': steps 2 and the close share one beat.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "T",
+    "TH"
+   ],
+   "rise_fall": "Rise at end of 1, up 2-&-3, lower end of 3",
+   "sway": "None",
+   "cbm": "Slight on 1",
+   "notes_for_beginners": "In the book the next step (right foot outside her) is the first step of a Natural Turn."
+  },
+  {
+   "id": "sw_hesitation",
+   "dance": "std_waltz",
+   "name": "Hesitation Change",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     1,
+     45,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     45,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     45,
+     "3"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     45,
+     "4"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     90,
+     "5"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "6",
+     false
+    ]
+   ],
+   "lead_cue": "First half of a Natural Turn, then step back, pull the right foot beside the left and hold. The left foot closes without weight.",
+   "follow_cue": "First half of a Natural Turn, then forward and side, and hold as your foot brushes in.",
+   "mistake": "Putting weight on the last step; the left foot must stay free for the Reverse Turn.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH",
+    "TH",
+    "H, inside edge, flat",
+    "inside edge of toe (no weight)"
+   ],
+   "rise_fall": "Normal rise on 1-3, no rise on 4-6",
+   "sway": "Right on 2-3, left on 5-6",
+   "cbm": "On 1 and 4"
+  },
+  {
+   "id": "sw_reverse_corte",
+   "dance": "std_waltz",
+   "name": "Reverse Corte",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     -45,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     -45,
+     "2"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     -45,
+     "3"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -90,
+     "4"
+    ],
+    [
+     "L",
+     "close",
+     2,
+     -45,
+     "5-6",
+     false
+    ],
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "7"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "8"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "9"
+    ]
+   ],
+   "lead_cue": "First half of a Reverse Turn, then step back on the right, turn left and hold with the left foot drawn in; finish back-side-close.",
+   "follow_cue": "First half of a Reverse Turn, then forward and turn on his hold; finish forward-side-close.",
+   "mistake": "Shifting weight onto the left foot during the hold; it stays free so you can step back on it.",
+   "source": "moore",
+   "rise_fall": "Rise on 2 of the corte, lower end of 3; normal rise on the final back-side-close",
+   "sway": "Right on 2-3 of the corte, left on the last two steps",
+   "cbm": "On 1 and the first corte step",
+   "notes_for_beginners": "Steps 1-3 are the first half of the Reverse Turn the book says to dance first."
+  },
+  {
+   "id": "sw_spin_turn",
+   "dance": "std_waltz",
+   "name": "Natural Spin Turn (+ Reverse 4-6)",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     1,
+     45,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     45,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     45,
+     "3"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     180,
+     "4"
+    ],
+    [
+     "R",
+     "fwd",
+     1,
+     90,
+     "5"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     45,
+     "6"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -45,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -45,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     -45,
+     "3"
+    ]
+   ],
+   "lead_cue": "First half of a Natural Turn, then pivot half a turn on the left foot, step forward and around; finish with the back half of a Reverse Turn.",
+   "follow_cue": "First half of a Natural Turn, then forward on the right and spin with him; finish with the back half of a Reverse Turn.",
+   "mistake": "Opening the knees on the pivot; keep the right foot in front and the thighs together.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH",
+    "THT",
+    "HT",
+    "TH",
+    "TH",
+    "T",
+    "TH"
+   ],
+   "rise_fall": "Normal rise on 1-3, rise end of 5 up on 6; normal rise on the reverse half",
+   "sway": "Right on 2-3, none on the spin",
+   "cbm": "On 1, 4 and 5",
+   "notes_for_beginners": "The book's usual follow-up (4-6 of a Reverse Turn) is built in so it ends facing diagonal wall."
+  },
+  {
+   "id": "sf_prep",
+   "dance": "std_foxtrot",
+   "name": "Preparation Step",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "One slow step forward on the left to set up the Feather with the right foot free.",
+   "follow_cue": "One slow step back on the right.",
+   "mistake": "Starting the Feather from standing still; the prep step gives you the swing.",
+   "source": "general"
+  },
+  {
+   "id": "sf_feather",
+   "dance": "std_foxtrot",
+   "name": "Feather Step",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Slow, quick, quick: right forward, left forward, then right forward stepping outside her.",
+   "follow_cue": "Back, back, back; let him pass on your right side on the last quick.",
+   "mistake": "Turning the hips to get outside; lead with the left side of the body instead.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH"
+   ],
+   "rise_fall": "Rise at end of 1, up on 2-3, lower end of 3",
+   "sway": "Right on 2-3",
+   "cbm": "On 1",
+   "notes_for_beginners": "In the book the next left-foot step is also the first step of the following figure."
+  },
+  {
+   "id": "sf_three_step",
+   "dance": "std_foxtrot",
+   "name": "Three Step",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Three straight walks forward, slow quick quick, with a rise on the quicks.",
+   "follow_cue": "Three walks back; reach long from the hip.",
+   "mistake": "Letting the quicks become short and choppy; they stay long and smooth.",
+   "source": "moore",
+   "footwork": [
+    "H",
+    "HT",
+    "TH"
+   ],
+   "rise_fall": "Rise at end of the first quick, lower at end of it",
+   "sway": "Left on the quicks"
+  },
+  {
+   "id": "sf_reverse",
+   "dance": "std_foxtrot",
+   "name": "Reverse Turn (with Feather Finish)",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     -45,
+     "S"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "R",
+     "back",
+     2,
+     -45,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Left forward turning left, side, back; then back, side, and forward outside her (the Feather Finish).",
+   "follow_cue": "Back with a heel turn (close the left beside the right and turn on the heel), forward; then forward, side, back.",
+   "mistake": "Swinging the leader's second step too far forward; it goes to the side across the line of dance.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH",
+    "TH",
+    "T",
+    "TH"
+   ],
+   "rise_fall": "Rise end of 1, up 2-3, lower end of 3; rise end of 4, up 5-6",
+   "sway": "Left on 2-3, right on 5-6",
+   "cbm": "On 1 and 4"
+  },
+  {
+   "id": "sf_natural",
+   "dance": "std_foxtrot",
+   "name": "Natural Turn (Heel Pull)",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     2,
+     45,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     45,
+     "Q"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     90,
+     "Q"
+    ],
+    [
+     "L",
+     "back",
+     2,
+     45,
+     "S"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     90,
+     "S"
+    ],
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "Right forward and turn right, side, back; then back, pull the right foot beside the left on the heel, and forward on the left.",
+   "follow_cue": "Back and heel turn, forward; then forward, side, and brush back.",
+   "mistake": "Stepping the heel-pull foot behind; it lands beside the left foot, parallel and slightly apart.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH",
+    "TH",
+    "H, inside edge, flat",
+    "H"
+   ],
+   "rise_fall": "Rise end of 1, up 2-3, lower end of 3; no rise on the heel pull",
+   "sway": "Right on 2-3, left on 5",
+   "cbm": "On 1, 4 and 6"
+  },
+  {
+   "id": "sf_feather_finish",
+   "dance": "std_foxtrot",
+   "name": "Feather Finish",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "back",
+     2,
+     -45,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Back on the right turning left, side, then forward outside her.",
+   "follow_cue": "Forward, side, back; he passes on your right side.",
+   "mistake": "Forgetting to turn: about a quarter turn to the left brings you to the diagonal.",
+   "source": "moore",
+   "footwork": [
+    "TH",
+    "T",
+    "TH"
+   ],
+   "sway": "Right on the quicks"
+  },
+  {
+   "id": "sf_closed_impetus",
+   "dance": "std_foxtrot",
+   "name": "Closed Impetus",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     2,
+     45,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     45,
+     "Q"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     45,
+     "Q"
+    ],
+    [
+     "L",
+     "back",
+     2,
+     90,
+     "S"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     45,
+     "Q"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     90,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Natural Turn start, then back on the left and close the right with a heel turn, step side; follow with a Feather Finish.",
+   "follow_cue": "Natural Turn start, then forward around him, side, and step back ready for the Feather Finish.",
+   "mistake": "Not closing the feet on the heel turn; the leader turns on the left heel with feet together.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH",
+    "TH",
+    "HT",
+    "TH"
+   ],
+   "rise_fall": "Normal rise on 1-3, rise end of 5 (heel turn), lower end of 6",
+   "sway": "Right on 2-3, left on 5",
+   "cbm": "On 1 and 4"
+  },
+  {
+   "id": "sf_change_dir",
+   "dance": "std_foxtrot",
+   "name": "Change of Direction",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     -45,
+     "S"
+    ],
+    [
+     "R",
+     "diag_fwd_r",
+     2,
+     -90,
+     "S"
+    ],
+    [
+     "L",
+     "fwd",
+     2,
+     -45,
+     "S"
+    ]
+   ],
+   "lead_cue": "Three slows: left forward turning left, right slightly forward with the right side leading, then left forward across the body.",
+   "follow_cue": "Three slows back, turning with him; keep the feet low.",
+   "mistake": "Rising; this figure stays level with no rise at all.",
+   "source": "moore",
+   "footwork": [
+    "H",
+    "inside edge of toe, H",
+    "H"
+   ],
+   "rise_fall": "None",
+   "sway": "Left on 2",
+   "cbm": "On 1 and 3"
+  },
+  {
+   "id": "sf_natural_weave",
+   "dance": "std_foxtrot",
+   "name": "Check and Weave (Natural Weave)",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     2,
+     45,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     45,
+     "Q"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     45,
+     "Q"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Natural turn start, check back on the left as she steps outside, then back, side, and forward outside her.",
+   "follow_cue": "Natural turn start, step forward outside him, then weave forward-side-back around him.",
+   "mistake": "Stopping on the check; the quicks keep flowing like a ribbon.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "T",
+    "T",
+    "T",
+    "T",
+    "TH"
+   ],
+   "rise_fall": "Rise end of 1, stay up through the quicks, lower end of the last quick",
+   "cbm": "On 1 and 5"
+  },
+  {
+   "id": "st_walks",
+   "dance": "std_tango",
+   "name": "Walks (LF, RF)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "fwd",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "Two slow walks, heel first, curving very slightly left.",
+   "follow_cue": "Two slow walks back on the ball of the foot, then the heel.",
+   "mistake": "Rising onto the toes; tango walks stay level and grounded.",
+   "source": "moore",
+   "footwork": [
+    "H",
+    "H"
+   ],
+   "rise_fall": "None"
+  },
+  {
+   "id": "st_prog_side",
+   "dance": "std_tango",
+   "name": "Progressive Side Step",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "Quick, quick, slow: left forward across the body, right to the side, left forward again.",
+   "follow_cue": "Back, side, back; stay compact in the hold.",
+   "mistake": "Taking the side step too wide; it is short and slightly back.",
+   "source": "moore",
+   "footwork": [
+    "H",
+    "inside edge of foot",
+    "H"
+   ],
+   "cbm": "CBMP on 1 and 3"
+  },
+  {
+   "id": "st_link",
+   "dance": "std_tango",
+   "name": "Progressive Link",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "promenade",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Quick, quick: left forward, then right to the side and slightly back as you turn her into promenade.",
+   "follow_cue": "Right back, then a short step side and back as your head snaps right.",
+   "mistake": "Opening into promenade with the arms; it is the body that turns her.",
+   "source": "moore",
+   "footwork": [
+    "H",
+    "inside edge of foot"
+   ],
+   "cbm": "CBMP on 1"
+  },
+  {
+   "id": "st_closed_prom",
+   "dance": "std_tango",
+   "name": "Closed Promenade",
+   "level": "Bronze",
+   "accepts": [
+    "promenade"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "cross_fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "Slow side in promenade, quick through, quick side, slow close back into closed hold.",
+   "follow_cue": "Side, through, turn to face him, close.",
+   "mistake": "Starting it from closed position; it needs promenade first (Progressive Link).",
+   "source": "moore",
+   "footwork": [
+    "H",
+    "H",
+    "inside edge of foot",
+    "whole foot"
+   ],
+   "cbm": "CBMP on 2"
+  },
+  {
+   "id": "st_back_corte",
+   "dance": "std_tango",
+   "name": "Back Corte",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "back",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "Slow back on the left, quick back turning left, quick side, slow close.",
+   "follow_cue": "Forward, forward, side, close.",
+   "mistake": "Looking down while going back; keep the frame and head steady.",
+   "source": "moore",
+   "footwork": [
+    "inside edge of ball, H",
+    "BH",
+    "inside edge of foot",
+    "whole foot"
+   ],
+   "cbm": "On 2"
+  },
+  {
+   "id": "st_rock_turn",
+   "dance": "std_tango",
+   "name": "Rock Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     2,
+     45,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     45,
+     "Q"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "back",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "Right forward turning right, rock back and forward, long step back, then back-side-close turning left.",
+   "follow_cue": "Back turning right, rock forward and back, forward, then forward-side-close.",
+   "mistake": "Rocking with the shoulders; the rock comes from the legs and the body stays still.",
+   "source": "moore",
+   "footwork": [
+    "H",
+    "IE of ball, H",
+    "IE of ball, H",
+    "IE of ball, H",
+    "BH",
+    "inside edge of foot",
+    "whole foot"
+   ],
+   "cbm": "Slight on 1, on 5"
+  },
+  {
+   "id": "st_basic_reverse",
+   "dance": "std_tango",
+   "name": "Basic Reverse Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     -90,
+     "Q"
+    ],
+    [
+     "L",
+     "cross_fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -90,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "Quick quick slow turning left, crossing the left foot in front; then back, side, close. Three-quarters of a turn.",
+   "follow_cue": "Back, side, close; then forward, side, and close the left foot.",
+   "mistake": "Trying it after the left-foot walk; it follows a right-foot walk so the left is free.",
+   "source": "moore",
+   "footwork": [
+    "H",
+    "BH",
+    "whole foot",
+    "BH",
+    "inside edge of foot",
+    "whole foot"
+   ],
+   "cbm": "On 1 and 4"
+  },
+  {
+   "id": "qs_qtr",
+   "dance": "quickstep",
+   "name": "Quarter Turn to Right",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     2,
+     45,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     45,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "Slow, quick, quick, slow: right forward turning right, side, close, side.",
+   "follow_cue": "Back turning right, side, close, side.",
+   "mistake": "Making it flat; rise through the quicks and lower on the last slow.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH",
+    "TH"
+   ],
+   "rise_fall": "Rise end of 1, up 2-3, lower end of 3",
+   "sway": "Right on 2-3",
+   "cbm": "On 1"
+  },
+  {
+   "id": "qs_qtl",
+   "dance": "quickstep",
+   "name": "Quarter Turn to Left (Heel Pivot)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "back",
+     2,
+     -45,
+     "S"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "R",
+     "in_place",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "Back on the right turning left, bring the left heel back to it and pivot, change weight, then forward on the left.",
+   "follow_cue": "Forward turning left, side, close, back.",
+   "mistake": "Taking a big back step; the heel pivot needs a medium step so you can turn on the spot.",
+   "source": "moore",
+   "footwork": [
+    "TH",
+    "H",
+    "H",
+    "H"
+   ],
+   "rise_fall": "Slight rise between 2 and 3",
+   "cbm": "On 1, slight on 4"
+  },
+  {
+   "id": "qs_prog_chasse",
+   "dance": "quickstep",
+   "name": "Progressive Chasse",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "back",
+     2,
+     -45,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "After a Quarter Turn to Right: back turning left, then a wide chasse side-close-side.",
+   "follow_cue": "Forward turning left, then side-close-side.",
+   "mistake": "Closing the feet loosely; the chasse feet touch on the close.",
+   "source": "moore",
+   "footwork": [
+    "TH",
+    "T",
+    "T",
+    "TH"
+   ],
+   "rise_fall": "Rise end of 1, up 2-3, lower end of 4",
+   "sway": "None",
+   "cbm": "On 1",
+   "notes_for_beginners": "In the book the next step (right foot outside her) starts the following figure."
+  },
+  {
+   "id": "qs_fwd_lock",
+   "dance": "quickstep",
+   "name": "Forward Lock",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "diag_fwd_l",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "cross_behind",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "diag_fwd_l",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "Right forward outside her, left forward, cross the right behind, left forward. Up on the toes for the lock.",
+   "follow_cue": "Back, back, cross the left in front, back.",
+   "mistake": "Crossing too loosely; the right foot locks tightly behind the left.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "T",
+    "TH"
+   ],
+   "rise_fall": "Rise end of 1, up 2-3, lower end of 4",
+   "sway": "None"
+  },
+  {
+   "id": "qs_nat_hes",
+   "dance": "quickstep",
+   "name": "Natural Turn with Hesitation",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     2,
+     45,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     45,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     45,
+     "Q"
+    ],
+    [
+     "L",
+     "back",
+     2,
+     45,
+     "S"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     90,
+     "S"
+    ],
+    [
+     "L",
+     "close",
+     2,
+     0,
+     "S",
+     false
+    ]
+   ],
+   "lead_cue": "Natural turn forward-side-close, then back, heel pull the right foot beside the left and hold with the left foot free.",
+   "follow_cue": "Back-side-close turning right, then forward, side, and hold.",
+   "mistake": "Putting weight on the last step; the left foot stays free for the Chasse Reverse Turn.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH",
+    "TH",
+    "H, inside edge, flat",
+    "toe (no weight)"
+   ],
+   "rise_fall": "Rise end of 1, up 2-3, lower end of 3, no rise on the heel pull",
+   "sway": "Right on 2-3",
+   "cbm": "On 1 and 4"
+  },
+  {
+   "id": "qs_chasse_rev",
+   "dance": "quickstep",
+   "name": "Chasse Reverse Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     -45,
+     "S"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     -45,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Left forward turning left, then side-close as you keep turning. Three-eighths of a turn.",
+   "follow_cue": "Back turning left, side, close.",
+   "mistake": "Under-turning; finish with your back to the line of dance.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH"
+   ],
+   "rise_fall": "Rise end of 1, up 2-3, lower end of 3",
+   "sway": "Left on 2-3",
+   "cbm": "On 1"
+  },
+  {
+   "id": "qs_nat_spin",
+   "dance": "quickstep",
+   "name": "Natural Spin Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     2,
+     45,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     45,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     45,
+     "Q"
+    ],
+    [
+     "L",
+     "back",
+     2,
+     180,
+     "S"
+    ],
+    [
+     "R",
+     "fwd",
+     2,
+     90,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     2,
+     45,
+     "S"
+    ]
+   ],
+   "lead_cue": "Natural turn forward-side-close, then pivot half a turn on the left foot, right forward and around, left to the side.",
+   "follow_cue": "Back-side-close, then forward and spin with him, back and to the side.",
+   "mistake": "Letting the feet split on the pivot; keep the right foot in front and the knees together.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH",
+    "THT",
+    "HT",
+    "TH"
+   ],
+   "rise_fall": "Rise end of 1, up 2-3, lower end of 3",
+   "sway": "Right on 2-3, none on the spin",
+   "cbm": "On 1, 4 and 5"
+  },
+  {
+   "id": "svw_lf_change",
+   "dance": "std_viennese",
+   "name": "LF Forward Change (Reverse to Natural)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     -22.5,
+     "1"
+    ],
+    [
+     "R",
+     "diag_fwd_r",
+     1,
+     -22.5,
+     "2"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "3"
+    ]
+   ],
+   "lead_cue": "Left forward, right diagonally forward, close. Turns you from Reverse Turns into Natural Turns.",
+   "follow_cue": "Right back, left diagonally back, close.",
+   "mistake": "Stopping the travel; keep moving down the room through the change.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH"
+   ],
+   "sway": "Left on 2-3",
+   "cbm": "On 1"
+  },
+  {
+   "id": "svw_rf_change",
+   "dance": "std_viennese",
+   "name": "RF Forward Change (Natural to Reverse)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     1,
+     22.5,
+     "1"
+    ],
+    [
+     "L",
+     "diag_fwd_l",
+     1,
+     22.5,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "3"
+    ]
+   ],
+   "lead_cue": "Right forward, left diagonally forward, close. Turns you from Natural Turns into Reverse Turns.",
+   "follow_cue": "Left back, right diagonally back, close.",
+   "mistake": "Going into a Reverse Turn without it.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH"
+   ],
+   "sway": "Right on 2-3",
+   "cbm": "On 1"
+  },
+  {
+   "id": "svw_natural",
+   "dance": "std_viennese",
+   "name": "Natural Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     1,
+     45,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     90,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     45,
+     "4"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     90,
+     "5"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Fast rotating turn to the right: forward-side-close, back-side-close, three-quarters of a turn.",
+   "follow_cue": "Back-side-close, forward-side-close, staying close in the hold.",
+   "mistake": "Leaning back from your partner; stay connected through the body to rotate.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH",
+    "TH",
+    "T",
+    "flat"
+   ],
+   "sway": "Right on 2-3, left on 5-6",
+   "cbm": "On 1 and 4"
+  },
+  {
+   "id": "svw_reverse",
+   "dance": "std_viennese",
+   "name": "Reverse Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     -45,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     -90,
+     "2"
+    ],
+    [
+     "L",
+     "cross_fwd",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -45,
+     "4"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -90,
+     "5"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Fast turn to the left: forward, side, cross the left foot in front; then back, side, close.",
+   "follow_cue": "Back, side, close; then forward, side, and cross the left foot in front.",
+   "mistake": "Not crossing on 3; the cross keeps the turn compact.",
+   "source": "moore",
+   "footwork": [
+    "HT",
+    "T",
+    "TH",
+    "TH",
+    "T",
+    "flat"
+   ],
+   "sway": "Left on 2-3, right on 5-6",
+   "cbm": "On 1 and 4"
+  },
+  {
+   "id": "waltz_box",
+   "dance": "waltz",
+   "name": "Box Step",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "5"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Forward-side-close, back-side-close. Draw a square on the floor.",
+   "follow_cue": "Back-side-close, forward-side-close. Wait for the lead before the side step.",
+   "mistake": "Stepping side on 1 instead of forward; forgetting to close the feet on 3.",
+   "source": "v1"
+  },
+  {
+   "id": "waltz_lf_change",
+   "dance": "waltz",
+   "name": "Left Foot Closed Change",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "3"
+    ]
+   ],
+   "lead_cue": "Forward on the left, side, close. Use it to switch to a right-foot figure.",
+   "follow_cue": "Back on the right, side, close.",
+   "mistake": "Dancing it with a turn. It travels straight down the line of dance.",
+   "source": "v1"
+  },
+  {
+   "id": "waltz_rf_change",
+   "dance": "waltz",
+   "name": "Right Foot Closed Change",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "3"
+    ]
+   ],
+   "lead_cue": "Forward on the right, side, close. The bridge from a Natural Turn into a Reverse Turn.",
+   "follow_cue": "Back on the left, side, close.",
+   "mistake": "Skipping it and trying to start a Reverse Turn on the wrong foot.",
+   "source": "v1"
+  },
+  {
+   "id": "waltz_left_box",
+   "dance": "waltz",
+   "name": "Left Box Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     -45,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     -45,
+     "2"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -45,
+     "4"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -45,
+     "5"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "A box step that turns a quarter to the left on each half.",
+   "follow_cue": "Back-side-close, forward-side-close, turning left with him.",
+   "mistake": "Turning on the close; the turn happens on the first two steps of each half.",
+   "source": "general"
+  },
+  {
+   "id": "waltz_underarm",
+   "dance": "waltz",
+   "name": "Underarm Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "5"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Forward box half while you raise your left hand, then back box half as she turns right under your arm.",
+   "follow_cue": "Back box half, then turn right under his arm with three small steps and come back into hold.",
+   "mistake": "Pulling her around with the arm; raise the hand and let her walk the turn.",
+   "source": "general"
+  },
+  {
+   "id": "waltz_natural",
+   "dance": "waltz",
+   "name": "Natural Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     1,
+     45,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     45,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     45,
+     "3"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     45,
+     "4"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     45,
+     "5"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     45,
+     "6"
+    ]
+   ],
+   "lead_cue": "Right foot forward and start turning right. About 3/4 of a turn over six steps.",
+   "follow_cue": "Left foot back, heel turn on 2-3, then forward-side-close.",
+   "mistake": "Starting it with the left foot. A natural (right) turn always starts on the right foot for the leader.",
+   "source": "v1"
+  },
+  {
+   "id": "waltz_reverse",
+   "dance": "waltz",
+   "name": "Reverse Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     -45,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     -45,
+     "2"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     -45,
+     "3"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -45,
+     "4"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -45,
+     "5"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     -45,
+     "6"
+    ]
+   ],
+   "lead_cue": "Left foot forward and turn left. About 3/4 of a turn over six steps.",
+   "follow_cue": "Right foot back, heel turn, then forward-side-close.",
+   "mistake": "Following a Natural Turn directly. You need a Right Foot Closed Change in between.",
+   "source": "v1"
+  },
+  {
+   "id": "waltz_whisk",
+   "dance": "waltz",
+   "name": "Whisk",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "promenade",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "diag_fwd_r",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "cross_behind",
+     1,
+     0,
+     "3"
+    ]
+   ],
+   "lead_cue": "Forward, side, cross the left foot behind and open the follower into promenade.",
+   "follow_cue": "Back, side, cross the right foot behind as you turn your head right.",
+   "mistake": "Closing back to closed position after a Whisk. You end in promenade, so a Chasse from Promenade comes next.",
+   "source": "v1"
+  },
+  {
+   "id": "waltz_chasse_pp",
+   "dance": "waltz",
+   "name": "Chasse from Promenade",
+   "level": "Bronze",
+   "accepts": [
+    "promenade"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "cross_fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     0.5,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "3"
+    ]
+   ],
+   "lead_cue": "Right foot through in promenade, then side-close-side to bring her back to closed.",
+   "follow_cue": "Left foot through, then turn to face him on side-close-side.",
+   "mistake": "Dancing it from closed position. It only starts from promenade (for example after a Whisk).",
+   "source": "v1"
+  },
+  {
+   "id": "tango_walks",
+   "dance": "tango",
+   "name": "Tango Walks",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "fwd",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "Two slow walks, curving slightly left, feet placed with purpose.",
+   "follow_cue": "Two slow walks back, staying connected in the frame.",
+   "mistake": "Rising on the toes. Tango stays level.",
+   "source": "v1"
+  },
+  {
+   "id": "tango_basic",
+   "dance": "tango",
+   "name": "Basic (Walks + Tango Close)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "close",
+     2,
+     0,
+     "S",
+     false
+    ]
+   ],
+   "lead_cue": "Slow, slow, quick, quick, slow. Draw the left foot in on the last slow without weight.",
+   "follow_cue": "Back, back, back, side, draw the right foot in without weight.",
+   "mistake": "Putting weight on the drawn foot. The same foot stays free for the next figure.",
+   "source": "v1"
+  },
+  {
+   "id": "tango_link",
+   "dance": "tango",
+   "name": "Progressive Link",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "promenade",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Quick-quick: left forward, then right back as you snap into promenade.",
+   "follow_cue": "Right back, then left back as your head snaps to the right.",
+   "mistake": "Dancing a Closed Promenade without the Link first.",
+   "source": "v1"
+  },
+  {
+   "id": "tango_closed_prom",
+   "dance": "tango",
+   "name": "Closed Promenade",
+   "level": "Bronze",
+   "accepts": [
+    "promenade"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "cross_fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     2,
+     0,
+     "S"
+    ]
+   ],
+   "lead_cue": "Slow side in promenade, quick through, quick side, slow close back to closed.",
+   "follow_cue": "Side, through, turn to face him, close.",
+   "mistake": "Starting it from closed position. It needs promenade (use a Progressive Link).",
+   "source": "v1"
+  },
+  {
+   "id": "tango_corte",
+   "dance": "tango",
+   "name": "Corte",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "back",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "replace",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "close",
+     2,
+     0,
+     "S",
+     false
+    ]
+   ],
+   "lead_cue": "Slow back into a soft dip on the left, slow recover forward, then tango close.",
+   "follow_cue": "Slow forward into the dip, recover back, then tango close.",
+   "mistake": "Bending forward at the waist in the dip; bend the standing knee and keep the frame upright.",
+   "source": "general"
+  },
+  {
+   "id": "tango_rock_turn",
+   "dance": "tango",
+   "name": "Left Rock Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     -45,
+     "S"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "R",
+     "back",
+     2,
+     -45,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Forward turning left, rock back and forward, back, then side-close. About half a turn left.",
+   "follow_cue": "Back, rock forward and back, forward, side, close.",
+   "mistake": "Making the rock big; it is a small weight change, almost in place.",
+   "source": "general"
+  },
+  {
+   "id": "fox_basic_fwd",
+   "dance": "foxtrot",
+   "name": "Forward Basic",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Slow, slow, quick, quick: walk, walk, side, close.",
+   "follow_cue": "Back, back, side, close.",
+   "mistake": "Rushing the slows. Each slow is two full beats.",
+   "source": "v1"
+  },
+  {
+   "id": "fox_basic_back",
+   "dance": "foxtrot",
+   "name": "Back Basic",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "back",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "back",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Back, back, side, close. Keep the frame toward your partner.",
+   "follow_cue": "Forward, forward, side, close.",
+   "mistake": "Looking down at the feet while going backward.",
+   "source": "v1"
+  },
+  {
+   "id": "fox_promenade",
+   "dance": "foxtrot",
+   "name": "Promenade",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "cross_fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Open to promenade, walk through, then side-close to come back to closed.",
+   "follow_cue": "Open to promenade, walk through with your left, side-close.",
+   "mistake": "Forgetting to close at the end. The quicks bring you back to closed position.",
+   "source": "v1"
+  },
+  {
+   "id": "fox_rock_turn",
+   "dance": "foxtrot",
+   "name": "Left Rock Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     -45,
+     "S"
+    ],
+    [
+     "R",
+     "back",
+     2,
+     -45,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     -45,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Forward turning left, rock back, then side-close to finish the turn.",
+   "follow_cue": "Back, rock forward, side, close.",
+   "mistake": "Rushing the rock; it is a slow.",
+   "source": "general"
+  },
+  {
+   "id": "fox_underarm",
+   "dance": "foxtrot",
+   "name": "Underarm Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "cross_fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Open to promenade, walk through while raising your left hand, side-close as she finishes the turn.",
+   "follow_cue": "Walk through, then turn right under his arm and side-close back into hold.",
+   "mistake": "Holding the hand tightly; keep a loose finger connection so she can turn.",
+   "source": "general"
+  },
+  {
+   "id": "fox_twinkle_pp",
+   "dance": "foxtrot",
+   "name": "Twinkle to Promenade",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "promenade",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Slow forward, then side-close as you open her into promenade.",
+   "follow_cue": "Slow back, then side-close as you turn to promenade.",
+   "mistake": "Staying closed; the quicks open the couple into promenade.",
+   "source": "general"
+  },
+  {
+   "id": "fox_closing_twinkle",
+   "dance": "foxtrot",
+   "name": "Closing Twinkle",
+   "level": "Bronze",
+   "accepts": [
+    "promenade"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "cross_fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "From promenade: slow through on the right, then side-close as you square up to closed hold.",
+   "follow_cue": "Slow through on the left, then turn to face him on side-close.",
+   "mistake": "Forgetting to bring her square; she should face you by the close.",
+   "source": "general",
+   "notes_for_beginners": "Taught in the team's Smooth Foxtrot notes."
+  },
+  {
+   "id": "vw_fwd_change_l",
+   "dance": "viennese",
+   "name": "Forward Change (left foot)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "3"
+    ]
+   ],
+   "lead_cue": "Forward, side, close on the left foot to switch to right-foot turns.",
+   "follow_cue": "Back, side, close.",
+   "mistake": "Stopping your travel; keep moving around the room.",
+   "source": "general"
+  },
+  {
+   "id": "vw_fwd_change_r",
+   "dance": "viennese",
+   "name": "Forward Change (right foot)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "3"
+    ]
+   ],
+   "lead_cue": "Forward, side, close on the right foot to switch to left turns.",
+   "follow_cue": "Back, side, close.",
+   "mistake": "Skipping it between a right turn and a left turn.",
+   "source": "general"
+  },
+  {
+   "id": "vw_balance",
+   "dance": "viennese",
+   "name": "Hesitation (Balance Step)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "close",
+     2,
+     0,
+     "2-3",
+     false
+    ]
+   ],
+   "lead_cue": "Step forward on the left and hold for two beats, the right foot closing without weight.",
+   "follow_cue": "Step back on the right and hold.",
+   "mistake": "Changing weight on the hold; the right foot stays free.",
+   "source": "general"
+  },
+  {
+   "id": "vw_left_turn",
+   "dance": "viennese",
+   "name": "Left (Reverse) Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     -45,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     -90,
+     "2"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -45,
+     "4"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -90,
+     "5"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Turn left: forward-side-close, back-side-close, three-quarters of a turn.",
+   "follow_cue": "Back-side-close, forward-side-close, turning left.",
+   "mistake": "Making big steps; Viennese is fast, so keep them compact.",
+   "source": "general"
+  },
+  {
+   "id": "vw_right_turn",
+   "dance": "viennese",
+   "name": "Right (Natural) Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     1,
+     45,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     90,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     45,
+     "4"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     90,
+     "5"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Turn right: forward-side-close, back-side-close.",
+   "follow_cue": "Back-side-close, forward-side-close, turning right.",
+   "mistake": "Starting it on the left foot.",
+   "source": "general"
+  },
+  {
+   "id": "vw_underarm",
+   "dance": "viennese",
+   "name": "Underarm Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "5"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Forward change while raising your left hand, then back change as she turns right under it.",
+   "follow_cue": "Back change, then turn right under his arm and return to hold.",
+   "mistake": "Letting go completely; keep the hand connection through the turn.",
+   "source": "general"
+  },
+  {
+   "id": "cc_basic_fwd",
+   "dance": "chacha",
+   "name": "Basic (forward half)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "Rock forward, replace, chasse to the left.",
+   "follow_cue": "Rock back, replace, chasse to the right.",
+   "mistake": "Starting the rock on 1. In cha cha the break step is on 2.",
+   "source": "v1"
+  },
+  {
+   "id": "cc_basic_back",
+   "dance": "chacha",
+   "name": "Basic (back half)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "Rock back, replace, chasse to the right.",
+   "follow_cue": "Rock forward, replace, chasse to the left.",
+   "mistake": "Taking the chasse too big. Keep the side steps small.",
+   "source": "v1"
+  },
+  {
+   "id": "cc_basic_full",
+   "dance": "chacha",
+   "name": "Basic (full)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "Forward half then back half. Ends with the left foot free.",
+   "follow_cue": "Back half then forward half.",
+   "mistake": "Going straight from a full Basic into a New Yorker. The New Yorker needs the right foot free.",
+   "source": "v1"
+  },
+  {
+   "id": "cc_new_yorker",
+   "dance": "chacha",
+   "name": "New Yorker",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "R",
+     "cross_fwd",
+     1,
+     -90,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     90,
+     "4"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "cross_fwd",
+     1,
+     90,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     0.5,
+     -90,
+     "4"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "Turn a quarter and check forward through side-by-side, replace, chasse back to face. Then the other side.",
+   "follow_cue": "Mirror him: check forward with the left, replace, chasse.",
+   "mistake": "Checking with the wrong foot. The leader's first check is with the right foot.",
+   "source": "v1"
+  },
+  {
+   "id": "cc_hand_to_hand",
+   "dance": "chacha",
+   "name": "Hand to Hand",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "R",
+     "back",
+     1,
+     90,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     -90,
+     "4"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     -90,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     0.5,
+     90,
+     "4"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "Like a New Yorker, but you check BACK side by side, holding one hand.",
+   "follow_cue": "Check back with the left, side by side.",
+   "mistake": "Breaking forward instead of back.",
+   "source": "v1"
+  },
+  {
+   "id": "cc_underarm",
+   "dance": "chacha",
+   "name": "Underarm Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "Dance a back half while raising your left hand so she turns right under it.",
+   "follow_cue": "Forward, turn right under his arm on 3, chasse to face him.",
+   "mistake": "Leading the turn on the wrong foot: the leader needs the right foot free.",
+   "source": "v1"
+  },
+  {
+   "id": "cc_fan",
+   "dance": "chacha",
+   "name": "Fan",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "fan",
+   "steps": [
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "Dance a back half while you lead her back and out to your left side into fan position.",
+   "follow_cue": "Forward, then turn left and step back away from him, ending at a right angle on his left.",
+   "mistake": "Pushing her away; lead the fan with your body turn, not by throwing the arm.",
+   "source": "general",
+   "notes_for_beginners": "Team video: 'Cha cha curl into fan'."
+  },
+  {
+   "id": "cc_hockey",
+   "dance": "chacha",
+   "name": "Hockey Stick",
+   "level": "Bronze",
+   "accepts": [
+    "fan"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "R",
+     "in_place",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "in_place",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "fwd",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "cross_behind",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "From fan: forward, replace, chasse in place raising your left hand; then back, replace, and forward lock as she turns under.",
+   "follow_cue": "Close, then walk forward and turn left under his arm, ending in open position.",
+   "mistake": "Trying it from closed hold; it only starts from fan.",
+   "source": "general"
+  },
+  {
+   "id": "rb_basic_fwd",
+   "dance": "rumba",
+   "name": "Basic (forward half)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "Forward, replace, side and hold through 1.",
+   "follow_cue": "Back, replace, side and hold.",
+   "mistake": "Not holding the side step. 4-1 is two beats.",
+   "source": "v1"
+  },
+  {
+   "id": "rb_basic_back",
+   "dance": "rumba",
+   "name": "Basic (back half)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     0,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "Back, replace, side and hold.",
+   "follow_cue": "Forward, replace, side and hold.",
+   "mistake": "Bouncing. Rumba stays grounded with hip action.",
+   "source": "v1"
+  },
+  {
+   "id": "rb_basic_full",
+   "dance": "rumba",
+   "name": "Basic (full box)",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "4-1"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     0,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "Forward half then back half. Ends with the left foot free.",
+   "follow_cue": "Back half then forward half.",
+   "mistake": "Following a full basic with a Fan. The Fan needs the right foot free.",
+   "source": "v1"
+  },
+  {
+   "id": "rb_new_yorker",
+   "dance": "rumba",
+   "name": "New Yorker",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "R",
+     "cross_fwd",
+     1,
+     -90,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     90,
+     "4-1"
+    ],
+    [
+     "L",
+     "cross_fwd",
+     1,
+     90,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     2,
+     -90,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "Quarter turn, check forward, replace, side. Then the other way.",
+   "follow_cue": "Mirror him with your left foot first.",
+   "mistake": "Starting with the left foot. The leader needs the right foot free.",
+   "source": "v1"
+  },
+  {
+   "id": "rb_hand_to_hand",
+   "dance": "rumba",
+   "name": "Hand to Hand",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "R",
+     "back",
+     1,
+     90,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     -90,
+     "4-1"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     -90,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     2,
+     90,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "Turn a quarter and step back side by side holding one hand, replace, side. Then the other side.",
+   "follow_cue": "Mirror him, stepping back with the left first.",
+   "mistake": "Breaking forward instead of back.",
+   "source": "general"
+  },
+  {
+   "id": "rb_spot_turn",
+   "dance": "rumba",
+   "name": "Spot Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "R",
+     "cross_fwd",
+     1,
+     -180,
+     "2"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     -180,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     0,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "Step across on the right and turn a full turn to the left on the spot, then side.",
+   "follow_cue": "Turn a full turn to the right on the spot while he turns left.",
+   "mistake": "Travelling during the turn; stay on the spot.",
+   "source": "general"
+  },
+  {
+   "id": "rb_fan",
+   "dance": "rumba",
+   "name": "Fan",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "fan",
+   "steps": [
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     0,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "Back half of the basic while you lead her out to your left into fan position.",
+   "follow_cue": "Forward, back, back as you turn away to his left side.",
+   "mistake": "Dancing a Fan from open position or with the wrong foot. It starts from closed with the right foot free.",
+   "source": "v1"
+  },
+  {
+   "id": "rb_hockey",
+   "dance": "rumba",
+   "name": "Hockey Stick",
+   "level": "Bronze",
+   "accepts": [
+    "fan"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     2,
+     0,
+     "4-1"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "fwd",
+     2,
+     0,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "From fan: forward, replace, close and raise your left hand; she turns under it.",
+   "follow_cue": "Close, forward, forward, then turn left under his arm.",
+   "mistake": "Dancing it from closed. A Hockey Stick only starts from fan position.",
+   "source": "v1"
+  },
+  {
+   "id": "rb_alemana",
+   "dance": "rumba",
+   "name": "Alemana",
+   "level": "Bronze",
+   "accepts": [
+    "fan"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     2,
+     0,
+     "4-1"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     2,
+     0,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "From fan: forward, replace, close, then lead her to turn right under your arm back to closed.",
+   "follow_cue": "Close, forward, forward, then turn right under his arm.",
+   "mistake": "Trying it from open position after a Hockey Stick.",
+   "source": "v1"
+  },
+  {
+   "id": "jv_fallaway",
+   "dance": "jive",
+   "name": "Fallaway Rock",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "side_l",
+     0.75,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "4"
+    ],
+    [
+     "R",
+     "side_r",
+     0.75,
+     0,
+     "5"
+    ],
+    [
+     "L",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Rock back, replace, chasse left, chasse right. Stay bouncy.",
+   "follow_cue": "Rock back, replace, chasse right, chasse left.",
+   "mistake": "Flat feet. Jive chasses are danced on the balls of the feet.",
+   "source": "v1"
+  },
+  {
+   "id": "jv_change_rl",
+   "dance": "jive",
+   "name": "Change of Place Right to Left",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "side_l",
+     0.75,
+     -45,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -45,
+     "4"
+    ],
+    [
+     "R",
+     "side_r",
+     0.75,
+     0,
+     "5"
+    ],
+    [
+     "L",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Rock, then raise your left hand on 4 so she turns under it to your left side. You end apart.",
+   "follow_cue": "Rock, then turn right under his arm on the first chasse.",
+   "mistake": "Starting it from open position. It starts from closed; from open use Left to Right.",
+   "source": "v1"
+  },
+  {
+   "id": "jv_change_lr",
+   "dance": "jive",
+   "name": "Change of Place Left to Right",
+   "level": "Newcomer",
+   "accepts": [
+    "open"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "side_l",
+     0.75,
+     45,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     45,
+     "4"
+    ],
+    [
+     "R",
+     "side_r",
+     0.75,
+     0,
+     "5"
+    ],
+    [
+     "L",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Rock, then lead her to turn left under your arm while you turn right.",
+   "follow_cue": "Rock, then turn left under his arm.",
+   "mistake": "Dancing it from closed position. You need to be apart first (Right to Left).",
+   "source": "v1"
+  },
+  {
+   "id": "jv_link",
+   "dance": "jive",
+   "name": "Link",
+   "level": "Newcomer",
+   "accepts": [
+    "open"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "fwd",
+     0.75,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "4"
+    ],
+    [
+     "R",
+     "side_r",
+     0.75,
+     0,
+     "5"
+    ],
+    [
+     "L",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Rock, then draw her in with a forward chasse back to closed hold.",
+   "follow_cue": "Rock, then chasse forward into his arms.",
+   "mistake": "Forgetting to link. After open figures, the Link brings you back to closed.",
+   "source": "v1"
+  },
+  {
+   "id": "jv_throwaway",
+   "dance": "jive",
+   "name": "Fallaway Throwaway",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "side_l",
+     0.75,
+     -45,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     -45,
+     "4"
+    ],
+    [
+     "R",
+     "side_r",
+     0.75,
+     0,
+     "5"
+    ],
+    [
+     "L",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Rock, then chasse turning left as you send her out to open position, chasse in place.",
+   "follow_cue": "Rock, then travel back away from him on your chasses.",
+   "mistake": "Throwing her with the arm; turn your body to lead it.",
+   "source": "general"
+  },
+  {
+   "id": "jv_american_spin",
+   "dance": "jive",
+   "name": "American Spin",
+   "level": "Bronze",
+   "accepts": [
+    "open"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "fwd",
+     0.75,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "L",
+     "in_place",
+     1,
+     0,
+     "4"
+    ],
+    [
+     "R",
+     "in_place",
+     0.75,
+     0,
+     "5"
+    ],
+    [
+     "L",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "R",
+     "in_place",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Rock, chasse forward and push her right hand to spin her, then chasse in place.",
+   "follow_cue": "Rock, chasse forward into his hand, spin right on the second chasse.",
+   "mistake": "Holding on during her spin; let go and catch her hand again.",
+   "source": "general"
+  },
+  {
+   "id": "jv_hands_behind",
+   "dance": "jive",
+   "name": "Change of Hands Behind Back",
+   "level": "Bronze",
+   "accepts": [
+    "open"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "fwd",
+     0.75,
+     90,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     90,
+     "4"
+    ],
+    [
+     "R",
+     "fwd",
+     0.75,
+     0,
+     "5"
+    ],
+    [
+     "L",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Rock, then pass her right hand behind your back as you turn.",
+   "follow_cue": "Rock, then walk past him as he changes hands.",
+   "mistake": "Trying it from closed hold. You need open position.",
+   "source": "v1"
+  },
+  {
+   "id": "sb_basic",
+   "dance": "samba",
+   "name": "Natural Basic Movement",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     0.75,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "R",
+     "in_place",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "back",
+     0.75,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "close",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "L",
+     "in_place",
+     1,
+     0,
+     "2"
+    ]
+   ],
+   "lead_cue": "Forward on the right, close, change weight; back on the left, close, change weight. Bounce through the knees.",
+   "follow_cue": "Back on the left, close, change; forward on the right, close, change.",
+   "mistake": "Dancing it flat; the samba bounce comes from softening the knees.",
+   "source": "general"
+  },
+  {
+   "id": "sb_whisks",
+   "dance": "samba",
+   "name": "Whisks to Right and Left",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "side_r",
+     0.75,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "cross_behind",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "side_l",
+     0.75,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "cross_behind",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "2"
+    ]
+   ],
+   "lead_cue": "Side, cross behind on the ball of the foot, replace; then to the other side.",
+   "follow_cue": "Side, cross behind, replace, the mirror of him.",
+   "mistake": "Putting the heel down on the cross; stay on the ball.",
+   "source": "general"
+  },
+  {
+   "id": "sb_whisk_pp",
+   "dance": "samba",
+   "name": "Whisks into Promenade",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "promenade",
+   "steps": [
+    [
+     "R",
+     "side_r",
+     0.75,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "cross_behind",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "side_l",
+     0.75,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "cross_behind",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "2"
+    ]
+   ],
+   "lead_cue": "Two whisks, opening her into promenade on the second one.",
+   "follow_cue": "Two whisks, turning to promenade on the second one.",
+   "mistake": "Not opening the hold; turn your body to make room for promenade.",
+   "source": "general"
+  },
+  {
+   "id": "sb_walks_pp",
+   "dance": "samba",
+   "name": "Samba Walks in Promenade",
+   "level": "Bronze",
+   "accepts": [
+    "promenade"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     0.75,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "back",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "fwd",
+     0.75,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "back",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "2"
+    ]
+   ],
+   "lead_cue": "Forward, small back step with part weight, slip the front foot back. Travel side by side.",
+   "follow_cue": "The same walks on the other foot, side by side with him.",
+   "mistake": "Taking big strides; samba walks are compact with a pelvic tilt.",
+   "source": "general",
+   "notes_for_beginners": "Team video: Bronze Samba routine."
+  },
+  {
+   "id": "sb_side_walk",
+   "dance": "samba",
+   "name": "Side Samba Walk",
+   "level": "Bronze",
+   "accepts": [
+    "promenade"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     0.75,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "fwd",
+     0.75,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "2"
+    ]
+   ],
+   "lead_cue": "Like a samba walk, but the second step goes to the side.",
+   "follow_cue": "Mirror him in promenade.",
+   "mistake": "Losing the 1-a-2 rhythm; the 'a' is very short.",
+   "source": "general"
+  },
+  {
+   "id": "sb_botafogo_close",
+   "dance": "samba",
+   "name": "Botafogos to Closed",
+   "level": "Bronze",
+   "accepts": [
+    "promenade"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "cross_fwd",
+     0.75,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "cross_fwd",
+     0.75,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "side_r",
+     0.25,
+     0,
+     "a"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "2"
+    ]
+   ],
+   "lead_cue": "Cross forward, side on the ball, replace; again on the other foot as you bring her back to closed hold.",
+   "follow_cue": "Cross forward, side, replace, ending facing him.",
+   "mistake": "Forgetting to rotate the body to the side on each cross.",
+   "source": "general"
+  },
+  {
+   "id": "ps_sur_place",
+   "dance": "paso",
+   "name": "Sur Place",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "in_place",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "in_place",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "in_place",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "in_place",
+     1,
+     0,
+     "4"
+    ]
+   ],
+   "lead_cue": "March in place on the balls of the feet, proud chest and lifted posture.",
+   "follow_cue": "March in place with him.",
+   "mistake": "Letting the posture sag; Paso is upright and proud.",
+   "source": "general"
+  },
+  {
+   "id": "ps_basic",
+   "dance": "paso",
+   "name": "Basic Movement",
+   "level": "Newcomer",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "4"
+    ]
+   ],
+   "lead_cue": "March forward, heel leads, one step per beat.",
+   "follow_cue": "March back, toe leads.",
+   "mistake": "Bouncing; Paso marches stay level.",
+   "source": "general"
+  },
+  {
+   "id": "ps_appel",
+   "dance": "paso",
+   "name": "Appel and Forward",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "in_place",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "4"
+    ]
+   ],
+   "lead_cue": "Stamp in place on the right (the appel), then march forward and close.",
+   "follow_cue": "Stamp on the left, march back, close.",
+   "mistake": "Stamping loudly with the whole foot; the appel is a sharp flat-foot press.",
+   "source": "general"
+  },
+  {
+   "id": "ps_chasses",
+   "dance": "paso",
+   "name": "Chasses to Left",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "in_place",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "4"
+    ]
+   ],
+   "lead_cue": "Appel, then side-close-side along the floor.",
+   "follow_cue": "Appel, then side-close-side the opposite way.",
+   "mistake": "Dropping the heels on the chasse; stay on the balls.",
+   "source": "general"
+  },
+  {
+   "id": "ps_separation",
+   "dance": "paso",
+   "name": "Separation",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "in_place",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "in_place",
+     1,
+     0,
+     "4"
+    ],
+    [
+     "R",
+     "in_place",
+     1,
+     0,
+     "5"
+    ],
+    [
+     "L",
+     "in_place",
+     1,
+     0,
+     "6"
+    ],
+    [
+     "R",
+     "in_place",
+     1,
+     0,
+     "7"
+    ],
+    [
+     "L",
+     "in_place",
+     1,
+     0,
+     "8"
+    ]
+   ],
+   "lead_cue": "Appel, forward, close, then mark time while she walks away and comes back to you.",
+   "follow_cue": "Walk back away from him for three steps, then walk back into hold.",
+   "mistake": "Letting go of the hand; keep the connection as she separates.",
+   "source": "general"
+  },
+  {
+   "id": "ps_prom_link",
+   "dance": "paso",
+   "name": "Promenade Link",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "promenade",
+   "steps": [
+    [
+     "R",
+     "in_place",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "in_place",
+     1,
+     0,
+     "4"
+    ]
+   ],
+   "lead_cue": "Appel, then side and close as you open her into promenade.",
+   "follow_cue": "Appel, side, close, turning to promenade.",
+   "mistake": "Staying closed; open her with your body turn.",
+   "source": "general"
+  },
+  {
+   "id": "ps_promenade",
+   "dance": "paso",
+   "name": "Promenade",
+   "level": "Bronze",
+   "accepts": [
+    "promenade"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "R",
+     "in_place",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "cross_fwd",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "4"
+    ]
+   ],
+   "lead_cue": "Appel, side in promenade, cross through, then side as you bring her back to face you.",
+   "follow_cue": "Appel, side, through, turn to face him.",
+   "mistake": "Forgetting the strong shape; stay tall and proud in promenade.",
+   "source": "general",
+   "notes_for_beginners": "Team video: 'Paso doble promenade into Spanish line' (the Spanish line is a Silver add-on)."
+  },
+  {
+   "id": "ac_basic",
+   "dance": "am_chacha",
+   "name": "Basic",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "Forward break on 2, replace, chasse left; back break, replace, chasse right.",
+   "follow_cue": "Back break, replace, chasse right; forward break, replace, chasse left.",
+   "mistake": "Breaking on 1; the break step is on 2.",
+   "source": "general"
+  },
+  {
+   "id": "ac_underarm",
+   "dance": "am_chacha",
+   "name": "Underarm Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "Basic, raising your left hand on the second half so she turns right under it.",
+   "follow_cue": "Forward break, then turn right under his arm on 2-3 and chasse.",
+   "mistake": "Leading the turn on the forward half; it happens on the back half.",
+   "source": "general"
+  },
+  {
+   "id": "ac_crossover",
+   "dance": "am_chacha",
+   "name": "Crossover Breaks",
+   "level": "Bronze",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "cross_fwd",
+     1,
+     90,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     0.5,
+     -90,
+     "4"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "cross_fwd",
+     1,
+     -90,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     90,
+     "4"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "Turn a quarter and cross the left foot through, replace, chasse back to face; then the other way.",
+   "follow_cue": "Mirror him, crossing the right foot first.",
+   "mistake": "Bending the supporting knee on the cross; keep the legs straight.",
+   "source": "general"
+  },
+  {
+   "id": "ac_open_break",
+   "dance": "am_chacha",
+   "name": "Open Break",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "Rock back to open out to arm's length, replace, chasse; repeat the break.",
+   "follow_cue": "Rock back away from him, replace, chasse.",
+   "mistake": "Letting the arms go slack; keep tone so you can lead the next figure.",
+   "source": "general"
+  },
+  {
+   "id": "ac_cross_body",
+   "dance": "am_chacha",
+   "name": "Cross Body Lead",
+   "level": "Bronze",
+   "accepts": [
+    "open"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     -45,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     0.5,
+     45,
+     "4"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -45,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     45,
+     "4"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "Break forward, then turn a quarter left out of her way so she walks across in front of you; take her back into hold.",
+   "follow_cue": "Walk forward across his path on the second half and turn to face him.",
+   "mistake": "Standing in her way; step to the side to open the path.",
+   "source": "general"
+  },
+  {
+   "id": "ac_spot_turn",
+   "dance": "am_chacha",
+   "name": "Spot Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "cross_fwd",
+     1,
+     180,
+     "2"
+    ],
+    [
+     "R",
+     "fwd",
+     1,
+     180,
+     "3"
+    ],
+    [
+     "L",
+     "side_l",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "cross_fwd",
+     1,
+     -180,
+     "2"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     -180,
+     "3"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "1"
+    ]
+   ],
+   "lead_cue": "Cross through and turn a full turn to the right on the spot, chasse; then turn back to the left.",
+   "follow_cue": "Mirror him, turning left first.",
+   "mistake": "Travelling while turning; keep the turn on the spot.",
+   "source": "general"
+  },
+  {
+   "id": "ar_box",
+   "dance": "am_rumba",
+   "name": "Box Step",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "back",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Slow forward, quick side, quick close; slow back, quick side, quick close.",
+   "follow_cue": "Slow back, side, close; slow forward, side, close.",
+   "mistake": "Stepping with straight legs at the wrong time; bend the moving knee and straighten as weight arrives (Cuban motion).",
+   "source": "general"
+  },
+  {
+   "id": "ar_prog_walks",
+   "dance": "am_rumba",
+   "name": "Progressive Walks",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Walk forward slow, quick, quick, with hip action on each step.",
+   "follow_cue": "Walk back slow, quick, quick, toe first.",
+   "mistake": "Walking on the heels; Rumba walks go ball-flat.",
+   "source": "general"
+  },
+  {
+   "id": "ar_underarm",
+   "dance": "am_rumba",
+   "name": "Underarm Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "back",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Box step; raise your left hand on the back half so she turns right under it.",
+   "follow_cue": "Back half, then turn right under his arm and close.",
+   "mistake": "Pulling her around; just raise the hand and give her room.",
+   "source": "general"
+  },
+  {
+   "id": "ar_crossover",
+   "dance": "am_rumba",
+   "name": "Crossover Breaks",
+   "level": "Bronze",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "cross_fwd",
+     1,
+     -90,
+     "Q"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     90,
+     "S"
+    ],
+    [
+     "L",
+     "cross_fwd",
+     1,
+     90,
+     "Q"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Side, then turn and cross through on the right, replace; side, cross through on the left, replace.",
+   "follow_cue": "Mirror him, crossing with the left first.",
+   "mistake": "Forgetting to come back to face on the side step.",
+   "source": "general"
+  },
+  {
+   "id": "ar_open_break",
+   "dance": "am_rumba",
+   "name": "Open Break",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Side, rock back away from her to open out, replace; side, rock back, replace.",
+   "follow_cue": "Side, rock back away from him, replace.",
+   "mistake": "Letting go; keep one hand connected with some tone.",
+   "source": "general"
+  },
+  {
+   "id": "ar_cross_body",
+   "dance": "am_rumba",
+   "name": "Cross Body Lead",
+   "level": "Bronze",
+   "accepts": [
+    "open"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "R",
+     "back",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Slow forward, then turn a quarter left out of her path and lead her across; finish in closed hold.",
+   "follow_cue": "Walk forward across his path and turn to face him.",
+   "mistake": "Blocking her path; step aside before she crosses.",
+   "source": "general"
+  },
+  {
+   "id": "ecs_single",
+   "dance": "swing",
+   "name": "Single-Rhythm Basic",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "1-2"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     0,
+     "3-4"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "5"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Side left, side right, rock back, replace. Six counts.",
+   "follow_cue": "Side right, side left, rock back, replace.",
+   "mistake": "Rocking forward; the rock step goes back.",
+   "source": "general"
+  },
+  {
+   "id": "ecs_triple",
+   "dance": "swing",
+   "name": "Triple-Rhythm Basic",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     0.5,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "5"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Triple step left (1-and-2), triple step right (3-and-4), rock back, replace.",
+   "follow_cue": "Triple right, triple left, rock back, replace.",
+   "mistake": "Taking big triple steps; keep them small and bouncy.",
+   "source": "general"
+  },
+  {
+   "id": "ecs_throwout",
+   "dance": "swing",
+   "name": "Throwout",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     0.5,
+     -45,
+     "1"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "5"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Turn a little left on the first triple to send her out to open position.",
+   "follow_cue": "Travel back away from him on the triples.",
+   "mistake": "Throwing with the arm; turn the body to lead it.",
+   "source": "general"
+  },
+  {
+   "id": "ecs_underarm",
+   "dance": "swing",
+   "name": "Lady's Underarm Turn",
+   "level": "Bronze",
+   "accepts": [
+    "open"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     0.5,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "5"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Raise your left hand on the first triple so she turns right under it; you change places.",
+   "follow_cue": "Turn right under his arm on the first triple and face him.",
+   "mistake": "Raising the arm too late; lift it on count 1.",
+   "source": "general"
+  },
+  {
+   "id": "ecs_tuck",
+   "dance": "swing",
+   "name": "Tuck Turn",
+   "level": "Bronze",
+   "accepts": [
+    "open"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     0.5,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "5"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "Draw her in on the first triple, then push gently so she spins right under your arm.",
+   "follow_cue": "Come in on the first triple, then spin right on the second.",
+   "mistake": "Spinning her before the tuck; the compression comes first.",
+   "source": "general"
+  },
+  {
+   "id": "ecs_return",
+   "dance": "swing",
+   "name": "Return to Closed",
+   "level": "Bronze",
+   "accepts": [
+    "open"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     0.5,
+     0,
+     "1"
+    ],
+    [
+     "R",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "side_r",
+     0.5,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     0.5,
+     0,
+     "&"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "4"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "5"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "6"
+    ]
+   ],
+   "lead_cue": "From open, draw her in on the triples and take closed hold before the rock.",
+   "follow_cue": "Triple forward into his arms, then rock back.",
+   "mistake": "Skipping it and doing closed figures from open position.",
+   "source": "general"
+  },
+  {
+   "id": "bo_basic",
+   "dance": "bolero",
+   "name": "Basic",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Slow side with a rise, then quick back break and replace; slow side, quick forward break and replace.",
+   "follow_cue": "Slow side with a rise, quick forward break and replace; slow side, quick back break and replace.",
+   "mistake": "Rushing the slow; it is a long, rising side step with body sway.",
+   "source": "general",
+   "notes_for_beginners": "Taught in the team's Bronze Bolero notes."
+  },
+  {
+   "id": "bo_crossover",
+   "dance": "bolero",
+   "name": "Crossover Breaks",
+   "level": "Bronze",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "cross_fwd",
+     1,
+     -90,
+     "Q"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     90,
+     "S"
+    ],
+    [
+     "L",
+     "cross_fwd",
+     1,
+     90,
+     "Q"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Slow side, turn and cross through on the right, replace; slow side, cross through on the left, replace.",
+   "follow_cue": "Mirror him: slow side, cross through on the left first.",
+   "mistake": "Not rising on the slow side step.",
+   "source": "general",
+   "notes_for_beginners": "Taught in the team's Bronze Bolero notes."
+  },
+  {
+   "id": "bo_underarm",
+   "dance": "bolero",
+   "name": "Underarm Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Basic, raising your left hand on the second half so she turns right under it.",
+   "follow_cue": "Turn right under his arm on the second quick-quick.",
+   "mistake": "Holding the hand tight; let it swivel in your fingers.",
+   "source": "general",
+   "notes_for_beginners": "Taught in the team's Bronze Bolero notes."
+  },
+  {
+   "id": "bo_open_break",
+   "dance": "bolero",
+   "name": "Open Break",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "side_r",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Slow side, rock back to open out, replace; slow side, rock back again, replace.",
+   "follow_cue": "Slow side, rock back away from him, replace.",
+   "mistake": "Going floppy in the arms; keep tone so you can lead the next figure.",
+   "source": "general"
+  },
+  {
+   "id": "bo_cross_body",
+   "dance": "bolero",
+   "name": "Cross Body Lead",
+   "level": "Bronze",
+   "accepts": [
+    "open"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "L",
+     "close",
+     1,
+     -45,
+     "Q"
+    ],
+    [
+     "R",
+     "back",
+     2,
+     0,
+     "S"
+    ],
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "Q"
+    ],
+    [
+     "R",
+     "close",
+     1,
+     0,
+     "Q"
+    ]
+   ],
+   "lead_cue": "Slow forward, turn left out of her way while she crosses, finish in closed hold.",
+   "follow_cue": "Walk across his path and turn to face him.",
+   "mistake": "Blocking her path.",
+   "source": "general"
+  },
+  {
+   "id": "mb_basic",
+   "dance": "mambo",
+   "name": "Basic",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     2,
+     0,
+     "4-1"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     2,
+     0,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "Break forward on 2, replace on 3, close on 4 and hold 1; then back break.",
+   "follow_cue": "Break back on 2, replace, close, hold; then forward.",
+   "mistake": "Stepping on 1; mambo breaks on 2 and holds the 1.",
+   "source": "general"
+  },
+  {
+   "id": "mb_side",
+   "dance": "mambo",
+   "name": "Side Breaks",
+   "level": "Newcomer",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "side_l",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     2,
+     0,
+     "4-1"
+    ],
+    [
+     "R",
+     "side_r",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     2,
+     0,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "Break to the side on 2, replace, close; then the other side.",
+   "follow_cue": "Mirror him: break to your right first.",
+   "mistake": "Letting the hips stop; keep the Cuban motion.",
+   "source": "general"
+  },
+  {
+   "id": "mb_crossover",
+   "dance": "mambo",
+   "name": "Crossover Breaks",
+   "level": "Bronze",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "cross_fwd",
+     1,
+     90,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     2,
+     -90,
+     "4-1"
+    ],
+    [
+     "R",
+     "cross_fwd",
+     1,
+     -90,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     2,
+     90,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "Turn and cross the left through, replace, close back to face; then the other side.",
+   "follow_cue": "Mirror him, crossing with the right first.",
+   "mistake": "Taking a big step; the cross is short and sharp.",
+   "source": "general"
+  },
+  {
+   "id": "mb_underarm",
+   "dance": "mambo",
+   "name": "Underarm Turn",
+   "level": "Bronze",
+   "accepts": [
+    "closed",
+    "open"
+   ],
+   "ends": "same",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     2,
+     0,
+     "4-1"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     2,
+     0,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "Basic, raising your left hand on the back half so she turns right.",
+   "follow_cue": "Turn right under his arm on 2-3, close on 4.",
+   "mistake": "Leading the turn on 1.",
+   "source": "general"
+  },
+  {
+   "id": "mb_open_break",
+   "dance": "mambo",
+   "name": "Open Break",
+   "level": "Bronze",
+   "accepts": [
+    "closed"
+   ],
+   "ends": "open",
+   "steps": [
+    [
+     "L",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     2,
+     0,
+     "4-1"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     0,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     2,
+     0,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "Break back away from her on 2, replace, close; repeat.",
+   "follow_cue": "Break back away from him, replace, close.",
+   "mistake": "Losing the hand connection.",
+   "source": "general"
+  },
+  {
+   "id": "mb_cross_body",
+   "dance": "mambo",
+   "name": "Cross Body Lead",
+   "level": "Bronze",
+   "accepts": [
+    "open"
+   ],
+   "ends": "closed",
+   "steps": [
+    [
+     "L",
+     "fwd",
+     1,
+     -45,
+     "2"
+    ],
+    [
+     "R",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "L",
+     "close",
+     2,
+     45,
+     "4-1"
+    ],
+    [
+     "R",
+     "back",
+     1,
+     -45,
+     "2"
+    ],
+    [
+     "L",
+     "replace",
+     1,
+     0,
+     "3"
+    ],
+    [
+     "R",
+     "close",
+     2,
+     45,
+     "4-1"
+    ]
+   ],
+   "lead_cue": "Break forward, then turn left out of her way as she crosses; close up in hold.",
+   "follow_cue": "Walk across his path on 2-3-4 and turn to face him.",
+   "mistake": "Blocking her path.",
+   "source": "general"
+  }
+ ]
 }

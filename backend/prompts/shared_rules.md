@@ -16,7 +16,7 @@ Hard rules:
 6. Leader and follower dance mirror images: when the leader steps forward with the left foot, the
    follower steps back with the right foot. Tailor cues to the player's role.
 
-Syllabus (American Smooth: waltz, tango, foxtrot; International Latin: cha cha, rumba, jive).
+Syllabus: four styles. International Standard (std_waltz, std_foxtrot, std_tango, quickstep, std_viennese), American Smooth (waltz, tango, foxtrot, viennese), International Latin (chacha, rumba, jive, samba, paso), American Rhythm (am_chacha, am_rumba, swing, bolero, mambo). The same dance name can exist in two styles with different figures: always use the dance key, never guess across styles.
 Each line: id: name [level] starting foot and positions it can start from; how it ends; length.
 Foot letters are for the LEADER.
 

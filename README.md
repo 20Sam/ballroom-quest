@@ -1,7 +1,8 @@
 # Ballroom Quest
 
-A 3D practice game for novice ballroom dancers. Walk around a virtual studio, step onto the
-**Smooth** or **Latin** floor, combine figures with a few keystrokes, watch the footwork from your
+A 3D practice game for novice ballroom dancers. Walk around **Evans Hall Ballroom**, a Yale SOM–inspired
+building: a glass courtyard ringed by four oval classroom "drums", one studio per style (**International
+Standard**, **American Smooth**, **International Latin**, **American Rhythm**). Step into a studio, combine figures with a few keystrokes, watch the footwork from your
 own point of view (leader or follower), and play it to the beat. Three AI agents on `gpt-6-luna`
 help between songs:
 
@@ -42,7 +43,7 @@ game, the footwork and the free rule checks still work; only the three agents ar
 
 ## Try this (2-minute tour)
 
-1. Walk (WASD) into the **Smooth** ring and press **E**.
+1. Walk (WASD) into the **Smooth** drum (top right on the minimap) and press **E**.
 2. Press **2**, **4**, **5** (LF Closed Change → Natural Turn → Reverse Turn). The chain turns red: after
    a Natural Turn the right foot is free, but a Reverse Turn starts on the left.
 3. Press **C**: Coach Marisol explains it and offers to insert a Right Foot Closed Change.
@@ -78,12 +79,14 @@ backend/
   prompts/         shared_rules.md (+ syllabus, cached prefix), coach.md, drill_builder.md, planner.md
 frontend/
   index.html, style.css
-  js/world.js      the studio (three.js)
+  js/world.js      Evans Hall Ballroom: courtyard, 4 style drums, library, terrace, minimap, collisions
+  js/mocap.js      replays instructor motion captured from lesson videos (skeletons only)
   js/dancer.js     characters + footwork engine (leader steps -> mirrored follower)
   js/main.js       game loop, rhythm game, panels
   js/api.js        API client + local progress
 data/
-  figures.json     32 figures across 6 dances (Waltz, Tango, Foxtrot / Cha Cha, Rumba, Jive)
+  figures.json     130 figures, 19 dances, 4 styles (Standard figures checked against Alex Moore's
+                   technique book; figures marked "general" still need a coach check)
   drills.json      team drills saved by the Drill Builder
 output/
   agent_runs.jsonl measured tokens, cost and trace per agent run

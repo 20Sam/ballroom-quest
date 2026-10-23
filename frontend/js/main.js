@@ -1,8 +1,9 @@
 // Ballroom Quest: explore the studio, combine figures, play them to the beat, and ask the AI helpers.
 import * as THREE from 'three'
-import { buildWorld, STATIONS, FLOORS, ROOM, textSprite } from './world.js'
+import { buildWorld, STATIONS, FLOORS, DRUMS, SPAWN, move, drawMinimap, textSprite } from './world.js'
 import { Dancer, buildTimeline, poseAt, partnerOf, targetFor, followerStep, KEY_FOR_DIR, KEY_LABEL } from './dancer.js'
 import { api, store } from './api.js'
+import { MocapPlayer } from './mocap.js'
 
 const $ = (s) => document.querySelector(s)
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
@@ -27,9 +28,11 @@ const { rings } = buildWorld(scene)
 const leaderD = new Dancer(scene, 'leader')
 const followerD = new Dancer(scene, 'follower')
 const coachD = new Dancer(scene, 'coach')
-coachD.walk(0, -8, 0, 0, false)
+coachD.walk(0, -2.5, 0, 0, false)
 const coachLabel = textSprite('Coach Marisol', { size: 44, scale: 0.8 })
-coachLabel.position.set(0, 2.25, -8); scene.add(coachLabel)
+coachLabel.position.set(0, 2.25, -2.5); scene.add(coachLabel)
+
+const mocap = new MocapPlayer(scene)
 
 // ghost footprints
 const footGeo = new THREE.CircleGeometry(1, 24)
@@ -43,7 +46,7 @@ const prints = [0, 1, 2].map((i) => {
 const S = {
   mode: 'explore', // explore | floor | watch | play
   role: 'leader', cat: null, figs: {}, style: 'smooth', dance: 'waltz', routine: [], check: null,
-  speed: 0.6, cam: 'behind', sound: true, keys: {}, me: { x: 0, z: 6, yaw: Math.PI, phase: 0 },
+  speed: 0.6, cam: 'behind', sound: true, keys: {}, me: { x: SPAWN.x, z: SPAWN.z, yaw: SPAWN.yaw, phase: 0 },
   near: null, run: null, aiOn: false, usage: [], prog: store.load(), lastStats: {},
 }
 S.role = S.prog.role || 'leader'
@@ -100,7 +103,7 @@ function showJudge(text, color = '#fff') {
 // ---------- floor mode ----------
 function placeCouple() {
   const f = FLOORS[S.style]
-  const start = { x: f.x, z: f.z + 2.5, yaw: Math.PI } // leader faces the mirror wall
+  const start = { x: f.x, z: f.z + 2.5, yaw: Math.PI } // leader faces the back of the drum
   S.start = start
   const lead = { x: start.x, z: start.z, yaw: start.yaw, rise: 0,
     L: { x: start.x + 0.1, z: start.z }, R: { x: start.x - 0.1, z: start.z } }
@@ -108,6 +111,10 @@ function placeCouple() {
 }
 
 function enterFloor(style, opts = {}) {
+  if (!S.cat.styles[style]) {
+    openModal(`<h2>${esc(DRUMS[style]?.room || style)}</h2><p>This studio opens soon: its figures are still being added to the syllabus.</p>`)
+    return
+  }
   S.style = style
   const ds = S.cat.styles[style].dances
   S.dance = opts.dance && ds.includes(opts.dance) ? opts.dance : ds.includes(S.dance) ? S.dance : ds[0]
@@ -123,16 +130,19 @@ function enterFloor(style, opts = {}) {
 
 function leaveFloor() {
   stopRun()
+  mocap.hide(); $('#mocapBtn').textContent = '🎥 Instructors'
   S.mode = 'explore'
   document.body.classList.remove('on-floor')
   $('#floor').classList.add('hidden')
-  const f = FLOORS[S.style]
-  S.me = { x: f.x, z: f.z + 4.5, yaw: Math.PI, phase: 0 }
+  const d = DRUMS[S.style]
+  // step back out through the drum's opening into the courtyard
+  S.me = { x: d.x + Math.cos(d.door) * (d.rx + 1.2), z: d.z + Math.sin(d.door) * (d.rz + 1.2), yaw: Math.atan2(Math.cos(d.door), Math.sin(d.door)), phase: 0 }
   legend()
 }
 
 function switchDance(d) {
   if (S.mode !== 'floor') return
+  mocap.hide(); $('#mocapBtn').textContent = '🎥 Instructors'
   S.dance = d
   S.routine = []
   S.check = null
@@ -179,6 +189,21 @@ async function checkRoutine() {
 function addFigure(id) {
   if (S.mode !== 'floor' || S.routine.length >= 12) return
   S.routine.push(id); checkRoutine()
+}
+
+// ---------- instructor motion capture ----------
+async function toggleMocap() {
+  if (mocap.playing) { mocap.hide(); $('#mocapBtn').textContent = '🎥 Instructors'; return }
+  S.mocapList ??= await api.mocapList().catch(() => [])
+  const clip = S.mocapList.find((c) => c.dance === S.dance)
+  if (!clip) {
+    showJudge(`No captured ${danceInfo().name} clip yet`, '#ffd2c4'); return
+  }
+  const data = await api.mocapClip(clip.id)
+  const f = FLOORS[S.style]
+  mocap.load(data, { x: f.x + 3, z: f.z + 1, yaw: Math.PI })
+  $('#mocapBtn').textContent = '⏹ Instructors'
+  showJudge('Team instructors (captured from video)', '#fff6c9')
 }
 
 // ---------- watch / play ----------
@@ -318,7 +343,7 @@ const camTarget = new THREE.Vector3(), camPos = new THREE.Vector3()
 function updateCamera(dt) {
   if (S.mode === 'explore') {
     player().setGhost(false)
-    camPos.set(S.me.x, 7.5, S.me.z + 9.5)
+    camPos.set(S.me.x, 8.5, S.me.z + 10)
     camTarget.set(S.me.x, 1, S.me.z - 1)
   } else {
     const p = player().pose
@@ -346,8 +371,8 @@ function updateExplore(dt) {
   if (len > 0) {
     mx /= len; mz /= len
     const speed = k.ShiftLeft || k.ShiftRight ? 6 : 3.6
-    me.x = THREE.MathUtils.clamp(me.x + mx * speed * dt, -ROOM.w / 2 + 0.6, ROOM.w / 2 - 0.6)
-    me.z = THREE.MathUtils.clamp(me.z + mz * speed * dt, -ROOM.d / 2 + 0.8, ROOM.d / 2 - 0.6)
+    const next = move(me, { x: me.x + mx * speed * dt, z: me.z + mz * speed * dt })
+    me.x = next.x; me.z = next.z
     const target = Math.atan2(mx, mz)
     let d = target - me.yaw
     d = Math.atan2(Math.sin(d), Math.cos(d))
@@ -355,7 +380,7 @@ function updateExplore(dt) {
     me.phase += dt * speed * 3.2
   }
   player().walk(me.x, me.z, me.yaw, me.phase, len > 0)
-  partner().walk(-2.2, 7, Math.PI, 0, false)
+  partner().walk(SPAWN.x - 2.2, SPAWN.z - 1, Math.PI, 0, false)
   // stations
   let near = null
   for (const s of STATIONS) if (Math.hypot(me.x - s.x, me.z - s.z) < s.r) near = s
@@ -365,12 +390,13 @@ function updateExplore(dt) {
   if (near && $('#modal').classList.contains('hidden')) {
     pr.innerHTML = `Press <kbd>E</kbd> · ${esc(near.label)}`; pr.classList.remove('hidden')
   } else pr.classList.add('hidden')
+  drawMinimap($('#minimap'), me, DRUMS[near?.id] ? near.id : null)
 }
 
 function interact() {
   const s = S.near
   if (!s) return
-  if (s.id === 'smooth' || s.id === 'latin') enterFloor(s.id)
+  if (DRUMS[s.id]) enterFloor(s.id)
   else if (s.id === 'coach') openCoach()
   else if (s.id === 'drills') openDrills()
   else if (s.id === 'planner') openPlanner()
@@ -592,6 +618,7 @@ addEventListener('keydown', (e) => {
     if (e.code === 'KeyW') startRun('watch')
     if (e.code === 'Enter') startRun('play')
     if (e.code === 'KeyC') openCoach()
+    if (e.code === 'KeyI') toggleMocap()
     if (e.code === 'KeyV') cycleCam()
   }
 })
@@ -605,6 +632,7 @@ $('#leaveFloor').onclick = leaveFloor
 $('#watchBtn').onclick = () => startRun('watch')
 $('#playBtn').onclick = () => startRun('play')
 $('#coachBtn').onclick = openCoach
+$('#mocapBtn').onclick = toggleMocap
 $('#undoBtn').onclick = () => { S.routine.pop(); checkRoutine() }
 $('#clearBtn').onclick = () => { S.routine = []; checkRoutine() }
 $('#speed').oninput = (e) => setSpeed(+e.target.value)
@@ -631,6 +659,7 @@ async function boot() {
     if (S.mode === 'explore') updateExplore(dt)
     else if (S.run) updateRun(now)
     coachD.root.rotation.y = Math.sin(now * 0.6) * 0.25
+    mocap.update(now, S.speed)
     updateCamera(dt)
     renderer.render(scene, camera)
   }

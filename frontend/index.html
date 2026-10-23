@@ -32,6 +32,7 @@
   </nav>
 
   <div id="prompt" class="pill hidden"></div>
+  <canvas id="minimap" width="240" height="176" aria-label="Map of Evans Hall Ballroom"></canvas>
   <div id="legend" class="pill"></div>
 
   <aside id="floor" class="card hidden">
@@ -51,6 +52,7 @@
       <button id="playBtn" class="primary">🎵 Play <kbd>Enter</kbd></button>
       <button id="coachBtn" class="ghost">🧑‍🏫 Coach <kbd>C</kbd></button>
     </div>
+    <div class="row"><button id="mocapBtn" class="ghost" style="flex:1;padding:9px;border-radius:12px;font-weight:600;font-size:13px">🎥 Instructors <kbd>I</kbd></button></div>
     <div class="row small"><button id="undoBtn" class="link">⌫ Undo</button><button id="clearBtn" class="link">Clear <kbd>X</kbd></button></div>
   </aside>
 
@@ -67,7 +69,7 @@
       <h1>Ballroom <span>Quest</span></h1>
       <p class="lead">Learn your figures before the lesson. See the footwork from the dancer's own eyes, play it to the beat, and let three AI helpers coach you for competition.</p>
       <ol class="how">
-        <li><b>Walk</b> with <kbd>WASD</kbd> or the arrow keys. Step onto the <span class="blue">Smooth</span> or <span class="coral">Latin</span> floor and press <kbd>E</kbd>.</li>
+        <li><b>Walk</b> Evans Hall Ballroom with <kbd>WASD</kbd> or the arrow keys. Four glass classroom drums hold one studio per style: <b>Standard</b>, <span class="blue">Smooth</span>, <span class="coral">Latin</span> and <b>Rhythm</b>. Walk in and press <kbd>E</kbd>.</li>
         <li><b>Combine</b> figures with number keys <kbd>1</kbd>–<kbd>9</kbd>. The chain turns red if a link isn't danceable.</li>
         <li><b>Play</b> with <kbd>↑</kbd> forward, <kbd>↓</kbd> back, <kbd>←</kbd> <kbd>→</kbd> side, <kbd>Space</kbd> close or replace, on the beat.</li>
         <li><b>Ask for help</b>: Coach Marisol reviews your routine, the Drill Board turns lesson notes into drills, and the Planner builds your plan for competition.</li>

@@ -141,7 +141,7 @@ function offset(foot, dir, s) {
 const MIRROR_DIR = {
   fwd: 'back', back: 'fwd', side_l: 'side_r', side_r: 'side_l', close: 'close', replace: 'replace',
   diag_fwd_r: 'diag_back_l', diag_fwd_l: 'diag_back_r', diag_back_r: 'diag_fwd_l', diag_back_l: 'diag_fwd_r',
-  cross_fwd: 'cross_fwd', cross_back: 'cross_back', cross_behind: 'cross_behind',
+  cross_fwd: 'cross_fwd', cross_back: 'cross_back', cross_behind: 'cross_behind', in_place: 'in_place',
 }
 
 // What the follower does on the same count: other foot, mirrored direction.
@@ -152,7 +152,7 @@ export function followerStep(step) {
 export const KEY_FOR_DIR = {
   fwd: 'ArrowUp', cross_fwd: 'ArrowUp', diag_fwd_r: 'ArrowUp', diag_fwd_l: 'ArrowUp',
   back: 'ArrowDown', cross_back: 'ArrowDown', cross_behind: 'ArrowDown', diag_back_r: 'ArrowDown', diag_back_l: 'ArrowDown',
-  side_l: 'ArrowLeft', side_r: 'ArrowRight', close: 'Space', replace: 'Space',
+  side_l: 'ArrowLeft', side_r: 'ArrowRight', close: 'Space', replace: 'Space', in_place: 'Space',
 }
 export const KEY_LABEL = { ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', ArrowRight: '→', Space: '␣' }
 

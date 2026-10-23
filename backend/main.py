@@ -31,7 +31,7 @@ async def no_stale_files(request: Request, call_next):
 DRILLS_FILE = DATA_DIR / "drills.json"
 _drill_lock = threading.Lock()
 
-DanceKey = Literal["waltz", "tango", "foxtrot", "chacha", "rumba", "jive"]
+DanceKey = Literal["std_waltz", "std_foxtrot", "std_tango", "quickstep", "std_viennese", "waltz", "tango", "foxtrot", "viennese", "chacha", "rumba", "jive", "samba", "paso", "am_chacha", "am_rumba", "swing", "bolero", "mambo"]
 Role = Literal["leader", "follower"]
 
 
@@ -169,6 +169,36 @@ async def plan_route(body: PlanIn):
                 minutes_per_day=body.minutes_per_day, drills=team)
     out, usage, record = await call("planner", prompt, deps)
     return {"plan": out.model_dump(), "days_left": days, "usage": usage, "trace": record["trace"]}
+
+
+MOCAP_DIR = DATA_DIR / "mocap"
+
+
+def mocap_index() -> dict[str, dict]:
+    """Motion clips captured from lesson videos (skeletons only, no video)."""
+    out = {}
+    for p in sorted(MOCAP_DIR.glob("*.game.json")) if MOCAP_DIR.exists() else []:
+        try:
+            clip = json.loads(p.read_text())
+        except ValueError:
+            continue
+        cid = p.name.removesuffix(".game.json")
+        frames = max((len(d["frames"]) for d in clip.get("dancers", [])), default=0)
+        out[cid] = {"id": cid, "dance": clip.get("dance"), "fps": clip.get("fps"), "frames": frames,
+                    "label": clip.get("label") or cid.replace("_", " ")}
+    return out
+
+
+@app.get("/api/mocap")
+def mocap_list():
+    return list(mocap_index().values())
+
+
+@app.get("/api/mocap/{clip_id}")
+def mocap_clip(clip_id: str):
+    if clip_id not in mocap_index():  # allowlist: no path tricks
+        raise HTTPException(404, "No such clip.")
+    return FileResponse(MOCAP_DIR / f"{clip_id}.game.json", media_type="application/json")
 
 
 @app.get("/api/usage")
