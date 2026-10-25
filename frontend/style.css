@@ -133,3 +133,12 @@ body.on-floor #nowFig { max-width: calc(100vw - 420px); white-space: nowrap; ove
 
 #minimap { position: fixed; left: 16px; bottom: 16px; width: 240px; height: 176px; border-radius: 14px; box-shadow: var(--shadow); }
 body.on-floor #minimap { display: none; }
+
+/* narrow windows (e.g. a side pane): keep the brand card, toolbar and studio panel from overlapping */
+@media (max-width: 900px) {
+  #brand { width: 230px; padding: 10px 12px; gap: 6px; }
+  #tools { max-width: calc(100vw - 262px); flex-wrap: wrap; justify-content: flex-end; }
+  #tools button { padding: 6px 8px; font-size: 13px; }
+  #floor { width: min(330px, calc(100vw - 262px)); }
+  #legend { left: auto; right: 12px; transform: none; flex-wrap: wrap; max-width: calc(100vw - 280px); gap: 8px; }
+}
