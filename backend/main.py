@@ -32,7 +32,7 @@ async def no_stale_files(request: Request, call_next):
 DRILLS_FILE = DATA_DIR / "drills.json"
 _drill_lock = threading.Lock()
 
-DanceKey = Literal["std_waltz", "std_foxtrot", "std_tango", "quickstep", "std_viennese", "waltz", "tango", "foxtrot", "viennese", "chacha", "rumba", "jive", "samba", "paso", "am_chacha", "am_rumba", "swing", "bolero", "mambo"]
+DanceKey = Literal["std_waltz", "std_foxtrot", "std_tango", "quickstep", "std_viennese", "waltz", "tango", "foxtrot", "viennese", "chacha", "rumba", "jive", "samba", "paso", "am_chacha", "am_rumba", "swing", "bolero", "mambo", "wcs", "lindy", "salsa"]
 Role = Literal["leader", "follower"]
 
 
@@ -119,10 +119,15 @@ def get_catalog():
     return catalog.public_catalog()
 
 
+class CheckIn(CoachIn):
+    # The hold the couple stands in before the first figure; empty = the first figure's own hold, as the game starts it.
+    start_position: Literal["closed", "promenade", "open", "fan"] | None = None
+
+
 @app.post("/api/check")
-def check(body: CoachIn):
+def check(body: CheckIn):
     """Instant, free rule check (no AI) used by the game while you build a routine."""
-    return catalog.check_routine(body.dance, body.figure_ids)
+    return catalog.check_routine(body.dance, body.figure_ids, body.start_position)
 
 
 @app.post("/api/coach")

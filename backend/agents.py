@@ -27,7 +27,7 @@ import catalog
 from config import OUTPUT_DIR, PROMPTS_DIR, REQUEST_LIMIT, TOKEN_LIMIT_PER_RUN, MODEL_NAME, build_model, cost_usd
 from safety import GUARD, leaks
 
-DanceKey = Literal["std_waltz", "std_foxtrot", "std_tango", "quickstep", "std_viennese", "waltz", "tango", "foxtrot", "viennese", "chacha", "rumba", "jive", "samba", "paso", "am_chacha", "am_rumba", "swing", "bolero", "mambo"]
+DanceKey = Literal["std_waltz", "std_foxtrot", "std_tango", "quickstep", "std_viennese", "waltz", "tango", "foxtrot", "viennese", "chacha", "rumba", "jive", "samba", "paso", "am_chacha", "am_rumba", "swing", "bolero", "mambo", "wcs", "lindy", "salsa"]
 Role = Literal["leader", "follower"]
 
 
@@ -98,16 +98,24 @@ def _figure_line(f: dict) -> str:
             f"Follow: {f.get('follow_cue', '')} Common mistake: {f.get('mistake', '')}")
 
 
+def style_dances(style: str) -> list[str]:
+    """The dance keys a style lists, in syllabus order. A style can also list a dance that belongs to another
+    style (Social & Nightclub lists East Coast Swing, dance key "swing", which is an American Rhythm dance)."""
+    listed = catalog.public_catalog()["styles"].get(style, {}).get("dances", [])
+    own = [k for k, d in catalog.dances().items() if d["style"] == style]
+    return list(dict.fromkeys([k for k in listed if k in catalog.dances()] + own))
+
+
 def catalog_text(style: str | None = None) -> str:
     """Syllabus text for a system prompt.
 
     style=None returns the whole syllabus (catalog.catalog_text(), shared by Drill Builder and Planner).
-    With a style key ("standard", "smooth", "latin", "rhythm") it returns only that style's dances,
-    built here from catalog.dances() / catalog.figures_for() so catalog.py stays untouched.
+    With a style key ("standard", "smooth", "latin", "rhythm", "social") it returns only the dances that style
+    lists, built here from catalog.dances() / catalog.figures_for() so catalog.py stays untouched.
     """
     if style is None:
         return catalog.catalog_text()
-    keys = [k for k, d in catalog.dances().items() if d["style"] == style]
+    keys = style_dances(style)
     if not keys:
         raise KeyError(f"unknown style {style!r}")
     label = catalog.public_catalog()["styles"].get(style, {}).get("label", style)
@@ -127,7 +135,8 @@ def _instructions(job: str, style: str | None = None) -> str:
 
 
 INSTRUCTIONS = {job: _instructions(job) for job in ("drill_builder", "planner")}
-STYLES = sorted({d["style"] for d in catalog.dances().values()})
+# Every style in the syllabus (standard, smooth, latin, rhythm, social), plus any style a dance names.
+STYLES = list(dict.fromkeys([*catalog.public_catalog()["styles"], *(d["style"] for d in catalog.dances().values())]))
 COACH_INSTRUCTIONS = {style: _instructions("coach", style) for style in STYLES}  # built once, stable per style
 
 
@@ -147,14 +156,39 @@ def coach_instructions(dance: str | None) -> str:
 
 
 # ---------- shared tools ----------
-def check_routine(ctx: RunContext[Deps], dance: DanceKey, figure_ids: list[str], start_position: str = "closed") -> dict:
-    """Check whether a chain of figures can be danced back to back. Returns ok and the issues."""
+Hold = Literal["closed", "promenade", "open", "fan"]
+
+
+def check_routine(ctx: RunContext[Deps], dance: DanceKey, figure_ids: list[str], start_position: Hold | None = None) -> dict:
+    """Check whether a chain of figures can be danced back to back. Returns ok and the issues.
+
+    Leave start_position empty: the routine starts in its first figure's own hold, as in the game (closed when the
+    first figure allows it, else the first hold it accepts). Each issue's from_position is the hold the couple is in
+    when the figure before the break starts; pass it to suggest_bridges."""
     return catalog.check_routine(dance, figure_ids, start_position)
 
 
-def suggest_bridges(ctx: RunContext[Deps], dance: DanceKey, from_id: str, to_id: str) -> list[list[str]]:
-    """Find the shortest legal figure(s) to insert between two figures that don't connect."""
-    return catalog.bridges(dance, from_id, to_id)
+def _hold_before(dance: str, routine: list[str], from_id: str, to_id: str) -> str | None:
+    """The hold the coached routine is in when from_id starts, if from_id -> to_id is one of its links (else None)."""
+    holds = set()
+    start = catalog.start_position_for(routine)
+    for i in range(len(routine) - 1):
+        if routine[i] == from_id and routine[i + 1] == to_id:
+            holds.add(catalog.check_routine(dance, routine[:i], start).get("end_position") if i else start)
+    return holds.pop() if len(holds) == 1 else None
+
+
+def suggest_bridges(ctx: RunContext[Deps], dance: DanceKey, from_id: str, to_id: str,
+                    position: Hold | None = None) -> list[dict]:
+    """Find the shortest legal figure(s) to insert between two figures that don't connect.
+
+    position = the hold the couple is in when from_id starts (the issue's from_position from check_routine). Each
+    fix is {"insert": figure ids, "legal_from": holds}; only use a fix whose legal_from includes that hold. Without
+    position, the hold comes from the routine being coached when from_id -> to_id is one of its links; otherwise
+    every hold from_id accepts is tried and legal_from says which ones each fix works from."""
+    if position is None:
+        position = _hold_before(dance, ctx.deps.routine or [], from_id, to_id)
+    return catalog.bridge_options(dance, from_id, to_id, position)
 
 
 def figure_details(ctx: RunContext[Deps], figure_id: str) -> dict:
