@@ -1,0 +1,218 @@
+{
+  "what": "One full real Coach Marisol run on a broken Standard Waltz routine (Natural Turn -> Reverse Turn), leader role.",
+  "run_id": "79ba0bfb74",
+  "at": "2026-10-25T10:44:56",
+  "agent": "coach",
+  "model": "gpt-6-luna",
+  "style_prompt": "standard",
+  "system_prompt": {
+    "kind": "per-style coach prompt (shared rules + Standard syllabus only + technique notes + coach job)",
+    "characters": 22187,
+    "text_included": false,
+    "why_not_included": "contains syllabus technique notes; size only"
+  },
+  "http_request": {
+    "method": "POST",
+    "path": "/api/coach",
+    "body": {
+      "dance": "std_waltz",
+      "role": "leader",
+      "figure_ids": [
+        "sw_natural",
+        "sw_reverse"
+      ],
+      "stats": {
+        "sw_natural": 0.62,
+        "sw_reverse": 0.48
+      }
+    },
+    "session_id": "tokenomics-c01 (logged as 'tokenomi')"
+  },
+  "user_message_sent_to_model": "Dance: std_waltz. Player role: leader.\nRoutine figure ids in order: [\"sw_natural\", \"sw_reverse\"]\n<player_data>timing accuracy per figure from the game: {\"sw_natural\": 0.62, \"sw_reverse\": 0.48}</player_data>",
+  "free_rule_check_same_routine": {
+    "endpoint": "POST /api/check",
+    "cost_usd": 0,
+    "result": {
+      "ok": false,
+      "issues": [
+        {
+          "index": 1,
+          "from": "sw_natural",
+          "to": "sw_reverse",
+          "kind": "foot",
+          "problem": "After Natural Turn the leader's R foot is free, but Reverse Turn starts with the L foot.",
+          "from_position": "closed"
+        }
+      ],
+      "start_position": "closed",
+      "end_position": "closed",
+      "end_free_foot": "L"
+    }
+  },
+  "steps": [
+    {
+      "kind": "model_call",
+      "input_tokens": 6188,
+      "cached_tokens": 0,
+      "output_tokens": 33,
+      "tool_calls": [
+        {
+          "tool": "check_routine",
+          "args": {
+            "dance": "std_waltz",
+            "figure_ids": [
+              "sw_natural",
+              "sw_reverse"
+            ]
+          }
+        }
+      ],
+      "step": "model call 1",
+      "cost_usd": 0.0006353
+    },
+    {
+      "kind": "tool_result",
+      "tool": "check_routine",
+      "result": {
+        "ok": false,
+        "issues": [
+          {
+            "index": 1,
+            "from": "sw_natural",
+            "to": "sw_reverse",
+            "kind": "foot",
+            "problem": "After Natural Turn the leader's R foot is free, but Reverse Turn starts with the L foot.",
+            "from_position": "closed"
+          }
+        ],
+        "start_position": "closed",
+        "end_position": "closed",
+        "end_free_foot": "L"
+      }
+    },
+    {
+      "kind": "model_call",
+      "input_tokens": 6305,
+      "cached_tokens": 6062,
+      "output_tokens": 40,
+      "tool_calls": [
+        {
+          "tool": "suggest_bridges",
+          "args": {
+            "dance": "std_waltz",
+            "from_id": "sw_natural",
+            "to_id": "sw_reverse",
+            "position": "closed"
+          }
+        }
+      ],
+      "step": "model call 2",
+      "cost_usd": 0.00010492
+    },
+    {
+      "kind": "tool_result",
+      "tool": "suggest_bridges",
+      "result": [
+        {
+          "insert": [
+            "sw_rf_change"
+          ],
+          "legal_from": [
+            "closed"
+          ]
+        },
+        {
+          "insert": [
+            "sw_hesitation"
+          ],
+          "legal_from": [
+            "closed"
+          ]
+        },
+        {
+          "insert": [
+            "sw_spin_turn"
+          ],
+          "legal_from": [
+            "closed"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "model_call",
+      "input_tokens": 6400,
+      "cached_tokens": 6179,
+      "output_tokens": 435,
+      "tool_calls": [
+        {
+          "tool": "final_result",
+          "args": {
+            "verdict": "needs_fix",
+            "summary": "Nice start with a Natural Turn; one small foot change will make the Reverse Turn connect. Your lowest timing score was on the Reverse Turn (48%), so give it a little extra practice.",
+            "issues": [
+              {
+                "between": [
+                  "sw_natural",
+                  "sw_reverse"
+                ],
+                "problem": "The Natural Turn leaves your right foot free, but the Reverse Turn starts on your left. Insert the LF Closed Change?",
+                "fix_figure_ids": [
+                  "sw_rf_change"
+                ],
+                "tip": "Feel your right foot step forward, then side-close to free your left foot for the Reverse Turn."
+              }
+            ],
+            "role_tip": "As leader, keep your side step in the Closed Change truly to the side so you finish square.",
+            "next_challenge": "sw_lf_change"
+          }
+        }
+      ],
+      "step": "model call 3",
+      "cost_usd": 0.00030139
+    },
+    {
+      "kind": "tool_result",
+      "tool": "final_result",
+      "result": "Final result processed."
+    }
+  ],
+  "final_report_shown_to_player": {
+    "verdict": "needs_fix",
+    "summary": "Nice start with a Natural Turn; one small foot change will make the Reverse Turn connect. Your lowest timing score was on the Reverse Turn (48%), so give it a little extra practice.",
+    "issues": [
+      {
+        "between": [
+          "sw_natural",
+          "sw_reverse"
+        ],
+        "problem": "The Natural Turn leaves your right foot free, but the Reverse Turn starts on your left. Insert the LF Closed Change?",
+        "fix_figure_ids": [
+          "sw_rf_change"
+        ],
+        "tip": "Feel your right foot step forward, then side-close to free your left foot for the Reverse Turn."
+      }
+    ],
+    "role_tip": "As leader, keep your side step in the Closed Change truly to the side so you finish square.",
+    "next_challenge": "sw_lf_change"
+  },
+  "usage": {
+    "requests": 3,
+    "tool_calls": 2,
+    "input_tokens": 18893,
+    "cached_tokens": 12241,
+    "output_tokens": 508,
+    "reasoning_tokens": 267,
+    "seconds": 8.98,
+    "cost_usd": 0.00104161
+  },
+  "client_wall_seconds": 9.07,
+  "session_spent_after_run_usd": 0.001042,
+  "cost_check": "sum of the 3 model calls = 0.00104161",
+  "notes": [
+    "Model call 1 had 0 cached tokens (first coach call of the day for the Standard prompt: cold cache); calls 2-3 reused about 96-97% of the prompt from the cache.",
+    "Tool results are stored truncated to 400 characters by agents.py; these were short enough to be complete.",
+    "The tool calls 'final_result' is PydanticAI's structured-output call; it is not counted in tool_calls (2).",
+    "Quality slip visible in this real run: the issue text says 'Insert the LF Closed Change?' while the fix id is sw_rf_change (the RF Closed Change), which is the correct bridge. The output validator checks ids, verdict and dance, not the wording, so the wrong label got through. Worth naming under agent malfunction / limits."
+  ]
+}

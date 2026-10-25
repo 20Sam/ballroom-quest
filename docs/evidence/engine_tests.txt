@@ -1,0 +1,69 @@
+# Engine test suite output
+# Run: 2026-10-25, node test.mjs <ballroom-quest>, against commit efd89c0 (frontend/js/dancer.js and data/figures.json unchanged from HEAD).
+# The harness (test.mjs + a three.js shim) is kept outside the public repo; it imports frontend/js/dancer.js and data/figures.json read-only.
+# Result line: '33545 checks, 0 failures'.
+
+also testing world.js FLOORS: {"standard":[-18,-13.5,15,9],"smooth":[0,-13.5,15,9],"latin":[18,-13.5,15,9],"rhythm":[-18,13.5,15,9],"social":[18,14,14,8.5]}
+┌─────────┬────────────┬────────────────┬────────┬──────┬───────┬─────────┬──────────┬────────┬─────────┬────────┬──────────┐
+│ (index) │ set        │ dance          │ kind   │ runs │ reach │ corners │ feetSep  │ c1Jump │ frameDv │ ccwDeg │ fromSpot │
+├─────────┼────────────┼────────────────┼────────┼──────┼───────┼─────────┼──────────┼────────┼─────────┼────────┼──────────┤
+│ 0       │ 'test'     │ 'std_waltz'    │ 'lod'  │ 96   │ 0.9   │ 0.4     │ 0.1      │ 0.0003 │ 0.12    │ 29     │ 6.7      │
+│ 1       │ 'test'     │ 'std_foxtrot'  │ 'lod'  │ 96   │ 0.93  │ 0.4     │ 0.1      │ 0.0004 │ 0.2     │ 69     │ 11.5     │
+│ 2       │ 'test'     │ 'std_tango'    │ 'lod'  │ 96   │ 0.93  │ 0.3     │ 0.1      │ 0.0006 │ 0.26    │ 19     │ 7.2      │
+│ 3       │ 'test'     │ 'quickstep'    │ 'lod'  │ 96   │ 0.93  │ 0.3     │ 0.1      │ 0.0004 │ 0.38    │ 16     │ 5.7      │
+│ 4       │ 'test'     │ 'std_viennese' │ 'lod'  │ 96   │ 0.93  │ 0.4     │ 0.1      │ 0.0003 │ 0.22    │ 143    │ 11.8     │
+│ 5       │ 'test'     │ 'waltz'        │ 'lod'  │ 96   │ 0.9   │ 0.2     │ 0.1      │ 0.0002 │ 0.07    │ 35     │ 5.8      │
+│ 6       │ 'test'     │ 'tango'        │ 'lod'  │ 96   │ 0.93  │ 0.4     │ 0.1      │ 0.0005 │ 0.2     │ 32     │ 9.4      │
+│ 7       │ 'test'     │ 'foxtrot'      │ 'lod'  │ 96   │ 0.93  │ 0.1     │ 0.1      │ 0.0002 │ 0.13    │ 20     │ 7.7      │
+│ 8       │ 'test'     │ 'viennese'     │ 'lod'  │ 96   │ 0.9   │ 0.2     │ 0.1      │ 0.0003 │ 0.18    │ 26     │ 5.3      │
+│ 9       │ 'test'     │ 'chacha'       │ 'spot' │ 96   │ 0.33  │ 0.1     │ 0.207    │ 0.0005 │ 0.27    │ -141   │ 1.1      │
+│ 10      │ 'test'     │ 'rumba'        │ 'spot' │ 96   │ 0.3   │ 0       │ 0.196    │ 0.0003 │ 0.13    │ -206   │ 0.9      │
+│ 11      │ 'test'     │ 'jive'         │ 'spot' │ 96   │ 0.48  │ 0       │ 0.307    │ 0.0005 │ 0.33    │ -64    │ 1.7      │
+│ 12      │ 'test'     │ 'samba'        │ 'lod'  │ 96   │ 0.74  │ 0       │ 0.149    │ 0.0006 │ 0.23    │ -7     │ 2.2      │
+│ 13      │ 'test'     │ 'paso'         │ 'lod'  │ 96   │ 0.9   │ 0.1     │ 0.107    │ 0.0003 │ 0.13    │ 40     │ 5.1      │
+│ 14      │ 'test'     │ 'am_chacha'    │ 'spot' │ 96   │ 0.27  │ 0       │ 0.239    │ 0.0003 │ 0.21    │ 377    │ 0.9      │
+│ 15      │ 'test'     │ 'am_rumba'     │ 'spot' │ 96   │ 0.57  │ 1       │ 0.14     │ 0.0004 │ 0.19    │ 82     │ 2.1      │
+│ 16      │ 'test'     │ 'swing'        │ 'spot' │ 96   │ 0.34  │ 0       │ 0.342    │ 0.0005 │ 0.43    │ -174   │ 0.8      │
+│ 17      │ 'test'     │ 'bolero'       │ 'spot' │ 96   │ 0.28  │ 0       │ 0.201    │ 0.0003 │ 0.09    │ 113    │ 0.8      │
+│ 18      │ 'test'     │ 'mambo'        │ 'spot' │ 96   │ 0.29  │ 0       │ 0.153    │ 0.0006 │ 0.34    │ -51    │ 0.9      │
+│ 19      │ 'test'     │ 'wcs'          │ 'slot' │ 96   │ 0.39  │ 0       │ Infinity │ 0.0005 │ 0.27    │ 247    │ 2.4      │
+│ 20      │ 'test'     │ 'lindy'        │ 'spot' │ 96   │ 0.34  │ 0       │ 0.133    │ 0.0004 │ 0.29    │ 137    │ 1.3      │
+│ 21      │ 'test'     │ 'salsa'        │ 'spot' │ 96   │ 0.27  │ 0       │ 0.245    │ 0.0004 │ 0.31    │ 269    │ 1        │
+│ 22      │ 'world.js' │ 'std_waltz'    │ 'lod'  │ 40   │ 0.9   │ 0.4     │ 0.1      │ 0.0003 │ 0.12    │ 19     │ 8        │
+│ 23      │ 'world.js' │ 'std_foxtrot'  │ 'lod'  │ 40   │ 0.94  │ 0.5     │ 0.1      │ 0.0004 │ 0.17    │ 60     │ 13       │
+│ 24      │ 'world.js' │ 'std_tango'    │ 'lod'  │ 40   │ 0.94  │ 0.3     │ 0.1      │ 0.0006 │ 0.25    │ 4      │ 6.1      │
+│ 25      │ 'world.js' │ 'quickstep'    │ 'lod'  │ 40   │ 0.94  │ 0.2     │ 0.098    │ 0.0004 │ 0.37    │ 1      │ 4.7      │
+│ 26      │ 'world.js' │ 'std_viennese' │ 'lod'  │ 40   │ 0.94  │ 0.5     │ 0.101    │ 0.0003 │ 0.22    │ 135    │ 13       │
+│ 27      │ 'world.js' │ 'waltz'        │ 'lod'  │ 40   │ 0.93  │ 0.2     │ 0.1      │ 0.0001 │ 0.06    │ 24     │ 5.9      │
+│ 28      │ 'world.js' │ 'tango'        │ 'lod'  │ 40   │ 0.92  │ 0.5     │ 0.1      │ 0.0005 │ 0.2     │ 45     │ 10.7     │
+│ 29      │ 'world.js' │ 'foxtrot'      │ 'lod'  │ 40   │ 0.92  │ 0.2     │ 0.1      │ 0.0002 │ 0.12    │ 7      │ 6        │
+│ 30      │ 'world.js' │ 'viennese'     │ 'lod'  │ 40   │ 0.93  │ 0.3     │ 0.1      │ 0.0002 │ 0.18    │ 16     │ 5        │
+│ 31      │ 'world.js' │ 'chacha'       │ 'spot' │ 40   │ 0.32  │ 0.1     │ 0.208    │ 0.0005 │ 0.24    │ -183   │ 0.9      │
+│ 32      │ 'world.js' │ 'rumba'        │ 'spot' │ 40   │ 0.28  │ 0       │ 0.195    │ 0.0003 │ 0.13    │ -638   │ 0.7      │
+│ 33      │ 'world.js' │ 'jive'         │ 'spot' │ 40   │ 0.43  │ 0       │ 0.304    │ 0.0005 │ 0.32    │ -90    │ 1.5      │
+│ 34      │ 'world.js' │ 'samba'        │ 'lod'  │ 40   │ 0.74  │ 0       │ 0.15     │ 0.0005 │ 0.23    │ -4     │ 1.9      │
+│ 35      │ 'world.js' │ 'paso'         │ 'lod'  │ 40   │ 0.9   │ 0.1     │ 0.107    │ 0.0003 │ 0.13    │ 52     │ 6.4      │
+│ 36      │ 'world.js' │ 'am_chacha'    │ 'spot' │ 40   │ 0.22  │ 0       │ 0.239    │ 0.0003 │ 0.2     │ 461    │ 0.9      │
+│ 37      │ 'world.js' │ 'am_rumba'     │ 'spot' │ 40   │ 0.47  │ 1.2     │ 0.159    │ 0.0004 │ 0.19    │ -45    │ 2.1      │
+│ 38      │ 'world.js' │ 'swing'        │ 'spot' │ 40   │ 0.27  │ 0       │ 0.342    │ 0.0005 │ 0.43    │ -61    │ 0.7      │
+│ 39      │ 'world.js' │ 'bolero'       │ 'spot' │ 40   │ 0.25  │ 0       │ 0.201    │ 0.0002 │ 0.09    │ -259   │ 0.8      │
+│ 40      │ 'world.js' │ 'mambo'        │ 'spot' │ 40   │ 0.25  │ 0       │ 0.153    │ 0.0006 │ 0.34    │ 245    │ 0.8      │
+│ 41      │ 'world.js' │ 'wcs'          │ 'slot' │ 40   │ 0.39  │ 0       │ Infinity │ 0.0005 │ 0.27    │ 652    │ 2.1      │
+│ 42      │ 'world.js' │ 'lindy'        │ 'spot' │ 40   │ 0.37  │ 0       │ 0.147    │ 0.0004 │ 0.28    │ 14     │ 1        │
+│ 43      │ 'world.js' │ 'salsa'        │ 'spot' │ 40   │ 0.28  │ 0       │ 0.247    │ 0.0004 │ 0.31    │ 272    │ 0.8      │
+└─────────┴────────────┴────────────────┴────────┴──────┴───────┴─────────┴──────────┴────────┴─────────┴────────┴──────────┘
+floor tests 49.8 s
+planted feet over 302 single-figure runs: worst slide 0.98 cm (sf_change_dir follow R beat 5.50 (step 2))
+planted feet in the showcase routines: worst slide 1.43 cm (std_foxtrot lead R beat 43.50 (step 29))
+line of dance: 181 fitting chains (0 bent), 221 corner turns (177 left), 2 back-to-back
+spacing: std/smooth closed [ '0.347', '0.377' ] median 0.362 side median 0.170 | latin/rhythm/social closed [ '0.365', '0.689' ] median 0.401 | open/fan [ '0.430', '1.100' ] median 0.875 | promenade V [ '90', '90' ] median 90 | feet 0.100 sw_rf_change beat 0.45
+follow_turns: 42 figures carry data
+hold integrity: 27882 closed/promenade frames, worst 21° (samba showcase sb_botafogo_close#2 beat 29.00 closed d 0.38), 0 over 30°; facing worst 7°; closed spacing std 0.347-0.377, loose 0.365-0.651
+swing-out family: worst end 17° (lindy showcase lh_swingout end (open, 0.79 m))
+closes: hers ≤ 0.117 m, his ≤ 0.193 m; her widest Standard side step 0.680 m
+shoes: 386319 grounded shoe pairs, worst overlap -0.7 cm (viennese showcase vw_left_turn#1 beat 28.58 his R her L), 0 over 1 cm
+rest pose: 220 routines, standing pose = frame 0
+side by side: 10 figures (cc_new_yorker, cc_hand_to_hand, rb_new_yorker, rb_hand_to_hand, rb_spot_turn, ac_crossover, ac_spot_turn, ar_crossover, bo_crossover, mb_crossover)
+random routines: 121899 closed/promenade frames, worst 21°, Standard 0.347-0.377 m, Latin/Social from 0.365 m
+33545 checks, 0 failures
+node test.mjs   63.26s user 0.56s system 103% cpu 1:01.95 total

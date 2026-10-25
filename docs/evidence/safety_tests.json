@@ -1,0 +1,161 @@
+{
+  "run_at": "2026-10-25T13:38:06",
+  "app": "ballroom-quest HEAD efd89c0, backend/main.py via FastAPI TestClient",
+  "model": "PydanticAI FunctionModel (scripted stand-in; no live LLM, $0)",
+  "passed": 10,
+  "total": 10,
+  "drills_json_unchanged": true,
+  "app_run_log_untouched": true,
+  "tests": [
+    {
+      "id": "T1",
+      "risk": "prompt injection",
+      "test": "The screen quarantines the attack line",
+      "what_we_did": "screen_notes() on the app's built-in injection sample (4 lines).",
+      "expected": "Line 3 flagged and replaced; the 3 dance lines kept.",
+      "observed": {
+        "flags": [
+          3
+        ],
+        "line_3_now_reads": "[line 3 removed by the safety screen]",
+        "lines_kept": 3
+      },
+      "pass": true
+    },
+    {
+      "id": "T2",
+      "risk": "prompt injection",
+      "test": "The model never sees the attack line; the drill is still built",
+      "what_we_did": "POST /api/drill with the same sample; a scripted model records every word it is sent.",
+      "expected": "HTTP 200, line 3 reported, attack text absent from everything the model received, notes inside <teammate_notes>.",
+      "observed": {
+        "http": 200,
+        "flags_returned": [
+          3
+        ],
+        "model_saw_attack_text": false,
+        "model_saw_placeholder": true,
+        "notes_wrapped_in_data_tags": true,
+        "drill_built": true
+      },
+      "pass": true
+    },
+    {
+      "id": "T3",
+      "risk": "agent malfunction",
+      "test": "Validator sends a made-up figure back (ModelRetry)",
+      "what_we_did": "Coach answer 1 suggests 'sw_backflip' (not in the syllabus); answer 2 is correct.",
+      "expected": "Answer 1 rejected with the reason; answer 2 accepted; the player only sees answer 2.",
+      "observed": {
+        "http": 200,
+        "model_calls": 2,
+        "retry_reason": "\"These ids are not in the syllabus: ['sw_backflip']. Use only syllabus ids.\"",
+        "final_fix": [
+          "sw_rf_change"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "id": "T4",
+      "risk": "agent malfunction",
+      "test": "Validator overrules a wrong 'flows' verdict",
+      "what_we_did": "Coach answer 1 says the broken Natural Turn -> Reverse Turn routine 'flows'.",
+      "expected": "Rejected because check_routine says needs_fix; corrected answer accepted.",
+      "observed": {
+        "http": 200,
+        "model_calls": 2,
+        "retry_reason": "\"check_routine says the verdict is 'needs_fix'. Fix the verdict and issues.\"",
+        "final_verdict": "needs_fix"
+      },
+      "pass": true
+    },
+    {
+      "id": "T5",
+      "risk": "agent malfunction",
+      "test": "Persistent bad output: friendly error, no leak, run still logged and charged",
+      "what_we_did": "Every Coach answer contains a link (3 tries = 1 + 2 retries).",
+      "expected": "HTTP 502 with a plain message; the link never reaches the player; run logged as error and charged.",
+      "observed": {
+        "http": 502,
+        "message": "The AI couldn't produce a valid answer this time. Please try again.",
+        "model_calls": 3,
+        "run_logged_as": "error",
+        "charged_to_session_usd_gt_0": true,
+        "link_reached_player": false
+      },
+      "pass": true
+    },
+    {
+      "id": "T6",
+      "risk": "overspending",
+      "test": "A looping agent is stopped at the 8-call limit",
+      "what_we_did": "The scripted model calls check_routine forever and never answers.",
+      "expected": "Stopped after 8 model calls; HTTP 502 'hit its step limit'; run logged and charged.",
+      "observed": {
+        "http": 502,
+        "message": "The agent hit its step limit before finishing. Try a shorter request.",
+        "model_calls": 8,
+        "run_logged_as": "error",
+        "error": "UsageLimitExceeded"
+      },
+      "pass": true
+    },
+    {
+      "id": "T7",
+      "risk": "overspending",
+      "test": "Session cap: AI pauses at $0.25",
+      "what_we_did": "Session already charged $0.25, then asks the Coach again.",
+      "expected": "HTTP 429 before any model call; the game keeps working.",
+      "observed": {
+        "http": 429,
+        "message": "This session reached its $0.25 AI budget. The game still works; AI coaching is paused.",
+        "model_calls": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "T8",
+      "risk": "overspending",
+      "test": "Daily cap: AI pauses for everyone at $3.00",
+      "what_we_did": "The whole app has spent $3.00 today; a brand-new session asks the Coach.",
+      "expected": "HTTP 429 before any model call.",
+      "observed": {
+        "http": 429,
+        "message": "The app reached today's AI budget. The game still works; AI coaching resumes tomorrow.",
+        "model_calls": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "T9",
+      "risk": "overspending",
+      "test": "Rate limit: the 21st request in 10 minutes is refused",
+      "what_we_did": "21 Coach requests from one session in a row.",
+      "expected": "Requests 1-20 answered; request 21 gets HTTP 429 without a model call.",
+      "observed": {
+        "first_20": [
+          200
+        ],
+        "request_21_http": 429,
+        "message": "Slow down: too many AI requests in 10 minutes. Try again shortly.",
+        "model_calls_for_request_21": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "T10",
+      "risk": "agent malfunction",
+      "test": "Legality is decided by code, not the model",
+      "what_we_did": "POST /api/check on Natural Turn -> Reverse Turn, then with RF Closed Change inserted.",
+      "expected": "Broken chain rejected with the reason; fixed chain accepted; no model call, $0.",
+      "observed": {
+        "broken_ok": false,
+        "broken_problem": "After Natural Turn the leader's R foot is free, but Reverse Turn starts with the L foot.",
+        "fixed_ok": true,
+        "model_calls": 0
+      },
+      "pass": true
+    }
+  ]
+}

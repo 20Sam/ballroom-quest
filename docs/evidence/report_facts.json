@@ -1,0 +1,84 @@
+{
+  "built_from": [
+    "evidence/tokenomics.json",
+    "evidence/coach_trace.json",
+    "evidence/screens_live_runs.json",
+    "evidence/safety_tests.json",
+    "ballroom-quest/data/figures.json (HEAD efd89c0)",
+    "evidence/engine_tests.txt"
+  ],
+  "figures_total": 151,
+  "dances": 22,
+  "styles": 5,
+  "figures_by_source": {
+    "moore": 35,
+    "general": 84,
+    "v1": 32
+  },
+  "figures_by_level": {
+    "Newcomer": 62,
+    "Bronze": 89
+  },
+  "same_routine_cold_vs_in_app": {
+    "cold_run": "79ba0bfb74",
+    "cold_cost_usd": 0.00104161,
+    "cold_cached": 12241,
+    "in_app_run": "e32130301d",
+    "in_app_cost_usd": 0.00042597,
+    "in_app_cached": 18237,
+    "change_pct": -59.1,
+    "cold_repriced_with_app_cache_same_output_usd": 0.00050197,
+    "cache_only_change_pct": -51.8,
+    "cold_output_tokens": 508,
+    "in_app_output_tokens": 356,
+    "note": "cache_only_change_pct reprices the cold run with the app run's 18,237 cached tokens and the cold run's own 508 output tokens (prices from backend/config.py); the rest of the -59.1% comes from the shorter answer."
+  },
+  "ai_cost_100_players_per_month_vs_one_private_hour": {
+    "ai_usd": 3.27,
+    "private_hour_usd_low": 75,
+    "private_hour_usd_high": 100,
+    "share_low_pct": 3.3,
+    "share_high_pct": 4.4,
+    "source": "private lesson $75-$100/hr: sources.md A1 (Thumbtack); AI cost: tokenomics.json usage_model.base"
+  },
+  "cost_per_1000_runs_usd": {
+    "coach": {
+      "with_cache": 0.75,
+      "no_cache": 2.0,
+      "cut_pct": 62.4
+    },
+    "drill_builder": {
+      "with_cache": 1.63,
+      "no_cache": 6.52,
+      "cut_pct": 75.0
+    },
+    "planner": {
+      "with_cache": 3.04,
+      "no_cache": 7.06,
+      "cut_pct": 57.0
+    },
+    "all_15_runs": {
+      "with_cache": 1.23,
+      "no_cache": 3.58,
+      "cut_pct": 65.6
+    }
+  },
+  "drill_screenshot_run_matches_fresh_run": {
+    "screenshot_run": "15e4b68d9d",
+    "fresh_run": "41440db28b",
+    "same_tokens": true,
+    "seconds_screenshot": 2,
+    "seconds_fresh": 14.01
+  },
+  "safety_tests": {
+    "passed": 10,
+    "total": 10
+  },
+  "engine_tests": {
+    "checks": 33545,
+    "failures": 0,
+    "commit": "efd89c0",
+    "run": "2026-10-25",
+    "source": "evidence/engine_tests.txt"
+  }
+}
