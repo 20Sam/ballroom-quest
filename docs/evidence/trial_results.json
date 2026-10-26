@@ -1,0 +1,32 @@
+{
+  "collected": "2026-10-26",
+  "by": "Sam Hernandez, in person on Sam's laptop (app at ballroom-quest main, local)",
+  "testers": "4 first-timers who have never danced ballroom (not YBDT members); no ballroom dancers were available",
+  "method": "Informal: each tester played the game while Sam watched; comments written down by Sam right after. No scores, timings or before/after ratings were recorded.",
+  "responses": [
+    {
+      "tester": "MS",
+      "said": "This looks incredible. ... Wow, incredible. This is so amazing. This could be super helpful, and I could see myself using it.",
+      "also": "Surprised that the mechanics look so good; liked how simple it is and the different camera views while playing the character."
+    },
+    {
+      "tester": "T2",
+      "said": "Wow, this looks just like Dancing with the Stars."
+    },
+    {
+      "tester": "T3",
+      "said": "Wow, the animations look really great. How did you get them to dance so well? How did you map out the dances?"
+    },
+    {
+      "tester": "T4",
+      "said": "Really enjoyed playing the game; would feel confident if they had to learn a dance and used this.",
+      "note": "paraphrased by Sam"
+    }
+  ],
+  "not_measured": [
+    "footwork quiz before/after",
+    "timing accuracy",
+    "time to fix a broken routine",
+    "minutes per week of intended use"
+  ]
+}
