@@ -18,6 +18,7 @@
       <button data-role="leader" class="on">Leader</button>
       <button data-role="follower">Follower</button>
     </div>
+    <div id="rooms" class="rooms" role="group" aria-label="Go to a ballroom"></div>
     <div class="level"><span id="lvl">Level 1 · Newcomer</span><div class="bar"><i id="xpbar"></i></div><small id="xptext">0 XP</small></div>
     <div class="ai"><i id="aidot"></i><span id="aitext">Checking AI…</span></div>
   </header>
@@ -25,6 +26,7 @@
   <nav id="tools" class="card">
     <button data-open="drills" title="Team drill board (B)">📋 Drills</button>
     <button data-open="planner" title="Competition planner (P)">📅 Plan</button>
+    <button data-open="coach" title="Ask Coach Marisol about your routine (C on a floor)">🧑‍🏫 Coach</button>
     <button data-open="usage" title="AI cost">💲 <span id="spend">$0.0000</span></button>
     <button id="outfitBtn" title="Outfits (O)">👗 Outfit</button>
     <button id="camBtn" title="Camera (V)">🎥 Behind</button>
@@ -43,15 +45,21 @@
     </div>
     <div id="danceTabs" class="tabs"></div>
     <p id="danceFeel" class="feel"></p>
+    <div id="goalPick" class="goalpick" role="group" aria-label="What do you want to work on?"></div>
     <h3>Figures <small>press 1–9 to add</small></h3>
     <ol id="figList"></ol>
     <h3>Your routine <small id="routineState"></small></h3>
     <div id="routine" class="chain"><em>Add figures to build a routine.</em></div>
+    <div id="tryNext" class="trynext"></div>
     <div class="row speed"><label>Tempo <input id="speed" type="range" min="40" max="100" step="5" value="60" /> <b id="speedVal">60%</b></label></div>
     <div class="row actions">
       <button id="watchBtn" class="ghost">▶ Watch <kbd>W</kbd></button>
       <button id="playBtn" class="primary">🎵 Play <kbd>Enter</kbd></button>
       <button id="coachBtn" class="ghost">🧑‍🏫 Coach <kbd>C</kbd></button>
+    </div>
+    <div id="keyMode" class="row keymode" role="group" aria-label="Play keys"><span>Keys:</span>
+      <button data-keys="feet" class="on" title="Beginner: S = left foot, L = right foot, on the beat">S/L feet</button>
+      <button data-keys="arrows" title="Advanced: arrows for the step direction, Space to close or replace">Arrows (advanced)</button>
     </div>
     <div class="row"><button id="mocapBtn" class="ghost" style="flex:1;padding:9px;border-radius:12px;font-weight:600;font-size:13px">🎥 Instructors <kbd>I</kbd></button></div>
     <div class="row small"><button id="undoBtn" class="link">⌫ Undo</button><button id="clearBtn" class="link">Clear <kbd>X</kbd></button></div>
@@ -74,7 +82,7 @@
         <li><b>Walk</b> Evans Hall with <kbd>WASD</kbd> or the arrow keys. Five ballrooms open off the hall: <b>Standard</b>, <span class="blue">Smooth</span>, <span class="coral">Latin</span>, <b>Rhythm</b> and the <span class="coral">Social &amp; Nightclub</span> room (East Coast Swing, West Coast Swing, Lindy Hop, Salsa). Walk onto a floor and press <kbd>E</kbd>.</li>
         <li><b>Share the floor</b> with other couples. Standard, Smooth, Samba and Paso Doble travel counter-clockwise along the line of dance; West Coast Swing keeps its slot; the other dances stay on a spot.</li>
         <li><b>Combine</b> figures with number keys <kbd>1</kbd>–<kbd>9</kbd>. The chain turns red if a link isn't danceable.</li>
-        <li><b>Play</b> with <kbd>↑</kbd> forward, <kbd>↓</kbd> back, <kbd>←</kbd> <kbd>→</kbd> side, <kbd>Space</kbd> close or replace, on the beat.</li>
+        <li><b>Play</b> on the beat with just two keys: <kbd>S</kbd> for your left foot, <kbd>L</kbd> for your right foot. (Advanced: switch to the arrows for each step's direction.)</li>
         <li><b>Ask for help</b>: Coach Marisol reviews your routine, the Drill Board turns lesson notes into drills, and the Planner builds your plan for competition.</li>
       </ol>
       <button id="startBtn" class="primary big">Enter the studio</button>

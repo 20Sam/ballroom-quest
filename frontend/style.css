@@ -22,6 +22,14 @@ kbd { font: 600 11px/1 ui-monospace, Menlo, monospace; padding: 3px 6px; border-
 .role { display: grid; grid-template-columns: 1fr 1fr; background: var(--sand); border-radius: 12px; padding: 3px; }
 .role button { padding: 7px; border-radius: 10px; font-weight: 600; color: var(--muted); }
 .role button.on { background: var(--ocean); color: #fff; }
+/* room picker: teleport onto a ballroom's floor (Hall walks you off it) */
+.rooms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.rooms button { padding: 6px 4px; border-radius: 10px; font-size: 12.5px; font-weight: 600; color: var(--ocean); background: rgba(216, 241, 247, 0.55);
+  border: 1px solid rgba(27, 127, 156, 0.18); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: background .2s, color .2s; }
+.rooms button:hover { background: var(--foam); border-color: rgba(27, 127, 156, 0.4); }
+.rooms button.on { background: var(--lagoon); border-color: var(--lagoon); color: #fff; }
+.rooms button[data-room="hall"] { background: var(--sand); border-color: var(--sand-2); color: var(--muted); }
+.rooms button[data-room="hall"].on { background: var(--sand-2); color: var(--ocean); }
 .level { font-size: 13px; color: var(--muted); display: grid; gap: 4px; }
 .level span { color: var(--ocean); font-weight: 600; }
 .bar { height: 8px; background: var(--sand); border-radius: 99px; overflow: hidden; }
@@ -140,6 +148,7 @@ body.on-floor #minimap { display: none; }
 /* narrow windows (e.g. a side pane): keep the brand card, toolbar and studio panel from overlapping */
 @media (max-width: 900px) {
   #brand { width: 230px; padding: 10px 12px; gap: 6px; }
+  .rooms button { padding: 4px 2px; font-size: 11.5px; }
   #tools { max-width: calc(100vw - 262px); flex-wrap: wrap; justify-content: flex-end; }
   #tools button { padding: 6px 8px; font-size: 13px; }
   #floor { width: min(330px, calc(100vw - 262px)); }
@@ -158,10 +167,10 @@ body.on-floor #minimap { display: none; }
 body.on-floor #printKey { left: calc((100% - 350px) / 2); }
 /* narrower windows: a small card under the brand card instead (the top centre is needed by the toolbar) */
 @media (max-width: 1400px) {
-  #printKey, body.on-floor #printKey { left: 16px; top: 214px; transform: none; flex-direction: column; align-items: flex-start; gap: 4px; border-radius: 16px; padding: 10px 14px; }
+  #printKey, body.on-floor #printKey { left: 16px; top: 286px; transform: none; flex-direction: column; align-items: flex-start; gap: 4px; border-radius: 16px; padding: 10px 14px; }
   #printKey img { height: 28px; }
 }
-@media (max-width: 900px) { #printKey, body.on-floor #printKey { top: 170px; font-size: 11px; } #printKey img { height: 22px; } }
+@media (max-width: 900px) { #printKey, body.on-floor #printKey { top: 248px; font-size: 11px; } #printKey img { height: 22px; } }
 
 /* wardrobe (Outfit button, O) */
 .wardrobe { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
@@ -180,3 +189,27 @@ body.on-floor #printKey { left: calc((100% - 350px) / 2); }
 .wardrobe .sw.on { box-shadow: 0 0 0 3px var(--lagoon); }
 .wardrobe-tip { font-size: 12.5px; color: var(--muted); margin-bottom: 0; }
 @media (max-width: 700px) { .wardrobe { grid-template-columns: 1fr; } }
+
+/* play keys: beginner S/L feet or advanced arrows (toggle under Play) */
+.keymode { margin-top: 8px; gap: 4px; font-size: 12px; color: var(--muted); }
+.keymode button { flex: 1; padding: 6px 4px; border-radius: 10px; background: var(--sand); color: var(--ocean); font-weight: 600; font-size: 12px; }
+.keymode button.on { background: var(--lagoon); color: #fff; }
+kbd.kL, #legend kbd.kL { background: var(--print-l); color: #fff; border-color: var(--print-l); }
+kbd.kR, #legend kbd.kR { background: var(--print-r); color: var(--ocean); border-color: var(--print-r); }
+#printKey .pk-key { display: none; margin-left: 2px; font-size: 12px; }
+body.keys-feet #printKey .pk-key { display: inline-block; }
+
+/* goal-based suggestions */
+.goalpick { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 8px 0 2px; }
+.goalpick .gp-q { width: 100%; font: 600 12.5px Georgia, serif; color: var(--ocean); }
+.goalpick button { padding: 4px 9px; border-radius: 999px; background: var(--sand); color: var(--ocean); font-size: 12px; font-weight: 600; }
+.goalpick button:hover { background: var(--sand-2); }
+.goalpick button.on { background: var(--sky); color: #fff; }
+#figList .goaltag { font-size: 10px; font-weight: 700; color: #fff; background: var(--sky); border-radius: 999px; padding: 1px 6px; margin-left: 4px; vertical-align: 1px; }
+#figList li.goal .n { background: #cfe9f5; }
+.trynext { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin-top: 6px; font-size: 12px; color: var(--muted); }
+.trynext:empty { display: none; }
+.trynext .tn-l { font-weight: 700; color: var(--ocean); }
+.trynext button { padding: 3px 8px; border-radius: 8px; background: var(--foam); color: var(--ocean); font-weight: 600; font-size: 12px; border: 1px dashed var(--sky); }
+.trynext button:hover { background: #c4e6f2; }
+.trynext .tn-miss { width: 100%; font-size: 11px; }

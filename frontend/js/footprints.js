@@ -270,8 +270,8 @@ export function createFootprints(scene, chip = document.getElementById('printKey
         return `<img src="${c.toDataURL()}" alt="${alt}">`
       }
       chip.innerHTML = `<span class="pk-title">Footprints</span>
-        <span>${img(printTex('L', 'flat'), 'blue print')}<b>Left</b></span>
-        <span>${img(printTex('R', 'flat'), 'gold print')}<b>Right</b></span>
+        <span>${img(printTex('L', 'flat'), 'blue print')}<b>Left</b><kbd class="pk-key kL">S</kbd></span>
+        <span>${img(printTex('R', 'flat'), 'gold print')}<b>Right</b><kbd class="pk-key kR">L</kbd></span>
         <span>${img(printTex('L', 'heel'), 'heel pad solid')}Heel lands first</span>
         <span>${img(printTex('R', 'toe'), 'toe pad solid')}Toe lands first</span>
         <span><i class="pk-num">1</i>next step</span>
