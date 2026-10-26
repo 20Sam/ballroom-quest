@@ -586,6 +586,14 @@ async function toggleMocap() {
 }
 
 // ---------- watch / play ----------
+// A rotation badge on a lane note: which way and how far your body turns on that step (on the foot that steps).
+const EIGHTHS = { 1: '⅛', 2: '¼', 3: '⅜', 4: '½', 5: '⅝', 6: '¾', 7: '⅞', 8: '1' }
+function turnBadge(deg) {
+  if (!(Math.abs(deg) >= 30)) return ''
+  const amt = EIGHTHS[Math.min(8, Math.max(1, Math.round(Math.abs(deg) / 45)))]
+  return `<span class="nturn" title="turn ${deg > 0 ? 'right' : 'left'} on this step">${deg > 0 ? '↻' : '↺'}${amt}</span>`
+}
+
 function startRun(kind) {
   if (S.mode !== 'floor') return
   const figs = runFigures()
@@ -602,6 +610,14 @@ function startRun(kind) {
     const mine = S.role === 'leader' ? s : followerStep(s, S.figs[s.figId])
     // beginner keys: the foot that steps (with or without weight); advanced: the step's direction
     s.key = S.keyMode === 'feet' ? FOOT_KEY[mine.foot] ?? 'KeyS' : KEY_FOR_DIR[mine.dir] ?? 'Space'; s.myFoot = mine.foot; s.judged = null
+    s.myDir = mine.dir
+  })
+  // the player's own turn on each step as the figure's chart writes it (+ = right): his step's turn, or hers from
+  // follow_turns where her turn differs (else she turns with him); floor steering at corners is left out
+  tl.steps.forEach((s) => {
+    const f = S.figs[s.figId], st = f?.steps?.[s.idx]
+    const his = Number(st?.[3]) || 0, hers = f?.follow_turns?.[String(s.idx)]
+    s.myTurn = S.role === 'leader' ? his : (hers !== undefined ? Number(hers) || 0 : his)
   })
   S.run = { kind, tl, figs, ids, tooLong: tl.fit?.reach > 1, spb, countIn, t0: performance.now() / 1000, lastBeat: -99, points: 0, keyMode: S.keyMode }
   dressPair(leaderD, followerD, S.style, true) // Watch/Play: the grand hall's gown becomes a short dress (see the steps)
@@ -610,7 +626,7 @@ function startRun(kind) {
   $('#lane').classList.toggle('hidden', false)
   $('#nowFig').classList.remove('hidden')
   $('#laneNotes').innerHTML = tl.steps.map((s, i) =>
-    `<div class="note ${s.myFoot}" id="n${i}">${keyLabel(s.key)}<small>${s.myFoot} · ${esc(s.count)}</small></div>`).join('')
+    `<div class="note ${s.myFoot}${Math.abs(s.myTurn) >= 30 ? ' turns' : ''}" id="n${i}">${keyLabel(s.key)}${S.keyMode === 'feet' ? `<i class="ndir">${KEY_LABEL[KEY_FOR_DIR[s.myDir]] ?? ''}</i>` : ''}<small>${s.myFoot} · ${esc(s.count)}</small>${turnBadge(s.myTurn)}</div>`).join('')
   document.querySelectorAll('#floor button').forEach((b) => { if (b.id !== 'leaveFloor') b.disabled = true })
   legend()
 }

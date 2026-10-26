@@ -213,3 +213,9 @@ body.keys-feet #printKey .pk-key { display: inline-block; }
 .trynext button { padding: 3px 8px; border-radius: 8px; background: var(--foam); color: var(--ocean); font-weight: 600; font-size: 12px; border: 1px dashed var(--sky); }
 .trynext button:hover { background: #c4e6f2; }
 .trynext .tn-miss { width: 100%; font-size: 11px; }
+
+/* lane notes: the step's direction (S/L mode) and a rotation badge where your body turns on that step */
+.note { overflow: visible; }
+.note .ndir { position: absolute; top: 3px; left: 5px; font-style: normal; font-size: 12px; opacity: .85; }
+.note .nturn { position: absolute; top: -10px; right: -12px; padding: 2px 5px; border-radius: 999px; background: #0d3b52; color: #fff; font-size: 12px; font-weight: 700; box-shadow: 0 0 0 2px #fff; white-space: nowrap; }
+.note.turns { box-shadow: 0 0 0 3px #fff, 0 0 0 5px #0d3b52; }
