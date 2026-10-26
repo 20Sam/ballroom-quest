@@ -10,6 +10,8 @@
 // heel leads as the engine sends them, CBM and sway from the figure charts, Latin turnout (~45° between the
 // feet), knee-driven Cuban hip action with quiet shoulders, spotting with a whip, weight-forward Latin poise,
 // the joined hands' halo over her head in underarm and spot turns, legs reaching through the feet on long stances.
+// Outfits (wardrobe.js) swap materials slot by slot (setOutfit); see-through views ghost each body zone (upper,
+// lower, shoe) on its own (setGhost), so a leader can look through his own legs and her skirt to his feet.
 import * as THREE from 'three'
 
 // Frame (three.js, +y up): a dancer with yaw θ faces (sin θ, 0, cos θ); their RIGHT is (-cos θ, 0, sin θ).
@@ -62,8 +64,14 @@ const BUILD = {
 BUILD.coach = BUILD.follower // Coach Marisol: the lady's build in practice wear
 
 // ---------- palettes (calm blue-and-sand ballroom; background couples use PALETTES) ----------
+// Leader fields beyond the tailsuit's suit/satin/shirt (each falls back to it): trousers, sleeve (jacket or shirt
+// sleeves), stripe (trouser stripe), tie, sole (sole edge and heel block: a light leather so the shoe and its
+// heel read on dark floors), sheen (satin shirt fabric) and look: 'tails' | 'dinner' | 'practice' | 'latin'
+// (which pieces show: tails, lapels, bow tie). Follower fields: cut ('latin' | 'practice' | 'gown' | 'social'
+// overrides the style's cut; the wardrobe uses it). The satin is a lighter charcoal than the cloth so the lapels
+// and trouser stripes catch the light and show the body's line (he also gets a soft rim light, see addRim).
 const DEFAULT = {
-  leader: { suit: 0x13161d, satin: 0x07080b, shirt: 0xf6f2ea, skin: 0xd6a57f, hair: 0x1d1611, shoe: 0x0a0a0c },
+  leader: { suit: 0x13161d, satin: 0x2f343c, shirt: 0xf6f2ea, skin: 0xd6a57f, hair: 0x1d1611, shoe: 0x0a0a0c, sole: 0xb89c78 },
   follower: { dress: 0x1f5784, lace: 0x86bde0, trim: 0x0d2338, skin: 0xd09a73, hair: 0x2a1910, shoe: 0xd9bc8c,
     lips: 0xae5a58, jewel: 0xe8cf98, hem: 'fringe' },
   coach: { dress: 0x1b7f9c, lace: null, trim: 0x13566a, skin: 0x8d5f3f, hair: 0x161616, shoe: 0x262321,
@@ -76,7 +84,7 @@ const DEFAULT = {
 export const PALETTES = [
   // the competition gown: champagne satin, a rhinestone bodice, bare arms and a full feather hem, with a
   // crisp white-tie tailsuit (black tails, white waistcoat, shirt and tie)
-  { name: 'Champagne', leader: { suit: 0x0c0d10, satin: 0x040405, shirt: 0xfdfcf8, skin: 0xd3a17c, hair: 0x15100c, shoe: 0x060607 },
+  { name: 'Champagne', leader: { suit: 0x0c0d10, satin: 0x2a2e35, shirt: 0xfdfcf8, skin: 0xd3a17c, hair: 0x15100c, shoe: 0x060607 },
     follower: { dress: 0xd9c091, lace: null, bodice: 'sparkle', satin: true, sleeves: false, trim: 0xe9d6b2, boa: 2.4, // light, full marabou hem (6.jpg)
       skin: 0xf1cfb2, hair: 0xe4d4b0, shoe: 0xc4955a, lips: 0xb8625d, jewel: 0xf6ead0, hem: 'fringe' } },
   { name: 'Sand dune', leader: { suit: 0x111111, satin: 0x050505, skin: 0xa86f4c, hair: 0x120c08 },
@@ -115,6 +123,16 @@ function categoryOf(style, dance, fallback) {
   if (style === 'latin' || style === 'rhythm') return 'lat'
   if (style === 'standard' || style === 'smooth') return 'std'
   return fallback || 'std'
+}
+// Turnout of each foot from the hip (rad): Latin about 23° per foot (45°+ between them), Social a little.
+const turnoutOf = (cat, hold) => (!hold || hold === 'none' ? 0.05 : cat === 'lat' ? 0.4 : cat === 'soc' ? 0.16 : 0.04)
+// Where a shoe lies on the floor for a footwork foot point p ({ x, z, yaw }: the middle of the foot), drawn the
+// way Dancer.apply places it (turned out by the style around a point near the heel). For the ghost footprints:
+// { x, z, yaw, len, width } in metres.
+export function shoePrint(kind, foot, p, style, dance, hold) {
+  const F = (BUILD[kind] || BUILD.leader).foot, t = turnoutOf(categoryOf(style, dance, 'std'), hold)
+  const fy0 = num(p.yaw), fy = fy0 + SX[foot] * t, piv = F.len * 0.3
+  return { x: p.x + (Math.sin(fy) - Math.sin(fy0)) * piv, z: p.z + (Math.cos(fy) - Math.cos(fy0)) * piv, yaw: fy, len: F.len, width: F.width }
 }
 
 // ---------- geometry helpers ----------
@@ -287,7 +305,7 @@ function limbGeo(L, rA, rB, { at = 0.5, amt = 0, z = 0, U = 16, uv = [2, 3] } = 
 function stripeGeo(L, rA, rB, side, at, amt) {
   return grid(2, 12, (u, v, o) => {
     const t = lerp(0.04, 0.97, v), r = limbRadius(rA, rB, t, at, amt) + 0.0025
-    const a = side * Math.PI / 2 + (u - 0.5) * 0.16
+    const a = side * Math.PI / 2 + (u - 0.5) * 0.24 // a little wider than real braid, so the leg's turn reads
     o[0] = r * Math.sin(a); o[1] = lerp(-L / 2, L / 2, t); o[2] = r * Math.cos(a)
   })
 }
@@ -385,12 +403,17 @@ function shoeGeo(b) {
     const strap = new THREE.TorusGeometry(0.034, 0.0042, 6, 20)
     strap.rotateX(Math.PI / 2); strap.translate(0, -0.014, 0.004)
     parts.push(heel, strap)
-  } else {
-    const heel = new THREE.BoxGeometry(0.058, F.lift + 0.004, 0.066)
-    heel.translate(0, -aH + F.lift / 2, zH + 0.037)
-    parts.push(heel)
+    return { rear: merge(parts), toe, ball: [-aH, zB] }
   }
-  return { rear: merge(parts), toe, ball: [-aH, zB] }
+  // his heel block and a sole edge (welt) in light leather, split at the ball like the shoe: from behind and
+  // above they show where his heel and toe are on a dark floor
+  const heel = new THREE.BoxGeometry(0.06, F.lift + 0.004, 0.068)
+  heel.translate(0, -aH + F.lift / 2, zH + 0.037)
+  const welt = (v0, v1, V) => grid(18, V, (u, vv, o) => {
+    const v = lerp(v0, v1, vv), c = u * TAU, w = wid(v) / 2 + 0.0045, ys = soleY(v)
+    o[0] = -w * spow(Math.sin(c), 0.6); o[1] = ys + 0.004 + 0.0042 * spow(Math.cos(c), 0.6); o[2] = lerp(zH - 0.003, zT + 0.004, v)
+  }, { closed: true })
+  return { rear: merge(parts), toe, ball: [-aH, zB], heel: merge([heel, welt(0.06, vBall + 0.02, 12)]), weltToe: welt(vBall - 0.035, 0.985, 8).translate(0, aH, -zB) }
 }
 
 // ---------- shared geometry (one set per build) ----------
@@ -631,9 +654,13 @@ function materials(kind, b, pal) {
   const std = (color, roughness, extra = {}) => new THREE.MeshStandardMaterial({ color, roughness, ...extra })
   let M
   if (!b.lady) {
-    M = { jacket: std(pal.suit, 0.55), satin: std(pal.satin, 0.22, { metalness: 0.15 }), shirt: std(pal.shirt, 0.6),
-      skin: std(pal.skin, 0.55), hair: std(pal.hair, 0.32), shoe: std(pal.shoe, 0.1, { metalness: 0.25 }), eye: EYE }
-    M.tails = M.jacket.clone(); M.tails.side = THREE.DoubleSide
+    // his cloth gets a soft rim light (addRim) so his silhouette, legs and joints read on black marble and wood
+    const cloth = (c) => (pal.sheen ? std(c, 0.32, { metalness: 0.08 }) : std(c, 0.55))
+    const satin = (c) => std(c, 0.22, { metalness: 0.15 })
+    M = { jacket: addRim(cloth(pal.suit)), trousers: addRim(std(pal.trousers ?? pal.suit, 0.55)), sleeve: addRim(cloth(pal.sleeve ?? pal.suit)),
+      satin: satin(pal.satin), stripe: satin(pal.stripe ?? pal.satin), shirt: std(pal.shirt, 0.6), tie: std(pal.tie ?? pal.shirt, 0.45),
+      skin: std(pal.skin, 0.55), hair: std(pal.hair, 0.32), shoe: std(pal.shoe, 0.1, { metalness: 0.25 }), sole: std(pal.sole ?? 0xb89c78, 0.6), eye: EYE }
+    M.tails = addRim(M.jacket.clone()); M.tails.side = THREE.DoubleSide
   } else {
     const lace = pal.lace != null ? laceTexture(mix(pal.dress, 0x000000, 0.3), pal.lace) : null
     const sheer = pal.lace != null ? laceTexture(mix(pal.skin, pal.dress, 0.5), mix(pal.dress, 0x000000, 0.15), 9) : null
@@ -655,11 +682,49 @@ function materials(kind, b, pal) {
   MATS.set(key, M)
   return M
 }
-function ghostOf(mat) {
-  let g = GHOST.get(mat)
-  if (!g) { g = mat.clone(); g.transparent = true; g.opacity = 0.35; g.depthWrite = false; GHOST.set(mat, g) }
+// See-through copy of a material at an opacity (cached per material and opacity).
+// A shoe material lit in its foot's print colour (left blue, right gold: footprints.js), cached per material.
+const SHOE_GLOW = { L: 0x1e90e6, R: 0xffc21a }
+const GLOW = new WeakMap()
+function glowOf(mat, foot) {
+  let byFoot = GLOW.get(mat)
+  if (!byFoot) GLOW.set(mat, (byFoot = {}))
+  if (!byFoot[foot]) {
+    const g = mat.clone()
+    if (g.emissive) { g.emissive.setHex(SHOE_GLOW[foot]); g.emissiveIntensity = 0.45 }
+    if (mat.userData.rim) addRim(g)
+    byFoot[foot] = g
+  }
+  return byFoot[foot]
+}
+function ghostOf(mat, opacity = 0.35) {
+  let byOp = GHOST.get(mat)
+  if (!byOp) GHOST.set(mat, (byOp = new Map()))
+  let g = byOp.get(opacity)
+  if (!g) {
+    g = mat.clone(); g.transparent = true; g.opacity = opacity; g.depthWrite = false
+    if (mat.userData.rim) addRim(g) // clone() does not carry onBeforeCompile
+    byOp.set(opacity, g)
+  }
   return g
 }
+// Rim light: a soft cool edge where the surface turns away from the camera (fresnel), added as emission. Dark
+// cloth keeps its colour face-on but its outline, folds and the line of each limb catch the light.
+const RIM = { color: new THREE.Color(0xbfe0ee), strength: 0.42, power: 2.6 }
+function addRim(mat) {
+  mat.userData.rim = true
+  mat.onBeforeCompile = (sh) => {
+    sh.uniforms.rimColor = { value: RIM.color.clone().multiplyScalar(RIM.strength) }
+    sh.fragmentShader = 'uniform vec3 rimColor;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+      { float rimF = 1.0 - clamp(abs(dot(normalize(normal), normalize(vViewPosition))), 0.0, 1.0);
+        totalEmissiveRadiance += rimColor * pow(rimF, ${RIM.power.toFixed(2)}); }`)
+  }
+  mat.customProgramCacheKey = () => 'bq-rim'
+  return mat
+}
+// Which slot of a material set a material fills (so an outfit change can swap in the new set's material).
+function slotOf(M, mat) { for (const k in M) if (M[k] === mat) return k; return null }
+const GHOST_ALL = { upper: 0.35, lower: 0.35, shoe: 0.35 }
 
 // ---------- small solvers ----------
 const _d = new THREE.Vector3(), _s = new THREE.Vector3(), _m = new THREE.Matrix4()
@@ -881,13 +946,12 @@ class Skirt {
     this.mesh = d.mesh(this.geo, d.M.skirt, d.bP)
     this.bandGeo = grid(this.NS, 2, null, { closed: true, uv: [16, 1] })
     this.band = d.mesh(this.bandGeo, d.M.trim, d.bP)
-    // a full feather hem (palette boa > 1.2) gets a second, outer layer of plumes, offset half a tile
-    if (num(d.pal.boa, 1) > 1.2) {
-      this.band2Geo = grid(this.NS, 2, null, { closed: true, uv: [16, 1] })
-      const uv2 = this.band2Geo.attributes.uv.array
-      for (let k = 0; k < uv2.length; k += 2) uv2[k] += 0.5
-      this.band2 = d.mesh(this.band2Geo, d.M.feather || d.M.trim, d.bP)
-    }
+    // a full feather hem (palette boa > 1.2) gets a second, outer layer of plumes, offset half a tile (built for
+    // every skirt, shown only then: the wardrobe can put any dancer in the feather gown)
+    this.band2Geo = grid(this.NS, 2, null, { closed: true, uv: [16, 1] })
+    const uv2 = this.band2Geo.attributes.uv.array
+    for (let k = 0; k < uv2.length; k += 2) uv2[k] += 0.5
+    this.band2 = d.mesh(this.band2Geo, d.M.feather || d.M.trim, d.bP)
     for (const m of [this.mesh, this.band, this.band2].filter(Boolean)) { m.frustumCulled = false; m.geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, -0.4, 0), 1.6) }
     this.push = new Float32Array(this.NS + 1); this.tmp = new Float32Array(this.NS + 1); this.carry = new Float32Array(this.NS + 1)
     this.Rb = new Float32Array(this.NS + 1)
@@ -907,7 +971,7 @@ class Skirt {
     for (let j = 0, k = 0; j <= NR; j++) for (let i = 0; i <= NS; i++, k++) { uv[k * 2] = (i / NS) * cut.uv[0]; uv[k * 2 + 1] = (j / NR) * cut.uv[1] }
     this.geo.attributes.uv.needsUpdate = true
     this.band.visible = !!cut.band
-    if (this.band2) this.band2.visible = cut.band === 'feather'
+    if (this.band2) this.band2.visible = cut.band === 'feather' && num(this.d.pal.boa, 1) > 1.2
     const M = this.d.M
     this.d.setMat(this.band, cut.band === 'fringe' ? M.fringe : cut.band === 'feather' && M.feather ? M.feather : M.trim)
     this.snap = true
@@ -1001,7 +1065,7 @@ class Skirt {
     const { cx, cz } = this.hem, fy = c.floorY + 0.006
     const Ex = this.E.x.x - this.D.x.x, Ez = this.E.z.x - this.D.z.x, Ff = clamp(F * 1.5, 0, 0.85)
     const set = (row, i, x, y, z) => { const k = (row * (NS + 1) + i) * 3; B[k] = x; B[k + 1] = Math.max(fy, y); B[k + 2] = z }
-    const B2 = mode === 'feather' && this.band2 ? this.band2Geo.attributes.position.array : null
+    const B2 = mode === 'feather' && this.band2?.visible ? this.band2Geo.attributes.position.array : null
     const set2 = (row, i, x, y, z) => { const k = (row * (NS + 1) + i) * 3; B2[k] = x; B2[k + 1] = Math.max(fy, y); B2[k + 2] = z }
     for (let i = 0; i <= NS; i++) {
       const k0 = i * 3, k1 = (NS + 1 + i) * 3
@@ -1072,14 +1136,17 @@ export class Dancer {
     // aliases kept from the earlier rig
     this.pelvis = this.bP; this.torso = this.bW; this.headG = this.bH
 
-    // torso and costume
+    // torso and costume; every mesh records its body zone (upper / lower / shoe: see setGhost) and its material
+    // slot (see setOutfit)
+    this._zone = 'upper'
     if (!b.lady) {
-      this.mesh(G.pelvis, M.jacket, this.bP)
+      this._zone = 'lower'; this.mesh(G.pelvis, M.trousers, this.bP); this._zone = 'upper'
       this.mesh(G.jacket, M.jacket, this.root, true)
-      this.mesh(G.front, M.shirt, this.root, true)
-      this.mesh(G.lapels, M.satin, this.root, true)
-      this.mesh(G.collar, M.shirt, this.bN)
-      this.mesh(G.bow, M.shirt, this.bN)
+      this.front = this.mesh(G.front, M.shirt, this.root, true)
+      this.lapels = this.mesh(G.lapels, M.satin, this.root, true)
+      this.collar = this.mesh(G.collar, M.shirt, this.bN)
+      this.bow = this.mesh(G.bow, M.tie, this.bN)
+      this._zone = 'lower'
       this.tails = kind === 'leader' ? G.tails.map((t, i) => {
         const piv = new THREE.Group()
         piv.position.copy(t.pivot)
@@ -1088,11 +1155,12 @@ export class Dancer {
         piv.userData = { sx: i === 0 ? 1 : -1, sw: spr(), lat: spr() }
         return piv
       }) : null
+      this._zone = 'upper'
     } else {
-      this.mesh(G.pelvis, M.dress, this.bP)
+      this._zone = 'lower'; this.mesh(G.pelvis, M.dress, this.bP); this._zone = 'upper'
       this.mesh(G.bodice, M.dress, this.root, true)
       this.yoke = this.mesh(G.yoke, M.sleeve, this.root, true)
-      this.skirt = new Skirt(this)
+      this._zone = 'lower'; this.skirt = new Skirt(this); this._zone = 'upper'
     }
     // neck, head, face, hair
     this.mesh(G.neck, M.skin, this.bN)
@@ -1104,28 +1172,35 @@ export class Dancer {
     this.mesh(G.brows, M.hair, this.bH, false, false)
     if (b.lady) { this.mesh(G.lips, M.lips, this.bH, false, false); this.mesh(G.earrings, M.jewel, this.bH, false, false) }
 
-    // limbs
+    // limbs (his legs in the trousers, his arms in the jacket's or the shirt's sleeves)
     this.parts = {}; this.caps = {}; this.arm = {}; this.feet = {}; this.legLocal = {}
     this.armMeshes = []
-    const legMat = b.lady ? M.legs : M.jacket, armMat = b.lady ? M.sleeve : M.jacket
+    const legMat = b.lady ? M.legs : M.trousers, armMat = M.sleeve
     for (const f of SIDES) {
+      this._zone = 'lower'
+      const thigh = this.limb(G.thigh, legMat), shin = this.limb(G.shin, legMat), knee = this.mesh(G.knee, legMat, this.limbs)
+      if (!b.lady) {
+        this.mesh(G.stripe[`thigh${f}`], M.stripe, thigh, false, false)
+        this.mesh(G.stripe[`shin${f}`], M.stripe, shin, false, false)
+      }
+      this._zone = 'upper'
       const P = (this.parts[f] = {
-        thigh: this.limb(G.thigh, legMat), shin: this.limb(G.shin, legMat), knee: this.mesh(G.knee, legMat, this.limbs),
+        thigh, shin, knee,
         upper: this.limb(G.upper, armMat), fore: this.limb(G.fore, armMat), elbow: this.mesh(G.elbow, armMat, this.limbs),
         hand: this.mesh(f === 'L' ? G.handL : G.handR, M.skin, this.limbs), shoe: new THREE.Group(),
       })
       P.shoe.rotation.order = 'YXZ'
       this.limbs.add(P.shoe)
-      this.mesh(G.shoe.rear, M.shoe, P.shoe)
+      this._zone = 'shoe'
+      this.mesh(G.shoe.rear, M.shoe, P.shoe).userData.foot = f
       P.toe = this.mesh(G.shoe.toe, M.shoe, P.shoe)
+      P.toe.userData.foot = f // the shoe uppers glow in their print colour in the feet views (setShoeGlow)
       P.toe.position.set(0, G.shoe.ball[0], G.shoe.ball[1])
-      if (!b.lady) {
-        this.mesh(G.stripe[`thigh${f}`], M.satin, P.thigh, false, false)
-        this.mesh(G.stripe[`shin${f}`], M.satin, P.shin, false, false)
-        this.mesh(G.cuff, M.shirt, P.fore, false, false)
-      }
+      if (G.shoe.heel) { this.mesh(G.shoe.heel, M.sole, P.shoe, false, false); this.mesh(G.shoe.weltToe, M.sole, P.toe, false, false) }
+      this._zone = 'upper'
+      if (!b.lady) this.mesh(G.cuff, M.shirt, P.fore, false, false)
       this.armMeshes.push(P.upper, P.fore, P.elbow)
-      this.caps[f] = this.mesh(G.cap, b.lady ? M.sleeve : M.jacket, this.bC)
+      this.caps[f] = this.mesh(G.cap, M.sleeve, this.bC)
       this.caps[f].position.set(SX[f] * b.shoulderW, b.shoulderY - b.chestY, 0)
       const V3 = () => new THREE.Vector3()
       this.arm[f] = { goal: V3(), local: V3(), pole: V3(), palmGoal: V3(), palm: V3(), finger: V3(), hasFinger: false,
@@ -1144,7 +1219,8 @@ export class Dancer {
     this._lean = 0; this._leanT = 0; this._leanDir = 0 // upper-body incline toward a stretched joined hand
     this._whip = 0 // spotting: the neck limit the head has whipped round to
     this.style = null; this.dance = null; this.cat = 'std'; this.costume = null
-    this._ghost = false; this._pending = false
+    this._ghost = null; this._ghostKey = ''; this._pending = false
+    this.basePal = this.pal; this._outfitKey = '' // the dancer's own look (setOutfit)
     this.setCostume(kind === 'coach' ? 'soc' : 'std')
     scene.add(this.root, this.limbs)
     this.walk(0, 0, 0, 0, false) // never show an unposed figure
@@ -1155,6 +1231,8 @@ export class Dancer {
     const m = skinned ? new THREE.SkinnedMesh(geo, mat) : new THREE.Mesh(geo, mat)
     m.castShadow = shadow
     m.userData.base = mat
+    m.userData.slot = slotOf(this.M, mat)
+    m.userData.zone = this._zone || 'upper'
     parent.add(m)
     if (skinned) { m.frustumCulled = false; m.bind(this.skeleton) }
     this.meshCount++
@@ -1163,28 +1241,84 @@ export class Dancer {
 
   limb(geo, mat) { const m = this.mesh(geo, mat, this.limbs); m.userData.len = geo.userData.len; return m }
 
-  setMat(m, mat) { m.userData.base = mat; m.material = this._ghost ? ghostOf(mat) : mat }
+  // The material a mesh shows: its own, or a see-through copy at its body zone's ghost opacity.
+  shown(m, mat) {
+    const op = this._ghost ? num(this._ghost[m.userData.zone || 'upper'], 1) : 1
+    const base = this._shoeGlow && m.userData.foot ? glowOf(mat, m.userData.foot) : mat
+    return op < 0.999 ? ghostOf(base, op) : base
+  }
+
+  // The player's own shoes in the feet views: left blue and right gold like his prints and lane notes, so dark
+  // shoes still read on the black marble and the club floor.
+  setShoeGlow(on) {
+    on = !!on
+    if (this._shoeGlow === on) return
+    this._shoeGlow = on
+    const set = (o) => { if (o.isMesh && o.userData.foot && o.userData.base) o.material = this.shown(o, o.userData.base) }
+    this.limbs.traverse(set)
+  }
+
+  setMat(m, mat) { m.userData.base = mat; m.userData.slot = slotOf(this.M, mat) ?? m.userData.slot; m.material = this.shown(m, mat) }
 
   // Costume by category: tails only for Standard/Smooth; her gown + sheer lace sleeves (std), short dress with
-  // bare arms (lat, soc); the coach in a plain practice top and skirt.
+  // bare arms (lat, soc); the coach in a plain practice top and skirt. An outfit (setOutfit) may set her cut
+  // (pal.cut: the short dress in any room, say) and his look (pal.look: which of tails, lapels and bow tie show).
   setCostume(cat) {
-    if (this.costume === cat) return
-    this.costume = cat
-    if (!this.b.lady) { if (this.tails) for (const t of this.tails) t.visible = cat === 'std'; return }
-    const M = this.M, coach = this.kind === 'coach', sleeved = cat === 'std' && this.pal.sleeves !== false
-    const arms = coach || !sleeved ? M.skin : M.sleeve
-    const yoke = coach ? M.dress : sleeved ? M.sleeve : M.skin
+    const key = `${cat}|${this._outfitKey}`
+    if (this.costume === key) return
+    this.costume = key
+    const pal = this.pal
+    if (!this.b.lady) {
+      const look = pal.look || 'tails', formal = look === 'tails' || look === 'dinner'
+      if (this.tails) for (const t of this.tails) t.visible = look === 'tails' && cat === 'std'
+      this.lapels.visible = formal; this.bow.visible = formal
+      return
+    }
+    const M = this.M, coach = this.kind === 'coach'
+    const cut = coach ? 'practice' : CUTS[pal.cut] ? pal.cut : cat === 'std' ? 'gown' : cat === 'soc' ? 'social' : 'latin'
+    const sleeved = !coach && cut === 'gown' && pal.sleeves !== false
+    const arms = sleeved ? M.sleeve : M.skin
+    const yoke = coach || cut === 'practice' ? M.dress : sleeved ? M.sleeve : M.skin
     for (const m of this.armMeshes) this.setMat(m, arms)
     this.setMat(this.yoke, yoke)
     for (const f of SIDES) this.setMat(this.caps[f], yoke)
-    this.skirt.setCut(coach ? 'practice' : cat === 'std' ? 'gown' : cat === 'soc' ? 'social' : 'latin', this.pal.hem)
+    this.skirt.setCut(cut, pal.hem)
   }
 
+  // Dress the dancer in another outfit without rebuilding it (the wardrobe): o.colours = palette fields for this
+  // kind (clothes only: the dancer keeps their own skin and hair), o.look (his) / o.cut (her dress); null = the
+  // dancer's own palette. Every mesh swaps to the new material set's material for its slot, so ghosting, the
+  // hold, body contact and the skirt's motion carry on undisturbed.
+  setOutfit(o) {
+    const key = o ? JSON.stringify(o) : ''
+    if (key === this._outfitKey) return
+    this._outfitKey = key
+    const pal = { ...this.basePal, ...(o?.colours || {}) }
+    if (o?.look) pal.look = o.look
+    if (o?.cut) pal.cut = o.cut
+    this.pal = pal
+    const old = this.M
+    this.M = materials(this.kind, this.b, pal)
+    const swap = (m) => {
+      const slot = m.isMesh ? m.userData.slot ?? slotOf(old, m.userData.base) : null
+      if (slot && this.M[slot]) this.setMat(m, this.M[slot])
+    }
+    this.root.traverse(swap); this.limbs.traverse(swap)
+    this.costume = null
+    this.setCostume(this.kind === 'coach' ? 'soc' : this.cat)
+  }
+
+  // See-through: false (solid), true (all of the dancer at 35%: the background couples), or opacities per body
+  // zone { upper, lower, shoe } (1 or missing = solid). The behind and footwork cameras use zones: the player's
+  // legs and skirt almost clear and the shoes solid, the partner's skirt and legs see-through where they would
+  // hide his feet.
   setGhost(on) {
-    on = !!on
-    if (this._ghost === on) return
-    this._ghost = on
-    const set = (o) => { if (o.isMesh && o.userData.base) o.material = on ? ghostOf(o.userData.base) : o.userData.base }
+    const g = !on ? null : on === true ? GHOST_ALL : on
+    const key = g ? `${num(g.upper, 1)}|${num(g.lower, 1)}|${num(g.shoe, 1)}` : ''
+    if (this._ghostKey === key) return
+    this._ghostKey = key
+    this._ghost = g
+    const set = (o) => { if (o.isMesh && o.userData.base) o.material = this.shown(o, o.userData.base) }
     this.root.traverse(set); this.limbs.traverse(set)
   }
 
@@ -1243,7 +1377,7 @@ export class Dancer {
     // feet: foot yaw (+ style turnout from the hip) and pitch; the foot pivots on the ball (heel up) or the
     // heel (toe up); the pose's foot point is the middle of the foot. Latin feet turn out about 23° each (45°+
     // between them) around a point near the heel, so closed feet make a V (heels together, toes apart).
-    const turnout = hold === 'none' ? 0.05 : cat === 'lat' ? 0.4 : cat === 'soc' ? 0.16 : 0.04
+    const turnout = turnoutOf(cat, hold)
     const tPiv = F.len * 0.3 // turnout pivot behind the middle of the foot
     for (const f of SIDES) {
       const sx = SX[f], P = f === 'L' ? PL : PR, ft = this.feet[f]

@@ -16,7 +16,9 @@ from pydantic_ai import UnexpectedModelBehavior, UsageLimitExceeded
 from pydantic_ai.exceptions import ContentFilterError
 
 import catalog
+import grade  # optional video grading: stdlib-only import; 501 at /api/grade without requirements-video.txt
 from agents import Deps, days_until, run_agent
+import choreo  # the Choreographer agent (registers itself in agents.AGENTS, so it is imported after agents)
 from config import DAILY_BUDGET_USD, DATA_DIR, FRONTEND_DIR, MAX_NOTES_CHARS, MODEL_NAME, OUTPUT_DIR, SESSION_BUDGET_USD, key_is_set
 from safety import GUARD, screen_notes
 
@@ -41,7 +43,7 @@ class CoachIn(BaseModel):
     session_id: str = Field(min_length=6, max_length=64)
     dance: DanceKey
     role: Role = "leader"
-    figure_ids: list[str] = Field(min_length=1, max_length=12)
+    figure_ids: list[str] = Field(min_length=1, max_length=choreo.MAX_FIGURES)  # a Choreographer plan can fill a song
     stats: dict[str, float] = Field(default_factory=dict)  # figure_id -> accuracy 0..1
 
 
@@ -119,6 +121,20 @@ def get_catalog():
     return catalog.public_catalog()
 
 
+_syllabus: dict = {}
+
+
+@app.get("/api/syllabus/{dance}")
+def get_syllabus(dance: DanceKey):
+    """The complete syllabus for one dance (data/syllabus.json): levels, our summaries and tips, links."""
+    if not _syllabus:
+        path = DATA_DIR / "syllabus.json"
+        _syllabus.update(json.loads(path.read_text()).get("dances", {}) if path.exists() else {})
+    if dance not in _syllabus:
+        raise HTTPException(404, "No syllabus for this dance yet.")
+    return _syllabus[dance]
+
+
 class CheckIn(CoachIn):
     # The hold the couple stands in before the first figure; empty = the first figure's own hold, as the game starts it.
     start_position: Literal["closed", "promenade", "open", "fan"] | None = None
@@ -186,6 +202,17 @@ async def plan_route(body: PlanIn):
     return {"plan": out.model_dump(), "days_left": days, "usage": usage, "trace": record["trace"]}
 
 
+@app.post("/api/choreograph")
+async def choreograph_route(body: choreo.ChoreoIn):
+    """Plan figures for each section of the player's song. The body is numbers only (tempo, length, bars, sections
+    with energy): the song itself is analysed in the browser and never uploaded."""
+    gate(body.session_id)
+    prompt, deps = choreo.build_request(body)
+    out, usage, record = await call("choreographer", prompt, deps)
+    return {"plan": out.model_dump(), "dance": body.dance, "beats_per_bar": choreo.beats_per_bar(body.dance),
+            "usage": usage, "trace": record["trace"]}
+
+
 MOCAP_DIR = DATA_DIR / "mocap"
 
 
@@ -251,6 +278,13 @@ def session_spend(body: SessionIn):
     """What this browser session has spent on AI so far, as charged by the budget guard (failed runs included)."""
     spent = round(GUARD.session_spend.get(body.session_id, 0.0), 6)  # .get: don't create entries for unknown ids
     return {"session_spent_usd": spent, "session_budget_usd": SESSION_BUDGET_USD, "daily_budget_usd": DAILY_BUDGET_USD}
+
+
+@app.post("/api/grade")
+async def grade_route(request: Request):
+    """Grade a phone video of the player dancing their routine (multipart: video, dance, figure_ids, role, bpm,
+    optional first_step, facing). Runs on this machine only; the upload is deleted when grading ends. No AI call."""
+    return await grade.handle(request)
 
 
 # ---------- the game ----------

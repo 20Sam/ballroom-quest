@@ -155,9 +155,8 @@ def catalog_text() -> str:
         for f in figures_for(key):
             accepts = "/".join(f["accepts"])
             ends = f["ends"]
-            lines.append(f"- {f['id']}: {f['name']} [{f['level']}] starts {f['start_foot']} foot from {accepts}; "
-                         f"ends {ends} with {f['end_free']} foot free; {f['beats']:g} beats. Lead: {f['lead_cue']} "
-                         f"Follow: {f['follow_cue']} Common mistake: {f['mistake']}")
+            lines.append(f"- {f['id']}: {f['name']} [{f['level']}] {f['start_foot']} foot, {accepts}->{ends}, "
+                         f"{f['end_free']} free, {f['beats']:g}b")  # compact: ~650 figures; details via figure_details
     return "\n".join(lines)
 
 

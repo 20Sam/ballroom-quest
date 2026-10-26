@@ -92,10 +92,10 @@ class Deps:
 
 # ---------- system prompts ----------
 def _figure_line(f: dict) -> str:
-    # Same line format as catalog.catalog_text(), so every agent reads the syllabus the same way.
-    return (f"- {f['id']}: {f['name']} [{f['level']}] starts {f['start_foot']} foot from {'/'.join(f['accepts'])}; "
-            f"ends {f['ends']} with {f['end_free']} foot free; {f['beats']:g} beats. Lead: {f.get('lead_cue', '')} "
-            f"Follow: {f.get('follow_cue', '')} Common mistake: {f.get('mistake', '')}")
+    # Same compact line as catalog.catalog_text(): the full syllabus is ~650 figures, so cues and mistakes are left
+    # out of the prompt and fetched with the figure_details tool when an agent needs them.
+    return (f"- {f['id']}: {f['name']} [{f['level']}] {f['start_foot']} foot, {'/'.join(f['accepts'])}->{f['ends']}, "
+            f"{f['end_free']} free, {f['beats']:g}b")
 
 
 def style_dances(style: str) -> list[str]:
@@ -356,7 +356,7 @@ async def run_agent(name: str, prompt: str, deps: Deps):
     model = build_model()
     base = {"run_id": uuid.uuid4().hex[:10], "at": datetime.now().isoformat(timespec="seconds"), "agent": name,
             "model": MODEL_NAME, "session": deps.session[:8]}
-    if name == "coach":
+    if name in ("coach", "choreographer"):
         base["style"] = style_of(deps.dance)  # which per-style prompt was used
     run_usage = RunUsage()  # filled in place by pydantic_ai, so it survives an exception
     t0 = time.perf_counter()

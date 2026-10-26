@@ -1,0 +1,116 @@
+{
+ "run_at": "2026-10-26T01:47:22",
+ "passed": 16,
+ "total": 16,
+ "results": [
+  {
+   "test": "synthetic: perfect dancer is graded high",
+   "pass": true,
+   "overall": 98,
+   "on_beat": 1.0,
+   "foot": 1.0,
+   "steps": "30/30",
+   "confidence": "high",
+   "first_step": 2.0
+  },
+  {
+   "test": "synthetic: detected step times sit on the expected ones",
+   "pass": true,
+   "mean_abs_dt_ms": 33.5
+  },
+  {
+   "test": "synthetic: sloppy timing (+-160 ms) scores lower",
+   "pass": true,
+   "overall": 78,
+   "on_beat": 0.8,
+   "spread_ms": 96,
+   "tips": [
+    "Practise the Basic (full) slowly: 7 of 10 steps were on the beat.",
+    "Your timing wanders (about \u00b195 ms): practise with the metronome at a slower tempo, then speed up."
+   ]
+  },
+  {
+   "test": "synthetic: wrong feet in one figure are caught",
+   "pass": true,
+   "foot": 0.667,
+   "per_figure_right_foot": {
+    "cc_basic_full": "10/10",
+    "cc_new_yorker": "0/10",
+    "cc_hand_to_hand": "10/10"
+   },
+   "tip": [
+    "Check your feet: 10 matched steps were on the other foot (in New Yorker)."
+   ]
+  },
+  {
+   "test": "synthetic: late against the music is caught only with the music's beat",
+   "pass": true,
+   "with_music": {
+    "mean_offset_ms": 164,
+    "on_beat": 0.2
+   },
+   "without_music": {
+    "mean_offset_ms": -1,
+    "on_beat": 1.0
+   }
+  },
+  {
+   "test": "synthetic: follower graded on her own feet",
+   "pass": true,
+   "as_follower": 1.0,
+   "as_leader": 0.0
+  },
+  {
+   "test": "synthetic: a video with almost no steps is refused",
+   "pass": true,
+   "message": "I could only find 1 steps in the video, too few to grade. Film your whole body (head to fe"
+  },
+  {
+   "test": "music: metronome beat found at the right time",
+   "pass": true,
+   "phase_error_ms": 1.4,
+   "strength": 2.97,
+   "bpm": 120.0
+  },
+  {
+   "test": "music: noise is not taken for a beat",
+   "pass": true,
+   "strength": 1.16
+  },
+  {
+   "test": "api: without the extras the app starts and /api/grade answers 501 with the install hint",
+   "pass": true,
+   "got": "200 501 Video grading needs the optional extras: pip install -r requirements-video.txt"
+  },
+  {
+   "test": "api: unknown dance -> 422",
+   "pass": true,
+   "detail": "Unknown dance."
+  },
+  {
+   "test": "api: unreadable video -> 422, temp folder deleted",
+   "pass": true,
+   "detail": "I couldn't read that video. Try an .mp4 or .mov straight from your phone."
+  },
+  {
+   "test": "api: too big -> 413, temp folder deleted",
+   "pass": true,
+   "detail": "That video is over 0 MB. Trim it to the routine (60 s at most)."
+  },
+  {
+   "test": "api: not a video -> 415",
+   "pass": true,
+   "detail": "That doesn't look like a video. Use an .mp4 or .mov from your phone."
+  },
+  {
+   "test": "api: one video at a time -> 429",
+   "pass": true,
+   "detail": "Another video is being graded right now. Try again in a minute."
+  },
+  {
+   "test": "api: no temp folder left behind",
+   "pass": true,
+   "folders": 2
+  }
+ ]
+}

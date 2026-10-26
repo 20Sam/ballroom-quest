@@ -5,6 +5,11 @@ import { buildTimeline, poseAt, restPose, targetFor, followerStep, startFor, flo
 import { api, store } from './api.js'
 import { MocapPlayer } from './mocap.js'
 import { Dancer, PALETTES } from './body.js'
+import { createFootprints } from './footprints.js'
+import { dressPair, initWardrobe } from './wardrobe.js'
+import * as Music from './music.js' // tempo presets, backing / your song (U), runs on the audio clock, Choreographer
+import { mountGrader } from './grade.js'
+import * as Syl from './syllabus.js' // complete syllabus: level chips, figure cards (I), browser (Y), suggested next figures
 
 const $ = (s) => document.querySelector(s)
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
@@ -46,7 +51,7 @@ let leaderD = PAIRS.plain.lead, followerD = PAIRS.plain.fol
 function dressCouple(room) {
   const want = ROOMS[room]?.theme === 'grand' && HERO_PALETTE ? (PAIRS.hero ??= pairOf(HERO_PALETTE)) : PAIRS.plain
   if (want.lead === leaderD) return
-  for (const d of [leaderD, followerD]) { d.setGhost(false); d.setVisible(false) }
+  for (const d of [leaderD, followerD]) { d.setGhost(false); d.setShoeGlow(false); d.setVisible(false) }
   leaderD = want.lead; followerD = want.fol
   leaderD.setVisible(true); followerD.setVisible(true)
 }
@@ -61,13 +66,8 @@ coachLabel.position.set(COACH.x, 2.25, COACH.z); scene.add(coachLabel)
 
 const mocap = new MocapPlayer(scene)
 
-// ghost footprints
-const footGeo = new THREE.CircleGeometry(1, 24)
-const prints = [0, 1, 2].map((i) => {
-  const m = new THREE.Mesh(footGeo, new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.0, depthWrite: false }))
-  m.rotation.x = -Math.PI / 2; m.scale.set(0.07, 0.15, 1); m.position.y = 0.015 + i * 0.001
-  scene.add(m); return m
-})
+// ghost footprints: shoe-shaped, numbered, heel/toe lead and swivel shown (footprints.js; key chip #printKey)
+const prints = createFootprints(scene)
 
 // ---------- state ----------
 const S = {
@@ -190,7 +190,7 @@ function setRole(r) {
 function legend() {
   const L = {
     explore: '<span><kbd>WASD</kbd> walk</span><span><kbd>E</kbd> interact</span><span><kbd>B</kbd> drills</span><span><kbd>P</kbd> plan</span><span><kbd>H</kbd> help</span>',
-    floor: '<span><kbd>1</kbd>–<kbd>9</kbd> add figure</span><span><kbd>Tab</kbd> next dance</span><span><kbd>W</kbd> watch</span><span><kbd>Enter</kbd> play</span><span><kbd>C</kbd> coach</span><span><kbd>V</kbd> camera</span><span><kbd>Esc</kbd> leave</span>',
+    floor: '<span><kbd>1</kbd>–<kbd>9</kbd> add figure</span><span><kbd>Tab</kbd> next dance</span><span><kbd>W</kbd> watch</span><span><kbd>Enter</kbd> play</span><span><kbd>C</kbd> coach</span><span><kbd>U</kbd> music</span><span><kbd>V</kbd> camera</span><span><kbd>Esc</kbd> leave</span>',
     watch: '<span>Watching. Follow the glowing footprints.</span><span><kbd>V</kbd> camera</span><span><kbd>Esc</kbd> stop</span>',
     play: '<span><kbd>↑</kbd> forward</span><span><kbd>↓</kbd> back</span><span><kbd>←</kbd><kbd>→</kbd> side</span><span><kbd>Space</kbd> close / replace</span><span><kbd>Esc</kbd> stop</span>',
   }
@@ -228,6 +228,7 @@ function runTimeline(figs) {
 // step), so nothing hops or shifts weight at the count-in.
 function placeCouple() {
   dressCouple(S.style) // the hero couple in the grand hall, the default costumes elsewhere
+  dressPair(leaderD, followerD, S.style) // then the wardrobe's outfits (wardrobe.js; room default when none chosen)
   const di = danceInfo(), figs = runFigures()
   S.start = startFor(di, FLOORS[S.style])
   S.idle = restPose(di, { ...S.start, position: startPosition(figs), floor: FLOORS[S.style] }, figs.length ? figs : null) // whole routine: exactly frame 0
@@ -240,6 +241,7 @@ function placeCouple() {
 // starting foot or hold) when that changed.
 function routineEdited() {
   checkRoutine()
+  if (S.mode === 'floor') renderFigList() // suggested next figures follow the routine's last figure
   if (S.mode === 'floor' && !S.run && (runFigures()[0]?.id ?? null) !== S.idleFirst) placeCouple()
 }
 
@@ -261,6 +263,7 @@ function enterFloor(style, opts = {}) {
   else if (S.routine.some((id) => S.figs[id]?.dance !== S.dance)) S.routine = []
   S.check = null // re-checked below for the new routine
   if (opts.tempo) { S.speed = opts.tempo / 100; $('#speed').value = opts.tempo; $('#speedVal').textContent = `${opts.tempo}%` }
+  else Music.defaultTempo() // the tempo you chose for this dance, else the recommended one (Latin/Rhythm/Social ≥ 80%)
   S.mode = 'floor'
   document.body.classList.add('on-floor')
   for (const s of STATIONS) if (rings[s.id]) rings[s.id].material.opacity = 0 // the rings belong to walking around
@@ -274,6 +277,7 @@ function leaveFloor() {
   mocap.hide(); S.mocapId = null; S.mocapGen = (S.mocapGen || 0) + 1; $('#mocapBtn').innerHTML = '🎥 Instructors <kbd>I</kbd>'
   S.mode = 'explore'
   dressCouple(null) // back in the hall in the default costumes
+  dressPair(leaderD, followerD, null) // then the wardrobe's outfits for the hall
   document.body.classList.remove('on-floor')
   $('#floor').classList.add('hidden')
   // step out through the room's door into the hall, facing away from the room
@@ -290,6 +294,7 @@ function switchDance(d) {
   S.danceFor[S.style] = d
   S.routine = []
   S.check = null
+  Music.defaultTempo()
   placeCouple() // each dance starts in its own place (line of dance, slot or spot)
   renderFloor(); checkRoutine(); refreshScoreboards()
 }
@@ -327,13 +332,25 @@ function renderFloor() {
   const kind = floorKind(di)
   $('#danceFeel').innerHTML = `<span class="floortip"><span class="kind ${kind}">${FLOOR_LABEL[kind]}</span>${esc(floorTip(di))}</span>
     ${esc(`${di.time} · ${di.bpm} bpm. ${di.feel} ${TIP[S.style] || ''}`)}`
-  $('#figList').innerHTML = figsOf(S.dance).map((f, i) => {
+  renderFigList()
+  renderChain()
+  Music.renderPanel() // competition tempo, presets and the recommendation for this dance
+}
+
+// The figure list for the chosen syllabus level (chips above it); keys 1-9 and 0 pick from what is shown.
+function renderFigList() {
+  const all = figsOf(S.dance), shown = Syl.visibleFigs(S.dance, all)
+  S.shownFigs = shown
+  let chips = $('#levelChips')
+  if (!chips) { chips = document.createElement('div'); chips.id = 'levelChips'; $('#figList').before(chips) }
+  chips.innerHTML = Syl.chipsHtml(S.dance, all)
+  const next = Syl.nextIds(S.routine, S.figs)
+  $('#figList').innerHTML = shown.map((f, i) => {
     const p = S.prog.figures?.[f.id]
-    return `<li><button data-add="${f.id}" title="${esc(S.role === 'leader' ? f.lead_cue : f.follow_cue)}">
-      <span class="n">${i + 1}</span><span>${esc(f.name)}<br><span class="meta">${f.level} · starts ${S.role === 'leader' ? f.start_foot : (f.start_foot === 'L' ? 'R' : 'L')} foot</span></span>
+    return `<li class="${next.has(f.id) ? 'next' : ''}"><button data-add="${f.id}" title="${esc(S.role === 'leader' ? f.lead_cue : f.follow_cue)}">
+      <span class="n">${i < 10 ? (i + 1) % 10 : ''}</span><span>${esc(f.name)}${next.has(f.id) ? '<span class="nexttag">★ next</span>' : ''}<br><span class="meta">${esc(Syl.levelLabel(f.level))} · starts ${S.role === 'leader' ? f.start_foot : (f.start_foot === 'L' ? 'R' : 'L')} foot <span class="info" data-info="${f.id}" title="Figure card">ⓘ</span></span></span>
       <span class="best">${p ? Math.round(p.best * 100) + '%' : ''}</span></button></li>`
   }).join('')
-  renderChain()
 }
 
 function renderChain(active = -1) {
@@ -412,6 +429,8 @@ function startRun(kind) {
     s.key = KEY_FOR_DIR[mine.dir] ?? 'Space'; s.myFoot = mine.foot; s.judged = null
   })
   S.run = { kind, tl, figs, ids, tooLong: tl.fit?.reach > 1, spb, countIn, t0: performance.now() / 1000, lastBeat: -99, points: 0 }
+  dressPair(leaderD, followerD, S.style, true) // Watch/Play: the grand hall's gown becomes a short dress (see the steps)
+  Music.attachRun(S.run) // with a backing or your song: starts on beat 1 and sets S.run.clock (the audio clock)
   S.mode = kind
   $('#lane').classList.toggle('hidden', false)
   $('#nowFig').classList.remove('hidden')
@@ -423,13 +442,15 @@ function startRun(kind) {
 
 function stopRun() {
   if (!S.run) return
+  Music.detachRun() // fade the music out
   // end segment: hold the last position and ease into a finishing pose (like a start/loop/end animation set)
   const lp = leaderD.pose, fp = followerD.pose
   S.idle = { lead: { ...lp, hold: 'finish' }, follow: { ...fp, hold: 'finish' } }
   S.run = null
   if (S.mode === 'watch' || S.mode === 'play') S.mode = 'floor'
+  if (S.mode === 'floor') dressPair(leaderD, followerD, S.style) // back in the room's own costume
   $('#lane').classList.add('hidden'); $('#nowFig').classList.add('hidden')
-  prints.forEach((p) => (p.material.opacity = 0))
+  prints.hide()
   document.querySelectorAll('#floor button').forEach((b) => (b.disabled = false))
   renderChain(); legend()
 }
@@ -486,7 +507,7 @@ function finishPlay() {
   $('#faster') && ($('#faster').onclick = () => { setSpeed(Math.min(100, Math.round(S.speed * 100) + 10)); closeModal(); startRun('play') })
 }
 
-function setSpeed(v) { S.speed = v / 100; $('#speed').value = v; $('#speedVal').textContent = `${v}%` }
+function setSpeed(v) { S.speed = v / 100; $('#speed').value = v; $('#speedVal').textContent = `${v}%`; Music.onSpeed() }
 
 // She answers his lead a fraction of a beat later: her body (where she is round him, her turn) and her weight
 // change trail his, but her feet stay those of the current instant, so they keep the engine's spacing from his
@@ -506,12 +527,13 @@ function followerLagged(pose, lagged) {
 
 function updateRun(now) {
   const R = S.run
-  const beat = (now - R.t0) / R.spb - R.countIn
+  // with music the beat comes from the audio being heard (music.js), so the dancers never drift off the song
+  const beat = R.clock ? R.clock() : (now - R.t0) / R.spb - R.countIn
   R.beat = beat
   const tl = R.tl
-  // metronome
+  // metronome (quiet when a backing or a song plays)
   const wb = Math.floor(beat + R.countIn)
-  if (wb !== R.lastBeat && beat < tl.totalBeats) { R.lastBeat = wb; click(wb % beatsPerBar(S.dance) === 0) }
+  if (wb !== R.lastBeat && beat < tl.totalBeats) { R.lastBeat = wb; if (!R.music) click(wb % beatsPerBar(S.dance) === 0) }
   const b = Math.max(0, Math.min(beat, tl.totalBeats - 1e-4))
   const pose = poseAt(tl, b, danceInfo())
   // she answers his weight change a fraction later (connection: the follower moves after feeling the lead)
@@ -534,19 +556,8 @@ function updateRun(now) {
     if (R.kind === 'play' && !s.judged && (beat - s.startBeat) * R.spb > WINDOW) { s.judged = { score: 0 }; showJudge('Miss', '#ffd2c4') }
     if (R.kind === 'watch' && beat >= s.startBeat) el.classList.add('done')
   })
-  // ghost footprints for the next steps of the player's own feet
-  let shown = 0
-  for (let i = Math.max(0, pose.step); i < tl.steps.length && shown < 3; i++) {
-    const moves = S.role === 'leader' ? tl.steps[i].moves : tl.steps[i].fmoves // her own step may move when his does not
-    if (!moves || (i === pose.step && pose.progress > 0.85)) continue
-    const t = targetFor(tl, i, S.role)
-    const m = prints[shown]
-    m.position.x = t.x; m.position.z = t.z; m.rotation.z = t.yaw
-    m.material.color.set(t.foot === 'L' ? 0x3a9fc4 : 0xe98a6b)
-    m.material.opacity = 0.85 - shown * 0.25
-    shown++
-  }
-  for (let k = shown; k < 3; k++) prints[k].material.opacity = 0
+  // ghost footprints for the next steps of the player's own feet (her own step may move when his does not)
+  prints.update(tl, pose, S.role, danceInfo(), now)
   if (beat > tl.totalBeats + 0.5) {
     if (R.kind === 'play') finishPlay(); else stopRun()
   }
@@ -941,12 +952,14 @@ function hallCamera(mid, dt) {
   return cfg.fov
 }
 
+const SEE_SELF = { behind: { upper: 0.5, lower: 0.45, shoe: 1 }, top: { upper: 0.45, lower: 0.4, shoe: 1 } } // see-through enough for the feet, his leg action still shows
+const SEE_PARTNER = { upper: 1, lower: 0.3, shoe: 1 }
 function updateCamera(dt) {
   if (S.mode === 'explore' || S.cam !== 'side') updateCamera.side = null // the next side view starts fresh
   if (S.mode === 'explore' || S.cam !== 'hall') updateCamera.hall = null
   let fov = 55
   if (S.mode === 'explore') {
-    player().setGhost(false)
+    player().setGhost(false); partner().setGhost(false); player().setShoeGlow(false); partner().setShoeGlow(false)
     // inside a ballroom the camera comes closer and lower; world.update drops the walls in between (cutaway)
     if (roomAt(S.me.x, S.me.z)) { camPos.set(S.me.x, 5.4, S.me.z + 6.8); camTarget.set(S.me.x, 0.9, S.me.z - 1.4) }
     else {
@@ -959,13 +972,25 @@ function updateCamera(dt) {
     const p = player().pose
     const fx = Math.sin(p.yaw), fz = Math.cos(p.yaw)
     const mid = { x: (leaderD.pose.x + followerD.pose.x) / 2, z: (leaderD.pose.z + followerD.pose.z) / 2 }
-    player().setGhost(S.cam === 'behind'); partner().setGhost(false)
-    if (S.cam === 'behind') { const rx = -Math.cos(p.yaw), rz = Math.sin(p.yaw); camPos.set(p.x - fx * 2.6 + rx * 0.5, 3.6, p.z - fz * 2.6 + rz * 0.5); camTarget.set(p.x + fx * 0.5, 0, p.z + fz * 0.5) }
-    else if (S.cam === 'top') {
-      // the club's lighting rig (truss, spots and mirror ball, lowest point ≈ 4 m) hangs over the floor: look
-      // at the feet from just below it there
-      const club = ROOMS[S.style]?.theme === 'nightclub', y = club ? 3.7 : 6.2
-      camPos.set(mid.x, y, mid.z + (club ? 0.5 : 0.8)); camTarget.set(mid.x, 0, mid.z)
+    // See your own feet: in the behind and footwork views your own body is see-through (legs and skirt almost
+    // clear, shoes solid), and a leader also looks through his partner's skirt and legs, which otherwise hide his
+    // feet and the next landing spot in front of him.
+    const feetView = S.cam === 'behind' || S.cam === 'top', lead = S.role === 'leader'
+    player().setGhost(feetView ? SEE_SELF[S.cam] : false); partner().setGhost(feetView && lead ? SEE_PARTNER : false)
+    player().setShoeGlow(feetView); partner().setShoeGlow(false)
+    const next = S.run ? prints.next() : null // the next footprint, kept in view
+    if (S.cam === 'behind') {
+      // the leader's camera sits higher, over his left shoulder (she stands to his right); hers is unchanged
+      const rx = -Math.cos(p.yaw), rz = Math.sin(p.yaw), back = lead ? 2.1 : 2.6, side = lead ? -0.55 : 0.5
+      camPos.set(p.x - fx * back + rx * side, lead ? 3.8 : 3.6, p.z - fz * back + rz * side)
+      camTarget.set(p.x + fx * 0.5, 0, p.z + fz * 0.5)
+      if (next) camTarget.set(camTarget.x * 0.7 + next.x * 0.3, 0, camTarget.z * 0.7 + next.z * 0.3)
+    } else if (S.cam === 'top') {
+      // footwork: straight down on your own feet (and the next print). The club's lighting rig (truss, spots and
+      // mirror ball, lowest point ≈ 4 m) hangs over the floor: look from just below it there
+      const club = ROOMS[S.style]?.theme === 'nightclub', y = club ? 3.7 : 4.6
+      const cx = next ? p.x * 0.7 + next.x * 0.3 : p.x * 0.8 + mid.x * 0.2, cz = next ? p.z * 0.7 + next.z * 0.3 : p.z * 0.8 + mid.z * 0.2
+      camPos.set(cx, y, cz + (club ? 0.5 : 0.6)); camTarget.set(cx, 0, cz)
     } else if (S.cam === 'hall') fov = hallCamera(mid, dt)
     else sideCamera(mid, dt)
   }
@@ -1242,7 +1267,8 @@ function openHelp() {
     <p><b>Evans Hall:</b> <kbd>WASD</kbd>/arrows walk (<kbd>Shift</kbd> runs). Five ballrooms open off the hall: <b>Standard</b>, <b>Smooth</b> and <b>Latin</b> to the north, <b>Rhythm</b> and <b>Social &amp; Nightclub</b> to the south. Walls between you and the camera sink out of the way. Walk onto a room's floor (the glowing ring) and press <kbd>E</kbd>; Coach Marisol, the Drill Board (Ross Library) and the Planner (Beinecke Terrace) are in the hall.</p>
     <p><b>Line of dance:</b> Standard, Smooth, Samba and Paso Doble travel counter-clockwise round the room with the wall on the leader's right, turning left at the corners. West Coast Swing keeps to a slot; the other Latin, Rhythm and Social dances stay on a spot. The other couples on the floor follow the same rules and wait for you.</p>
     <p><b>On a floor:</b> <kbd>1</kbd>–<kbd>9</kbd> add figures, <kbd>Tab</kbd> switch dance, <kbd>Backspace</kbd> undo, <kbd>X</kbd> clear, <kbd>[</kbd> <kbd>]</kbd> tempo, <kbd>W</kbd> watch, <kbd>Enter</kbd> play, <kbd>C</kbd> coach, <kbd>V</kbd> camera (behind you / top-down footwork / side / hall: the couple against the grand hall's balconies and chandelier, a wide view of the other rooms), <kbd>Esc</kbd> leave.</p>
-    <p><b>Playing:</b> hit the key when a note reaches the white line. <kbd>↑</kbd> forward, <kbd>↓</kbd> back, <kbd>←</kbd>/<kbd>→</kbd> side, <kbd>Space</kbd> close or replace. <span class="blue">Blue = left foot</span>, <span class="coral">coral = right foot</span>. The glowing footprints show where your feet go next.</p>
+    <p><b>Playing:</b> hit the key when a note reaches the white line. <kbd>↑</kbd> forward, <kbd>↓</kbd> back, <kbd>←</kbd>/<kbd>→</kbd> side, <kbd>Space</kbd> close or replace. <span class="blue">Blue = left foot</span>, <span class="gold">gold = right foot</span>. The footprints show where your feet go next (1, 2, 3): the solid pad lands first (H heel, T toe) and a curved arrow means the foot then swivels. <kbd>O</kbd> outfits.</p>
+    <p><b>Tempo and music:</b> under the tempo slider, <b>Learn 70%</b>, <b>Practise 85%</b>, <b>Competition 100%</b> and <b>★ For you</b> (your level; Latin, Rhythm and social dances start at 80% or more). <kbd>U</kbd> opens Music: a backing track for the dance, or your own song (analysed in your browser, never uploaded): it finds the song's tempo, beat 1 and sections, sets your routine to its tempo, and the Choreographer agent plans figures for each part of the song.</p>
     <p><b>Leader or follower?</b> Switch at the top left. Followers see their own mirrored footwork and the camera moves behind them.</p>
     <p><b>Why the chain turns red:</b> each figure needs a particular free foot and position (closed, promenade, open, fan). The rules come from the syllabus, so they are always the same.</p>`)
 }
@@ -1278,12 +1304,13 @@ addEventListener('keydown', (e) => {
   }
   if (S.mode === 'floor') {
     const n = parseInt(e.key, 10)
-    if (n >= 1 && n <= 9) { const f = figsOf(S.dance)[n - 1]; if (f) addFigure(f.id) }
+    if (n >= 0 && n <= 9 && /^Digit|^Numpad/.test(e.code)) { const f = (S.shownFigs || figsOf(S.dance))[(n + 9) % 10]; if (f) addFigure(f.id) }
+    if (e.code === 'KeyY') Syl.openBrowser(S.dance)
     if (e.code === 'Backspace') { S.routine.pop(); routineEdited() }
     if (e.code === 'KeyX') { S.routine = []; routineEdited() }
     if (e.code === 'Tab') { e.preventDefault(); const ds = S.cat.styles[S.style].dances; switchDance(ds[(ds.indexOf(S.dance) + 1) % ds.length]) }
     if (e.code === 'BracketLeft') setSpeed(Math.max(40, Math.round(S.speed * 100) - 5))
-    if (e.code === 'BracketRight') setSpeed(Math.min(100, Math.round(S.speed * 100) + 5))
+    if (e.code === 'BracketRight') setSpeed(Math.min(+$('#speed').max || 100, Math.round(S.speed * 100) + 5)) // up to the slider's max (120 with music)
     if (e.code === 'KeyW') startRun('watch')
     if (e.code === 'Enter') startRun('play')
     if (e.code === 'KeyC') openCoach()
@@ -1296,16 +1323,48 @@ addEventListener('blur', () => { S.keys = {} })
 
 document.querySelectorAll('.role button').forEach((b) => (b.onclick = () => setRole(b.dataset.role)))
 $('#danceTabs').addEventListener('click', (e) => { const d = e.target.closest('[data-dance]'); if (d) switchDance(d.dataset.dance) })
-$('#figList').addEventListener('click', (e) => { const b = e.target.closest('[data-add]'); if (b) addFigure(b.dataset.add) })
+$('#figList').addEventListener('click', (e) => {
+  const info = e.target.closest('[data-info]')
+  if (info) { e.stopPropagation(); Syl.openCard(info.dataset.info); return }
+  const b = e.target.closest('[data-add]'); if (b) addFigure(b.dataset.add)
+})
+$('#floor').addEventListener('click', (e) => {
+  const lv = e.target.closest('#levelChips [data-level]')
+  if (lv) { Syl.setLevel(S.dance, lv.dataset.level); renderFigList(); return }
+  if (e.target.closest('#levelChips [data-syllabus]')) Syl.openBrowser(S.dance)
+})
+$('#modal').addEventListener('click', (e) => { Syl.handleModalClick(e) })
+Syl.initSyllabus({ esc, openModal, closeModal, getState: () => S, addFigure, figsOf })
 $('#leaveFloor').onclick = leaveFloor
 $('#watchBtn').onclick = () => startRun('watch')
 $('#playBtn').onclick = () => startRun('play')
 $('#coachBtn').onclick = openCoach
 $('#mocapBtn').onclick = toggleMocap
+// Grade my video (grade.js): a button under Instructors and the G key on a floor; the video is graded by the local
+// server and deleted. Coach Marisol can then review the routine with the video's per-figure timing.
+mountGrader({
+  esc, openModal, closeModal, aiOn: () => S.aiOn,
+  state: () => ({
+    mode: S.mode, dance: S.dance, danceName: S.cat?.dances[S.dance]?.name || S.dance, role: S.role, routine: [...S.routine],
+    figs: S.figs, compBpm: S.cat?.dances[S.dance]?.bpm || 120, speedPct: Math.round(S.speed * 100),
+    bpm: (S.cat?.dances[S.dance]?.bpm || 120) * S.speed,
+  }),
+  onCoach: (stats) => { S.lastStats = { ...S.lastStats, ...stats }; openCoach() },
+})
 $('#undoBtn').onclick = () => { S.routine.pop(); routineEdited() }
 $('#clearBtn').onclick = () => { S.routine = []; routineEdited() }
 $('#speed').oninput = (e) => setSpeed(+e.target.value)
 $('#camBtn').onclick = cycleCam
+// wardrobe: the Outfit button and O key open the picker; a choice re-dresses the couple on the floor at once
+initWardrobe({ openModal, canOpen: () => S.mode !== 'play', apply: () => dressPair(leaderD, followerD, S.mode === 'explore' ? null : S.style, !!S.run) })
+// music (music.js): tempo presets under the slider, the Music panel (button and U key), the Choreographer agent
+Music.init({
+  S, setSpeed, openModal, closeModal, startRun, usageLine, spinner, showJudge, aiOn: () => S.aiOn,
+  level: () => levelOf(S.prog.xp || 0).name, audio: () => (actx ??= new AudioContext()),
+  loadRoutine: (dance, ids) => {
+    if (S.mode === 'floor' && S.dance === dance) { S.routine = ids.filter((id) => S.figs[id]); routineEdited() } else enterFloor(roomFor(dance), { dance, routine: ids })
+  },
+})
 $('#soundBtn').onclick = () => { S.sound = !S.sound; $('#soundBtn').textContent = S.sound ? '🔔 On' : '🔕 Off' }
 document.querySelectorAll('[data-open]').forEach((b) => (b.onclick = () => ({ drills: openDrills, planner: openPlanner, usage: openUsage, help: openHelp }[b.dataset.open]())))
 $('#startBtn').onclick = () => { $('#welcome').classList.add('hidden'); actx ??= new AudioContext() }

@@ -1,0 +1,8 @@
+# Optional extras for "Grade my video" (POST /api/grade). The base app (requirements.txt) runs without them:
+# the route then answers 501 with an install hint. Install with:
+#   .venv/bin/pip install -r requirements-video.txt
+# The pose model itself ships in models/ (see models/README.md). Videos are graded on this laptop only.
+mediapipe>=1.1,<2        # PoseLandmarker (Apache-2.0); pulls in opencv-contrib-python and numpy
+av>=13                   # PyAV: decodes phone .mov/.mp4 and reports the display rotation
+numpy>=2.0
+python-multipart>=0.0.20 # lets FastAPI read the multipart upload

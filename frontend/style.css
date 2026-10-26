@@ -2,6 +2,7 @@
   --ocean: #0d3b52; --lagoon: #1b7f9c; --sky: #3a9fc4; --foam: #d8f1f7;
   --sand: #f3e6cf; --sand-2: #e8d3ac; --shell: #fffaf0; --coral: #e98a6b;
   --ink: #18323f; --muted: #5b7380; --ok: #2f9e7a; --bad: #d4553b;
+  --print-l: #1e90e6; --print-r: #ffc21a; --gold: #d9a441;
   --radius: 18px; --shadow: 0 10px 30px rgba(13, 59, 82, 0.16);
 }
 * { box-sizing: border-box; }
@@ -82,7 +83,8 @@ button:disabled { opacity: .45; cursor: not-allowed; }
 #lane .hit { position: absolute; left: 90px; top: 8px; bottom: 8px; width: 4px; background: #fff; border-radius: 2px; box-shadow: 0 0 12px #fff; }
 .note { position: absolute; top: 12px; width: 58px; height: 60px; margin-left: -29px; border-radius: 14px; display: grid; place-items: center; color: #fff; font: 700 24px system-ui; line-height: 1; }
 .note small { font-size: 10px; font-weight: 600; opacity: .9; }
-.note.L { background: var(--sky); } .note.R { background: var(--coral); }
+/* lane notes match the floor's footprints: azure = left foot, gold = right foot */
+.note.L { background: var(--print-l); } .note.R { background: var(--print-r); color: var(--ocean); }
 .note.done { opacity: .25; }
 #judge { position: fixed; left: 50%; top: 32%; transform: translate(-50%, -50%); font: 700 46px Georgia, serif; color: #fff; text-shadow: 0 4px 18px rgba(13,59,82,.6); pointer-events: none; transition: opacity .35s; opacity: 0; }
 #judge.show { opacity: 1; }
@@ -124,6 +126,7 @@ table.t td, table.t th { padding: 6px 8px; border-bottom: 1px solid var(--sand);
 #welcome .lead { font-size: 17px; line-height: 1.55; color: var(--muted); }
 .how { padding-left: 20px; line-height: 1.9; font-size: 15px; }
 .blue { color: var(--lagoon); font-weight: 600; } .coral { color: var(--coral); font-weight: 600; }
+.gold { color: #a87408; font-weight: 600; }
 .big { padding: 14px 26px; border-radius: 14px; font-size: 16px; font-weight: 600; margin-top: 6px; }
 
 /* keep the lane and hints centred in the space left of the floor panel */
@@ -142,3 +145,38 @@ body.on-floor #minimap { display: none; }
   #floor { width: min(330px, calc(100vw - 262px)); }
   #legend { left: auto; right: 12px; transform: none; flex-wrap: wrap; max-width: calc(100vw - 280px); gap: 8px; }
 }
+
+/* footprint key (shown while a routine plays): the same prints as on the floor */
+#printKey { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 5; display: flex; align-items: center; gap: 12px;
+  padding: 6px 14px 6px 12px; border-radius: 999px; background: rgba(13, 59, 82, 0.9); color: #fff; font-size: 12.5px; box-shadow: var(--shadow); pointer-events: none; white-space: nowrap; }
+#printKey span { display: inline-flex; align-items: center; gap: 5px; }
+#printKey img { height: 34px; width: auto; }
+#printKey b { font-weight: 600; }
+#printKey .pk-title { font: 600 13px Georgia, serif; color: var(--sand); letter-spacing: .3px; }
+#printKey .pk-num { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--print-l); border: 2px solid #fff; font: 700 11px system-ui; font-style: normal; }
+#printKey .pk-turn { font-style: normal; font-size: 18px; line-height: 1; color: var(--print-r); }
+body.on-floor #printKey { left: calc((100% - 350px) / 2); }
+/* narrower windows: a small card under the brand card instead (the top centre is needed by the toolbar) */
+@media (max-width: 1400px) {
+  #printKey, body.on-floor #printKey { left: 16px; top: 214px; transform: none; flex-direction: column; align-items: flex-start; gap: 4px; border-radius: 16px; padding: 10px 14px; }
+  #printKey img { height: 28px; }
+}
+@media (max-width: 900px) { #printKey, body.on-floor #printKey { top: 170px; font-size: 11px; } #printKey img { height: 22px; } }
+
+/* wardrobe (Outfit button, O) */
+.wardrobe { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+.wardrobe section { display: grid; gap: 8px; align-content: start; }
+.wardrobe h3 { margin: 0 0 2px; }
+.wardrobe .outfit { display: grid; gap: 7px; padding: 10px 12px; border-radius: 14px; background: #fff; border: 1px solid var(--sand); text-align: left; }
+.wardrobe .outfit.on { border-color: var(--lagoon); box-shadow: 0 0 0 2px rgba(27, 127, 156, 0.25); background: #f4fbfd; }
+.wardrobe .outfit b { color: var(--ocean); font-size: 14px; }
+.wardrobe .outfit small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.wardrobe .outfit.auto { cursor: pointer; }
+.wardrobe .outfit.auto:hover { background: var(--foam); }
+.wardrobe .swatches { display: flex; flex-wrap: wrap; gap: 7px; }
+.wardrobe .sw { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--sand-2);
+  background: linear-gradient(135deg, var(--c1) 0 58%, var(--c2) 58% 100%); }
+.wardrobe .sw:hover { transform: scale(1.08); }
+.wardrobe .sw.on { box-shadow: 0 0 0 3px var(--lagoon); }
+.wardrobe-tip { font-size: 12.5px; color: var(--muted); margin-bottom: 0; }
+@media (max-width: 700px) { .wardrobe { grid-template-columns: 1fr; } }
