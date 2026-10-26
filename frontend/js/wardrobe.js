@@ -64,7 +64,8 @@ export const OUTFITS = {
     ] },
   ],
 }
-const PRACTICE_HIM = { look: 'practice', colours: OUTFITS.leader[2].colours[0].c } // the room default for him
+const PRACTICE_HIM = { look: 'practice', colours: OUTFITS.leader[2].colours[0].c } // his look in every room
+const STANDARD_HER = { cut: 'latin', colours: OUTFITS.follower[0].colours[0].c } // her short ocean Latin dress
 
 // ---------- saved choice: { leader: { outfit, colour } | null, follower: ... } (null = room default) ----------
 export function loadOutfits() {
@@ -83,14 +84,10 @@ const find = (kind, pick) => {
 // What a dancer of this kind wears in a room (null = the dancer's own palette: the hero couple's costume).
 // dancing: a Watch or Play run is on (the grand hall's gown turns into a short dress so both partners' steps show).
 export function outfitFor(kind, room, saved = loadOutfits(), dancing = false) {
-  const hit = find(kind, saved[kind])
-  if (hit) return kind === 'leader' ? { look: hit.o.look, colours: hit.c.c } : { cut: hit.o.cut, colours: hit.c.c }
-  // the painting's couple in the grand hall; while they dance, she keeps her colours in the short Latin cut
-  if (ROOMS[room]?.theme === 'grand') return kind === 'follower' && dancing ? { cut: 'latin' } : null
-  if (kind === 'leader') return PRACTICE_HIM
-  // her own colours in a short dress: the Latin cut where the style would put her in a gown (Smooth, the hall),
-  // else the style's own short cut (Latin fringe, the Social room's ruffle)
-  return !room || room === 'standard' || room === 'smooth' ? { cut: 'latin' } : null
+  // One clear look in every room (Sam's feedback, 26 Oct): the long gown hid the leader's steps, so the player's
+  // couple always wears the short ocean Latin dress and his light practice shirt with dark trousers. Saved picks
+  // are ignored until new costumes arrive (the Outfit button says "coming soon").
+  return kind === 'leader' ? PRACTICE_HIM : STANDARD_HER
 }
 
 // Put the saved outfits on the player's couple for this room (room = the floor's key, null in the hall).
@@ -128,7 +125,9 @@ function pickerHtml(saved) {
 // Wire the toolbar's Outfit button (#outfitBtn) and the O key. openModal(html) shows the shared modal; apply()
 // re-dresses the couple on the floor; canOpen() says whether the picker may open now (not mid-play).
 export function initWardrobe({ openModal, apply, canOpen = () => true }) {
-  const open = () => openModal(pickerHtml(loadOutfits()))
+  const open = () => openModal(`<div class="wardrobe"><h2>👗 New costumes: coming soon</h2>
+    <p>For now every room uses one clear look, so both partners' feet stay easy to see: a short ocean Latin dress for the follower and a light shirt with dark trousers for the leader.</p>
+    <p class="muted">Tailsuits, gowns and more colours will come back as options in a later update.</p></div>`)
   // one delegated listener; it only acts while the picker is what the modal shows
   const body = document.getElementById('modalBody')
   body?.addEventListener('click', (e) => {
